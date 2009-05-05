@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<beans xmlns="http://www.springframework.org/schema/beans" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:p="http://www.springframework.org/schema/p" 
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/context 
+        http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+    
+    <context:component-scan base-package="harvester.client.web"/>
+    <context:component-scan base-package="harvester.client.service"/>
+    <context:annotation-config/>
+    
+ <!-- Controllers -->
+    <bean name="/AjaxValidation.htm" class="harvester.client.web.AjaxValidationController">
+        <property name="daofactory" ref="DAOFactoryImpl" />
+    </bean>
+    <bean name="/ViewProcessingProfiles.htm" class="harvester.client.web.ViewProcessingProfilesController">
+        <property name="daofactory" ref="DAOFactoryImpl" />
+	<property name="profilesession" ref="profilesession" />        
+    </bean>    
+
+    <bean name="/Interact.htm" class="harvester.client.web.InteractController">
+        <property name="daofactory" ref="DAOFactoryImpl" />
+        <property name="schedulerclient" ref="schedulerclient" />
+        <property name="processorurl" value="${harvesterurl}" />
+        <property name="collectionService" ref="collectionService" />
+    </bean>    
+    <bean name="/ListHarvestLogs.htm" class="harvester.client.web.ListHarvestLogsController">
+        <property name="daofactory" ref="DAOFactoryImpl" />
+    </bean>
+    <bean name="/ViewHarvest.htm" class="harvester.client.web.ViewHarvestController">
+        <property name="daofactory" ref="DAOFactoryImpl" />
+    </bean>
+    <bean name="/ViewHarvestSchedule.htm" class="harvester.client.web.ViewHarvestScheduleController">
+        <property name="daofactory" ref="DAOFactoryImpl" />
+        <property name="schedulerclient" ref="schedulerclient" />
+    </bean>
+    <bean name="/EditSchedule.htm" class="harvester.client.web.EditScheduleController">
+        <property name="daofactory" ref="DAOFactoryImpl" />
+        <property name="schedulerclient" ref="schedulerclient" />
+    </bean>
+    <bean name="/ModifySchedule.htm" class="harvester.client.web.ModifyScheduleController">
+        <property name="daofactory" ref="DAOFactoryImpl" />
+        <property name="schedulerclient" ref="schedulerclient" />
+    </bean>
+    <bean name="/EditManualHarvest.htm" class="harvester.client.web.EditManualHarvestController">
+        <property name="daofactory" ref="DAOFactoryImpl" />
+    </bean>
+    <bean name="/ModifyManualHarvest.htm" class="harvester.client.web.ModifyManualHarvestController">
+        <property name="daofactory" ref="DAOFactoryImpl" />
+        <property name="schedulerclient" ref="schedulerclient" />
+    </bean>
+    
+    <bean name="/ListHarvests.htm" class="harvester.client.web.ListHarvestsController">
+        <property name="daofactory" ref="DAOFactoryImpl" />
+        <property name="schedulerclient" ref="schedulerclient" />
+        <property name="numberOfRecordsToShowBeforeChoppingOff" value="10" />
+    </bean>
+    <bean name="/ViewRecord.htm" class="harvester.client.web.ViewRecordController">
+        <property name="daofactory" ref="DAOFactoryImpl" />
+    </bean>
+    <bean name="/ViewRecords.htm" class="harvester.client.web.ViewRecordsController">
+        <property name="daofactory" ref="DAOFactoryImpl" />
+        <property name="pagesize" value="${pagesize}" />
+        <property name="casualLayoutStylePath" value="classpath:style.xsl" />
+        <property name="xmlLayoutStylePath" value="classpath:xmlstyle.xsl" />
+    </bean>
+    <bean name="/ViewAllRecords.htm" class="harvester.client.web.ViewAllRecordsController">
+        <property name="daofactory" ref="DAOFactoryImpl" />
+    </bean>
+    <bean name="/ViewClusters.htm" class="harvester.client.web.ViewClustersController">
+        <property name="daofactory" ref="DAOFactoryImpl" />
+    </bean>        
+    <bean name="/Help.htm" class="harvester.client.web.HelpController">
+        <property name="regexUrl" value="${help.regex.url}" />
+        <property name="xpathUrl" value="${help.xpath.url}" /> <!-- actually the picker help url -->
+    </bean>
+
+    <bean name="/Login.htm" class="harvester.client.web.LoginController" />
+    
+</beans>

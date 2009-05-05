@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>au.gov.nla</groupId>
+  <artifactId>nlaharvester</artifactId>
+  <packaging>pom</packaging>
+  <version>1.0</version>
+  <name>nlaharvester</name>
+  <url>https://code.nla.gov.au/redmine/projects/show/nlaharvester</url>
+  
+  <modules>
+    <module>Scheduler</module>
+    <module>HarvesterData</module>    
+    <module>Converter</module>
+    <module>HarvesterClient</module>
+    <module>HarvesterProcessor</module>
+  </modules>
+  
+  <pluginRepositories>
+      <pluginRepository>
+          <id>maven2-repository.dev.java.net</id>
+          <url>http://download.java.net/maven/2</url>
+          <layout>default</layout>
+      </pluginRepository>
+      <pluginRepository>
+          <id>maven-repository.dev.java.net</id>
+          <url>http://download.java.net/maven/1</url>
+          <layout>legacy</layout>
+      </pluginRepository>
+  </pluginRepositories>
+  
+  
+  <build>
+    <pluginManagement>
+        <plugins>
+          <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                   <source>1.5</source>
+                   <target>1.5</target>
+                </configuration>
+             </plugin>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>tomcat-maven-plugin</artifactId>
+            <configuration>
+              <server>mytomcat</server>
+            </configuration>
+          </plugin>
+          
+          <plugin>
+            <groupId>org.mortbay.jetty</groupId>
+            <artifactId>maven-jetty-plugin</artifactId>
+            <configuration>
+              <scanIntervalSeconds>3</scanIntervalSeconds>
+            </configuration>
+          </plugin>
+          
+        </plugins>
+    </pluginManagement>
+
+  </build>  
+  
+    <dependencyManagement>
+        <dependencies>
+            <!-- oracle ojdbc.jar, we have to use the old version because of a bug in newer versions -->
+            <dependency>
+                <groupId>com.oracle</groupId>
+                <artifactId>ojdbc</artifactId>
+                <version>11.1.0.7.0</version>
+                <scope>runtime</scope>
+            </dependency>
+            <!-- junit -->
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.4</version>
+            </dependency>
+            <!-- log4j is the logging framework used by all parts -->
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>1.2.12</version>
+            </dependency>
+            <!-- servlet api needed for all our servlets -->
+            <dependency>
+                <groupId>javax.servlet</groupId>
+                <artifactId>servlet-api</artifactId>
+                <version>2.5</version>
+            </dependency>
+            <!-- there are several run time dependencies on commons collections -->
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>3.2.1</version>
+                <scope>runtime</scope>
+            </dependency>        
+			<!-- used for some xml conversions -->
+			<dependency>
+				<groupId>commons-lang</groupId>
+				<artifactId>commons-lang</artifactId>
+				<version>2.3</version>
+			</dependency>
+        </dependencies>
+    </dependencyManagement>
+    
+	 <reporting>
+	    <plugins>
+	      <plugin>
+	        <groupId>org.apache.maven.plugins</groupId>
+	        <artifactId>maven-javadoc-plugin</artifactId>
+	        <configuration>
+	          <aggregate>true</aggregate>
+						<quiet>true</quiet>
+	        </configuration>
+	      </plugin>
+	    </plugins>
+	 </reporting>
+
+
+
+</project>

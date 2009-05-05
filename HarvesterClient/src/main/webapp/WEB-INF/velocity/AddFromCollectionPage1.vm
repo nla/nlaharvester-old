@@ -1,0 +1,79 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>NLA Harvester</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+	<link rel="stylesheet" type="text/css" href="_css/style.css" media="screen" />
+  <!--[if IE 7]> 
+	<link rel="stylesheet" type="text/css" href="_css/style-ie7.css" media="screen" />
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="_css/print.css" media="print" />
+  <script type="text/javascript" src="_js/jquery.js"></script>
+  <script type="text/javascript" src="_js/script.js"></script>
+  
+</head>
+<body class="con">
+  <h1>NLA Harvester</h1>
+  <h2><span>&gt;</span> <a href="ListCollections.htm">Collections</a> <span>&gt;</span> $collectionname <a class="logout" href="Logout.htm">Logout </a><br/><label class="user">$userUtil.userName</label></h2>
+  <div id="container">
+    #if($colview)
+    <ul id="nav">
+      <li>Collection Details</li>
+    </ul>
+    <ul id="subnav">
+      <li>Create/Edit Processing Profile</li>
+    </ul>
+    #else
+    <ul id="nav">
+      <li><a href="ViewCollection.htm?collectionid=$collectionid">Collection Details</a></li>
+
+      <li class="on"><a href="ListContributors.htm?collectionid=$collectionid">Contributors</a></li>
+      <li><a href="ListHarvests.htm?collectionid=$collectionid">Harvests</a></li>
+      <li><a href="ListReports.htm?collectionid=$collectionid">Reports</a></li>
+    </ul>
+    <ul id="subnav">
+      <li><a href="ViewContributor.htm?contributorid=$contributorid">Contributor Details</a></li>
+      <li><a href="ViewNotes.htm?contributorid=$contributorid">Notes</a></li>
+
+      <li><a href="ViewConnectionSettings.htm?contributorid=$contributorid">Connection Settings</a></li>
+      #if($contributortype == 1)<li><a href="ViewHarvestSchedule.htm?contributorid=$contributorid">Schedule Production Harvest</a></li>#end
+      <li><a href="EditManualHarvest.htm?contributorid=$contributorid">Perform Test Harvest</a></li>
+      <li class="on"><a href="ViewProcessingSteps.htm?contributorid=$contributorid">Processing Steps</a></li>
+      <li><a href="ListHarvestLogs.htm?contributorid=$contributorid">Logs</a></li>
+    </ul>
+    #end
+
+    <div id="content">
+      <h3>#if($colview)$!collectionname#{else}$!contributorname#end</h3>
+      <p class="step">Step 1 of 2</p>
+      <form method="post" id="selectProfileForm" action="AddFromCollectionPage2.htm" >
+	<fieldset>   
+          <legend>Copy from collection processing profile</legend>
+	  <input type="text" style="display:none"  name="new" value="true" />
+	  $sessionStateHTML ##ouputs a bunch of hidden input statements to maintain the session information with	
+
+        <dl class="reallybig">
+          <dt>Select a processing profile<span class="requiredfield">*</span>: </dt>
+          <dd>
+	    <select class="required" name="collectionprofile">
+	      #foreach($option in $profiles.options)
+		<option value="$option.key" >$option.value</option>
+	      #end
+	    </select>
+	  </dd>
+	</dl>
+      
+
+	</fieldset> 
+	<ul class="buttons">
+         <li><a href="$editProfileUrl" class="cancel">Cancel</a></li>
+	<li><a href="javascript:document.getElementById('selectProfileForm').submit()" class="next"><strong>Step 2</strong> : Select Steps</a></li>
+	</ul>
+  
+        <p><span class="required">*</span> Compulsory Field</p>
+      </form>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</body>
+</html>

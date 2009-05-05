@@ -1,0 +1,69 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+    <session-factory>
+
+        <!-- Database connection settings -->
+	<property name="connection.driver_class">oracle.jdbc.OracleDriver</property>
+        <property name="connection.url">${oracle.url}</property>
+        <property name="connection.username">${oracle.username}</property>
+        <property name="connection.password">${oracle.password}</property>
+        
+        <property name="hibernate.connection.useUnicode">true</property>
+        <property name="hibernate.connection.characterEncoding">UTF-8</property>        
+        <property name="hibernate.jdbc.use_streams_for_binary">true</property>
+        <property name="hibernate.bytecode.use_reflection_optimizer">false</property>
+        
+        <!-- c3p0 is used for connection pooling -->
+        <property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property>         
+        <property name="hibernate.c3p0.min_size">1</property>
+        <property name="hibernate.c3p0.max_size">5</property>
+        <property name="hibernate.c3p0.timeout">1800</property>
+        <property name="hibernate.c3p0.max_statements">50</property>
+        <property name="hibernate.c3p0.idle_test_period">30</property>
+        
+        <property name="hibernate.jdbc.batch_size">20</property>
+        
+        <!-- JDBC connection pool (use the built-in) -->
+       <!-- <property name="connection.pool_size">1</property> -->
+
+        <!-- SQL dialect -->
+        <property name="dialect">org.hibernate.dialect.Oracle9iDialect</property>
+
+        <!-- Enable Hibernate's automatic session context management -->
+        <property name="current_session_context_class">thread</property>
+
+        <!-- Disable the second-level cache  -->
+        <property name="cache.provider_class">org.hibernate.cache.NoCacheProvider</property>
+
+	<property name="format_sql">true</property>
+
+	<mapping class="harvester.data.Harvest"/>
+	<mapping class="harvester.data.Profile"/>
+	<mapping class="harvester.data.ProfileStepParameter"/>
+	<mapping class="harvester.data.ParameterInformation"/>
+	<mapping class="harvester.data.ProfileStep"/>
+        
+	<mapping class="harvester.data.Step"/>
+	<mapping class="harvester.data.HarvestData"/>
+	<mapping class="harvester.data.HarvestLog"/>
+	<mapping class="harvester.data.Collection"/>
+	<mapping class="harvester.data.Contributor"/>
+        
+	<mapping class="harvester.data.ContributorContact"/>
+	<mapping class="harvester.data.ParameterOption"/>
+        <mapping class="harvester.data.Note"/>
+        <mapping class="harvester.data.CollectionContact"/>
+	<mapping class="harvester.data.HarvestCluster" />
+	<mapping class="harvester.data.HarvestClusterData" />
+        <mapping class="harvester.data.ContactSelections" />
+        
+        <mapping class="harvester.data.StepFile" />
+        
+    </session-factory>
+
+</hibernate-configuration>

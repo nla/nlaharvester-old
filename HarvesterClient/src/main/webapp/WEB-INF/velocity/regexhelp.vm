@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+      <title>NLA Harvester</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+      <script type="text/javascript" src="_js/jquery.js"></script>
+      <script type="text/javascript" src="_js/script.js"></script>
+    </head>
+    <body class="con">
+        Regular expressions are a compact way of describing complex patterns in text. They are very similar to a standard phrase language but include a few more special characters.
+        <p>
+        
+        <h3>Basics</h3>
+        <p>
+        
+        The simplest use is matching text.
+        
+        <p>Eg,<br />
+        
+        <table class="regex" cellpadding=4 border=1>
+                <tr><th>Regular Expression</th><th>Matches</th></tr>
+        
+                <tr><td><kbd>Hello</kbd></td><td>Hello</td></tr>
+        </table>
+        <p>
+        To match an arbitrary character use the "." (fullstop). Use "\d" to match digits or "\s" to match whitespace.
+        
+        <table class="regex" cellpadding=4 border=1>
+                <tr><th>Regular Expression</th><th>Matches</th></tr>
+                <tr><td><kbd>Hel.</kbd></td><td>Help, Held</td></tr>
+                <tr><td><kbd>\d\d\d\d-\d\d-\d\d</kbd></td><td>2007-02-03, 0000-99-99</td></tr>
+        
+        </table>
+        <p>
+        
+        It's often useful to repeat things. The regular expression provides two common ways to do this. Use the "*" to repeat things 0 or more times and the "+" symbol to repeat things 1 or more times.
+        
+        <table class="regex" cellpadding=4 border=1>
+                <tr><th>Regular Expression</th><th>Matches</th></tr>
+                <tr><td><kbd>\d*</kbd></td><td>1, 123, the empty string</td></tr>
+                <tr><td><kbd>\d+</kbd></td><td>1, 123</td></tr>
+        
+                <tr><td><kbd>hello*</kbd></td><td>hello, helloo, hellooo, helloooo, ...</td></tr>
+                <tr><td><kbd>(hello)*</kbd></td><td>hello, hellohello, hellohellohello, the empty string</td></tr>
+                <tr><td><kbd>hello(\shello)*</kbd></td><td>hello, hello hello, hello hello hello</td></tr>
+        </table>
+        
+        <p>
+        Sometimes ".", \d and \s aren't enough. For this you can use square brackets [] to create sets of your own.
+        
+        <table class="regex" cellpadding=4 border=1>
+        
+                <tr><th>Regular Expression</th><th>Matches</th></tr>
+                <tr><td><kbd>[ab]</kbd></td><td>a, b</td></tr>
+                <tr><td><kbd>[ab]*</kbd></td><td>aa, ab, ba, bb, aaa, aab, aba, ... </td></tr>
+                <tr><td><kbd>[a-z]</kbd></td><td>a, b, c, d, ..., z</td></tr>
+                <tr><td><kbd>[a-z0-9]</kbd></td><td>a, b, c, ..., z, 0, 1, ..., 9</td></tr>
+        
+                <tr><td><kbd>[^0-9a-zA-Z]</kbd></td><td>Any non alpha-numeric character</td></tr>
+        </table>
+        
+        <p>
+        
+        The regular expression uses various other special characters which need to be escaped if you actually want to use them to match. These characters are:<br />
+        [, ], *, ., ?, (, ), |, \, $, ^ <br />
+        To use any of these to match in expression you need to escape them using the '\'
+        
+        <table class="regex" cellpadding=4 border=1>
+                <tr><th>Regular Expression</th><th>Matches</th></tr>
+        
+                <tr><td><kbd>\$\d+</kbd></td><td>$10, $15, $0, $100000</td></tr>
+                <tr><td><kbd>.*you\?</kbd></td><td>How are you?, What are you?</td></tr>
+                <tr><td><kbd>3\+2</kbd></td><td>3+2</td></tr>
+                <tr><td><kbd>3\s*\+\s*2</kbd></td><td>3+2, 3 + 2, 3+ 2, 3 +2</td></tr>
+        </table>
+        
+        <h3>The convert step</h3>
+        
+        This step allows you to convert values using a simple regular expression templating language. Substrings of a regular expression contained in parentheses are call groups so the regular expression (one)(two(three))(four) has three groups. They are named by how many opening parentheses you must count to get there.<br />
+        
+        <table class="regex" cellpadding=4 border=1>
+                <tr><th>Regular Expression</th><th>Convert to Expression</th><th>Original Value</th><th>New Value</th></tr>
+                <tr><td><kbd>(\d\d\d\d)-\d\d-\d\d</kbd></td><td>$1</td><td>It was between 2006-03-03 and 2007-05-08</td><td>It was between 2006 and 2007</td></tr>
+        
+                <tr><td><kbd>hi</kbd></td><td>hello</td><td>hi there my dear friend</td><td>hello there my dear friend</td></tr>
+                <tr><td><kbd>RFCD\s*(\d*)\s*(.*)</td><td>$2 ($1)</td><td>RFCD 25726 Homological Algebra</td><td>Homological Algebra (25726)</td></tr>
+        </table>    
+    </body>
+</html>
+
+

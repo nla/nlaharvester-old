@@ -1,0 +1,30 @@
+
+body {
+}
+
+div.indent {
+	margin-left:30px;
+}
+
+a.element {
+	font-style:none;
+	text-decoration:none;	
+}
+
+a.element:hover {
+	background-color: #CCC;
+}
+
+span.element {
+	color: purple;
+	font-weight: bold;
+}
+
+span.attribute_name {
+	font-weight: bold;
+	color: black;
+}
+
+span.attribute_value {
+	color: blue;
+}

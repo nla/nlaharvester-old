@@ -1,0 +1,11 @@
+<h3>$contributor.name Harvest Details</h3>
+<dl>
+  #foreach($prop in $harvestProperties)
+    <dt>$prop.key</dt>
+    <dd>$prop.value</dd>
+  #end
+  <dt>Harvest Type:</dt>
+  <dd>$type</dd>
+  <dt>Server:</dt>
+  <dd>$serverName</dd>
+</dl>

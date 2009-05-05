@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>NLA Harvester</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+	<link rel="stylesheet" type="text/css" href="_css/style.css" media="screen" />
+  <!--[if IE 7]> 
+	<link rel="stylesheet" type="text/css" href="_css/style-ie7.css" media="screen" />
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="_css/print.css" media="print" />
+</head>
+<body>
+  <h1>NLA Harvester</h1>
+  <h2><span>&gt;</span>Error <a class="logout" href="Logout.htm">Logout </a><br/><label class="user">$userUtil.userName</label></h2>
+  <div id="container">
+    <div id="content">
+        <h3>An Error has occured during the processing of your request</h3>
+        <p>The error message is below:</p>
+        <p style="margin-left: 20%">#if($errormsg)$errormsg #else No error message #end</p>
+        <br/>
+        <p>The unique message identifier is <strong>$errorcode</strong>, please report this number to the application maintainer imediately.</p>
+    </div>
+  </div>
+</body>
+</html>

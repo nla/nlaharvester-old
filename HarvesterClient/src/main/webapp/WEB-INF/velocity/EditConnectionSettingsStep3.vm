@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>NLA Harvester</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" type="text/css" href="_css/style.css" media="screen" />
+  <!--[if IE 7]> 
+	<link rel="stylesheet" type="text/css" href="_css/style-ie7.css" media="screen" />
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="_css/print.css" media="print" />
+  <script type="text/javascript" src="_js/jquery.js"></script>
+  <script type="text/javascript" src="_js/script.js"></script>
+  <script type="text/javascript" src="_js/jquery.validate.js"></script>
+  <script type="text/javascript">
+  <!--
+    $(document).ready(function(){
+      $("#settingsform").validate();
+    });
+  -->
+  </script>
+</head>
+<body #if(!$new)class="con"#{end}>
+  <h1>NLA Harvester</h1>
+  <h2><span>&gt;</span> <a href="ListCollections.htm">Collections</a> <span>&gt;</span> $contributor.collection.name <a class="logout" href="Logout.htm">Logout </a><br/><label class="user">$userUtil.userName</label></h2>
+  <div id="container">
+    <ul id="nav">
+      <li><a href="ViewCollection.htm?collectionid=$!{contributor.collection.collectionid}">Collection Details</a></li>
+
+      <li class="on"><a href="ListContributors.htm?collectionid=$!{contributor.collection.collectionid}">Contributors</a></li>
+      <li><a href="ListHarvests.htm?collectionid=$!{contributor.collection.collectionid}">Harvests</a></li>
+      <li><a href="ListReports.htm?collectionid=$!{contributor.collection.collectionid}">Reports</a></li>
+    </ul>
+    #if(!$new)
+      <ul id="subnav">
+          <li><a href="ViewContributor.htm?contributorid=$!{contributor.contributorid}">Contributor Details</a></li>
+          <li><a href="ViewNotes.htm?contributorid=$!{contributor.contributorid}">Notes</a></li>
+          <li class="on"><a href="ViewConnectionSettings.htm?contributorid=$!{contributor.contributorid}">Connection Settings</a></li>
+          #if($contributor.type == 1)<li><a href="ViewHarvestSchedule.htm?contributorid=$!{contributor.contributorid}">Schedule Production Harvest</a></li>#end
+          <li><a href="EditManualHarvest.htm?contributorid=$!{contributor.contributorid}">Perform Test Harvest</a></li>
+          <li><a href="ViewProcessingSteps.htm?contributorid=$!{contributor.contributorid}">Processing Steps</a></li>
+          <li><a href="ListHarvestLogs.htm?contributorid=$!{contributor.contributorid}">Logs</a></li>
+      </ul>
+    #end
+
+    <div id="content">
+      #if(!$new)<h3>$contributor.name</h3>#{end}
+      <p class="step">Step 3 of 3</p>
+      <form method="post" action="PersistConnectionSettingsStep3.htm" id="settingsform">
+      <fieldset>
+        #if($new)
+          <input type="text" style="display:none"  name="new" value="true" />
+          <legend>Create New Contributor</legend>
+          <h3 class="nestedheading">Harvest Settings</h3>
+        #else        
+          <legend>Edit Connection Settings</legend>
+        #end
+        <input type="text" style="display:none"  name="contributorid" value="$!contributor.contributorid" />        
+        #if(!$fetched)
+          <p><strong>Warning: Unable to gather data from the given url, you may enter fields manually instead</strong></p>
+        #end
+        <dl>
+          
+          #if($new)
+            <dt>Name:</dt>
+            <dd>$contributor.name</dd>
+          #end
+          <dt>Harvest Type:</dt>
+          <dd>$harvesttype</dd>
+          
+          #foreach($param in $parameters)
+            <dt>${param.name}:#if($param.editibility == 1)<span class="requiredfield">*</span>#{end}</dt>
+            <dd>
+            #if($param.type == $param.READ_ONLY)
+              $!param.value
+              <input type="text" style="display:none"  name="$param.id" value="$!param.value" />
+            #end
+            #if($param.type == $param.READ_ONLY_HIDDEN)
+              $!param.value
+              <input type="text" style="display:none"  name="$param.id" value="$!param.hiddenvalue" />
+            #end            
+            #if($param.type == $param.TEXT)
+              <input name="$param.id" #if($param.editibility == 1)class="required"#{end} type="text" value="$!param.value" />
+            #end
+            #if($param.type == $param.DROP_DOWN)
+              <select #if($param.editibility == 1)class="required"#{end} name="$param.id">
+                #foreach($option in $param.options)
+                  <option  value="$!option.key" #if($param.value && $option.key == $param.value)selected="selected"#{end}>$option.value</option>
+                #end
+              </select>
+            #end
+            #if($param.type == $param.CHECK_BOX)
+              <input type="checkbox" #if($param.editibility == 1)class="required"#{end} name="$param.id" value="$!param.value" />
+            #end
+            #if($param.description)<span>$param.description</span>#{end}</dd>
+          #end
+          
+        </dl>
+      </fieldset>
+      <ul class="buttons">
+        #if($new)
+          <li><a href="EditConnectionSettingsStep2.htm?contributorid=$!{contributor.contributorid}&amp;new=true" class="back">Change Connection Details</a></li>
+          <li><a href="ListContributors.htm?collectionid=$!{contributor.collection.collectionid}" class="cancel">Cancel</a></li>
+        #else
+          <li><a href="EditConnectionSettingsStep2.htm?contributorid=$!{contributor.contributorid}" class="back">Change Connection Details</a></li>
+          <li><a href="ViewConnectionSettings.htm?contributorid=$!{contributor.contributorid}" class="cancel">Cancel</a></li>          
+        #end
+        <li><input type="submit" id="mainsubmit" class="save" value="Save" /></li> 
+      </ul>
+      <p><span class="requiredfield">*</span> Compulsory Field</p>
+      </form>            
+      <div class="clearfix"></div>
+    </div>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,328 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>NLA Harvester</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <style type="text/css"> @import url("_css/style.css"); </style>
+  <!--[if IE 7]> <style type="text/css"> @import url("_css/style-ie7.css"); </style> <![endif]-->
+  <script type="text/javascript" src="_js/jquery.js"></script>
+  <script type="text/javascript" src="_js/script.js"></script>
+  <script type="text/javascript" src="_js/jquery.validate.js"></script>
+  <script type="text/javascript" src="_js/jquery.form.js"></script>
+  <script type="text/javascript">
+  <!--
+  
+    var submitProperly = false;
+  
+    var options = {
+      url : "ConvertValuePostBack.htm",
+      success:  function(returned) {
+       if(returned == 'true') {
+         $('#fileerror').css("display", "none");
+         submitProperly = true;
+         $("#processingstepform").each(function() {
+            this.submit();
+         });
+       } else {
+         $('#fileerror').css("display", "inherit");
+         submitProperly = false;
+       }                         
+      }
+    };
+  
+    $(document).ready(function(){
+      
+      #if(!$mappingused)
+       toggleTextBoxes(false);
+		   toggleFileSelection(true);
+      #else
+       toggleTextBoxes(true);
+		   toggleFileSelection(false);
+      #end  
+      
+      
+      $("#processingstepform").validate({
+        submitHandler: function(form) {
+          
+          //is the mapping file radio selected?
+          if($('#mappingnotusedradio').attr('checked') || $('#mappingfile').css('display') == "none" ) {
+            //submit normally
+            form.submit();
+            return;
+          }
+          
+          if(!submitProperly) {
+             $(form).ajaxSubmit(options);
+          }       
+        }
+        
+      });
+      
+      data = $("#rules").attr("innerHTML");
+      $("#rulesdata").attr("value", data);
+      
+      jQuery.validator.addClassRules("regex", { remote: "AjaxValidation.htm?type=regex" } );
+      jQuery.validator.addClassRules("xpath", { remote: "AjaxValidation.htm?type=xpath" } );
+            
+      $("#mappingremove").click( function(){
+         $("#mappingremove").css("display", "none");
+         $("#filename").css("display", "none");
+         $("#mappingfile").css("display", "inherit");
+      });
+      
+      $("#mappingusedradio").click( function() {
+         $(".original").removeClass("required");
+				 toggleTextBoxes(true);
+			   toggleFileSelection(false);
+      });
+      
+      $("#mappingnotusedradio").click( function() {
+         $(".original").addClass("required");
+				 toggleTextBoxes(false);
+			   toggleFileSelection(true);
+      });
+      
+    });
+    
+    function downloaddata()
+    {
+      filename = $("#filename").attr("innerHTML");
+      filename = escape(filename).replace(new RegExp( "\\+", "g" ),"%2B");
+      data = $("#rules").attr("innerHTML");
+      data = escape(data).replace(new RegExp( "\\+", "g" ),"%2B");
+      window.open("GetConvertValueCSV.htm?filename=" + filename + "&data=" + data ,
+                  $("#filename").attr("innerHTML") ,
+                  'width=800,height=400,scrollbars=yes');
+      return false;
+    }
+    
+    function changefield(element, name)
+    {
+      if(element.href.search(/&field/) == -1 )
+        element.href = element.href + '&field=' + name;
+      else {
+        positionofendnum = element.href.search(/&field=/);
+        element.href = element.href.substr(0, positionofendnum+7);
+        element.href = element.href + name;
+      }
+    }
+    
+    //returns a reference to the opened window
+    function popup(mylink, windowname)
+    {
+      if (! window.focus)return true;
+      var href;
+      if (typeof(mylink) == 'string')
+         href=mylink;
+      else
+         href=mylink.href;
+         
+      window.open(href, windowname, 'width=800,height=400,scrollbars=yes');
+      return false;
+    }
+
+		function toggleTextBoxes(disable) {
+			if(disable) {
+				$('.conversion').attr('disabled', 'disabled').addClass('disabled');
+				$('#conversionheadingrow').addClass('disabled');
+			} else {
+				$('.conversion').removeAttr('disabled').removeClass('disabled');
+			  $('#conversionheadingrow').removeClass('disabled');
+			}
+		}
+		
+		function toggleFileSelection(disable) {
+        if(disable) {
+          $('#filetd').addClass('disabled');
+					$('#mappingremove').attr('disabled', 'disabled');
+					$('#mappingfile').attr('disabled', 'disabled');
+				} else {
+				  $('#filetd').removeClass('disabled');
+					$('#mappingremove').removeAttr('disabled');
+					$('#mappingfile').removeAttr('disabled');					
+				}
+		}
+
+
+    
+  -->
+  </script>
+</head>
+<body class="con">
+  <h1>NLA Harvester</h1>
+  <h2><span>&gt;</span> <a href="ListCollections.htm">Collections</a> <span>&gt;</span> $collectionname <a class="logout" href="Logout.htm">Logout </a><br/><label class="user">$userUtil.userName</label></h2>
+  <div id="container">
+    #if($colview)
+    <ul id="nav">
+      <li>Collection Details</li>
+    </ul>
+    <ul id="subnav">
+      <li>Create/Edit Processing Profile</li>
+    </ul>
+    #else
+    <ul id="nav">
+      <li><a href="ViewCollection.htm?collectionid=$collectionid">Collection Details</a></li>
+
+      <li class="on"><a href="ListContributors.htm?collectionid=$collectionid">Contributors</a></li>
+      <li><a href="ListHarvests.htm?collectionid=$collectionid">Harvests</a></li>
+      <li><a href="ListReports.htm?collectionid=$collectionid">Reports</a></li>
+    </ul>
+    <ul id="subnav">
+      <li><a href="ViewContributor.htm?contributorid=$contributorid">Contributor Details</a></li>
+      <li><a href="ViewNotes.htm?contributorid=$contributorid">Notes</a></li>
+
+      <li><a href="ViewHarvestDetails.htm?contributorid=$contributorid">Connection Settings</a></li>
+      #if($contributortype == 1)<li><a href="ViewHarvestSchedule.htm?contributorid=$contributorid">Schedule Production Harvest</a></li>#end
+      <li><a href="EditManualHarvest.htm?contributorid=$contributorid">Perform Test Harvest</a></li>
+      <li class="on"><a href="ViewProcessingSteps.htm?contributorid=$contributorid">Processing Steps</a></li>
+      <li><a href="ListHarvestLogs.htm?contributorid=$contributorid">Logs</a></li>
+    </ul>
+    #end
+
+    #macro(picker $n $name)
+          #if($n.subtype == $n.XPATH) <a name="$!name" href="Help.htm?type=xpathpicker" class="help picker" target="_blank" onClick="changefield(this); return popup(this, 'xpath')">Pick</a> #{end}
+    #end
+
+    <div id="content">
+      <h3>#if($colview)$collectionname#{else}$contributorname#end</h3>     
+      <form method="post" action="$preserveProfileEditUrl" enctype="multipart/form-data" id="processingstepform" class="cloner">
+      <dl>
+        ##show some readonly information about the step
+        <dt>
+                  <!-- <input type="text" style="display:none"  name="action" value="preserveedit" /> -->
+                   $sessionStateHTML ##ouputs a bunch of hidden input statements to maintain the session information with         
+          Name:
+        </dt><dd>$!step.name</dd>
+        <dt>Description:</dt> <dd>$step.description</dd>
+        <dt>Input:</dt> <dd>$step.inputtype</dd>
+        <dt>Output:</dt> <dd>$step.outputtype</dd>
+        <dt>Sequence: </dt>
+        <dd><input type="text" name="newposition" value="$position" /></dd>
+        #if($colview)
+          
+          <dt>Restriction Type</dt>
+          <dd>
+            <input name="restriction" type="radio" class="required" value="$None" #if($restriction == $None)checked="checked"#end />
+              <img src="_img/pencil.png" title="None"/> None &nbsp;&nbsp;
+            <input name="restriction" type="radio" class="required" value="$Locked" #if($restriction == $Locked)checked="checked"#end />
+              <img src="_img/lock.png" title="Locked"/> Locked &nbsp;&nbsp;
+            <input name="restriction" type="radio" class="required" value="$Mandatory" #if($restriction == $Mandatory)checked="checked"#end />
+              <img src="_img/lock_edit.png" title="Mandatory"/>Mandatory &nbsp;&nbsp;
+          </dd>
+        #end        
+        <dt>Description of function: </dt>
+        <dd><input type="text" name="description" value="$!description" /></dd>          
+        <dt> <br /> </dt> <dd> <br /></dd>
+          
+  
+          <dt title="fields matching field name will be converted using the given regular expression"> Convert Value </dt>
+          <dd>
+          <table class="invisibletable">
+            <tr>
+                <th class="invisibletable" title="xpath expression signifying the fields to convert">
+                  Field Name: <span class="requiredfield">*</span>
+                  <a href="Help.htm?type=xpath" class="help" target="_blank" onClick="return popup(this, 'xpath')">Help</a>
+                </th>
+                <th class="invisibletable" title="pairs of fields that specify conversion rules">Conversion</th>
+            </tr>
+            <tr>
+              <td class="invisibletable" id="fieldnametd">
+                
+                <input name="fieldname" type="text" value="$!fieldname" title="XPath expression is invalid" class="required xpath"/>
+                <a name="namepicker" href="Help.htm?type=xpathpicker" class="help picker" target="_blank"
+                   onClick="changefield(this, 'fieldname'); return popup(this, 'xpath')">Pick</a>
+              </td>
+                <input type="text" style="display:none"  name="biggestfield"
+                  value="#if($rulelist && $rulelist.size() == 0)1#{else}$!rulelist.size()#{end}" />          
+              <td>
+                  
+                  <div>
+                  <table summary="table of values" class="invisibletable">
+                      <tr id="conversionheadingrow">
+                        <th class="invisibletable"></th>
+                        <th class="invisibletable" title="Original Value">Original Value
+                          <a href="Help.htm?type=regex" class="help" target="_blank" onClick="return popup(this, 'regex')"> Help</a>
+                        </th>
+                        <th class="invisibletable" title="New Value">New Value</th>                          
+
+                        <th class="invisibletable"></th>  ##for the remove button to go in
+                      </tr>
+                      #foreach($rule in $rulelist)
+                        <tr class="clone">
+                          <td class="invisibletable mappingtd">
+                            #if($velocityCount == 1)
+                            <input type="radio" id="mappingnotusedradio" class="dontcopy" name="mappingused" value="false" #if(!$mappingused)checked="checked"#{end}/>
+                            #end
+                          </td>
+                          <td class="invisibletable"><input name="rule.original.${velocityCount}" type="text" value="$rule.key" class="conversion regex #if(!$mappingused)required#{end} original" /></td>
+                          <td class="invisibletable"><input class="conversion" name="rule.new.${velocityCount}" type="text" value="$rule.value" /></td>
+                          <td class="invisibletable conversion"><ul class="buttons"><li><a href="#" class="delete">Remove</a></li></ul></td>
+                        </tr>
+                      #end
+                      <tr class="invisibletable">
+                        <td class="invisibletable"></td>
+                        <td class="invisibletable conversion">
+                          <ul class="buttons">
+                          <li><a href="#" onclick="document.getElementById('processingstepform').biggestfield.value++" class="add">Add Another</a></li>
+                          </ul>
+                        </td>
+                      </tr>
+                    </table>        
+                    </div>                  
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="invisibletable"></td>
+                    <td class="invisibletable" title="semicolon delimterd rule file, 'Original Value, newValue' one rule per line">
+                      <table class="invisibletable">
+                        <tr class="invisibletable">
+                        <th class="invisibletable"></th>
+                        <th class="invisibletable"></th>
+                        </tr>
+                        <tr class="invisibletable">
+                          <td class="invisibletable">
+                      <input type="radio" id="mappingusedradio" name="mappingused" value="true" #if($mappingused)checked="checked"#{end}/>
+                      </td>
+                          <td class="invisibletable" id="filetd">
+                      #if($mappingused)
+                        Mapping file: <a href="#" onclick="downloaddata()" id="filename">$!mappingfile</a>
+                        <ul class="buttons"><li><a href="#" id="mappingremove">Remove</a></li></ul>
+
+                        <input type="file" style="display:none" class="mappingfile" id="mappingfile" name="mappingfile" />
+                        <input type="text" style="display:none" name="mappingfilename" value="$!mappingfile"/>
+                        
+                      #else
+                        Mapping file: <input type="file" name="mappingfile" id="mappingfile"/>
+
+                      #end
+                      <label id="fileerror" class="error" style="display:none">Invalid CSV file</label>
+                      <br /><span>Comma separated values, one mapping per line (csv)</span>
+                      </td>
+                      </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+          </td>
+
+      </dl>
+      <br />
+      <span id="rules" style="display:none" >$!rules</span>
+      <input type="text" style="display:none" id="rulesdata" name="rules" />
+      <ul class="buttons">
+        #if($new)
+          <li><a href="${goBackInStepWizardUrl}&amp;position=${position}" class="back">Change Step</a></li>
+          <li><a href="${deleteProfileStepUrl}&amp;position=${position}" class="cancel">Cancel</a>
+        #else
+          <li><a href="$editProfileUrl" class="cancel">Cancel</a></li>
+        #end
+        <li><input type="submit" id="mainsubmit" value="Done" class="save" /></li>
+      </ul>
+
+      <p><span class="requiredfield">*</span> Compulsory Field</p>
+      </form>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</body>
+</html>

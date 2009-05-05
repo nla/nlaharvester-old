@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<web-app version="2.4"
+         xmlns="http://java.sun.com/xml/ns/j2ee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
+         http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd" >
+ 
+  <!-- servlet stuff -->
+
+<display-name>HarvesterClient</display-name>
+
+
+  <listener>
+          <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+  </listener>
+  <context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>
+       classpath:HarvesterClient-servlet.xml, classpath:Security-Context.xml, classpath:HarvesterClient-data.xml, classpath:HarvesterClient-controllers.xml
+    </param-value>
+  </context-param>
+
+  <filter>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+  </filter>
+    
+  <filter-mapping>
+    <filter-name>springSecurityFilterChain</filter-name>
+    <servlet-name>HarvesterClient</servlet-name>
+  </filter-mapping>   
+ 
+  <servlet>
+    <servlet-name>HarvesterClient</servlet-name>
+    <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+	<init-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>
+		  classpath:HarvesterClient-servlet.xml, classpath:Security-Context.xml, classpath:HarvesterClient-data.xml, classpath:HarvesterClient-controllers.xml
+		</param-value>
+	</init-param>
+    <load-on-startup>1</load-on-startup>
+  </servlet>
+
+
+  <servlet-mapping>
+    <servlet-name>HarvesterClient</servlet-name>
+    <url-pattern>*.htm</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>HarvesterClient</servlet-name>
+    <url-pattern>/ListCollections.htm</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>HarvesterClient</servlet-name>
+    <url-pattern>/j_spring_security_check</url-pattern>
+  </servlet-mapping>
+
+  <session-config>
+    <session-timeout>240</session-timeout>
+   </session-config>
+
+
+  <welcome-file-list>
+    <welcome-file>
+      ListCollections.htm
+    </welcome-file>
+  </welcome-file-list>
+
+</web-app>

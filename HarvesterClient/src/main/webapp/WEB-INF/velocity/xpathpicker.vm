@@ -1,0 +1,486 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+<html>
+<head>
+<title>xpath picker</title>
+<link href="_css/styles.css" media="screen" rel="stylesheet" type="text/css">
+<script type="text/javascript" src="jquery.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+<script type="text/javascript" src="_js/jquery.js"></script>
+<script type="text/javascript" src="_js/script.js"></script>
+<script type="text/javascript">
+    
+    //this sets the value of the form field in div field with the value just selected
+    function select(selected)
+    {
+        fieldname = document.getElementById('field').innerHTML;
+        window.opener.document.getElementsByName(fieldname)[0].value = selected;
+        window.close();
+    }
+    
+    function pick(element)
+    {   
+	//extract a list of the parents of the clicked node
+	//each tag has a class of start-tag
+        
+        //Attributes should not have the slash
+        if($(element).hasClass("attribute"))
+            expression = element.name;
+        else
+            expression = "/" + element.name;      
+
+        do {
+            element = $(element).parent().get(0);
+            if(element.id == 'root')
+                break;
+            else
+                expression =  "/" + element.id + expression;
+        } while (true)
+        
+        select(expression)
+    }
+</script>
+
+
+
+</head>
+<body>
+<!-- needed for the javascript stuff --> <div id="field" style="display:none" >$field</div>
+
+
+
+
+<h2>NLA Pers EAC Record</h2>
+
+
+<div id="root">
+<a name="eac%5B@id=''%5D%5B@type='persname'%5D%5B@schemaLocation='http://jefferson.village.virginia.edu/eac%20http://jefferson.village.virginia.edu/eac/shared/eac/eac.xsd'%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">eac</span></a> <a name="eac/@id" class="element" href="#" onClick="pick(this)"><span class="attribute_name">id</span>="<span class="attribute_value"></span>"</a> <a name="eac/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value">persname</span>"</a> <a name="eac/@schemaLocation" class="element" href="#" onClick="pick(this)"><span class="attribute_name">schemaLocation</span>="<span class="attribute_value">http://jefferson.village.virginia.edu/eac http://jefferson.village.virginia.edu/eac/shared/eac/eac.xsd</span>"</a>&gt;<br><div class="indent" id="eac[@id=''][@type='persname'][@schemaLocation='http://jefferson.village.virginia.edu/eac http://jefferson.village.virginia.edu/eac/shared/eac/eac.xsd']">
+<a name="eacheader%5B@detaillevel=''%5D%5B@status=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">eacheader</span></a> <a name="eacheader/@detaillevel" class="element" href="#" onClick="pick(this)"><span class="attribute_name">detaillevel</span>="<span class="attribute_value"></span>"</a> <a name="eacheader/@status" class="element" href="#" onClick="pick(this)"><span class="attribute_name">status</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="eacheader[@detaillevel=''][@status='']">
+<a name="eacid%5B@ownercode=''%5D%5B@syskey=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">eacid</span></a> <a name="eacid/@ownercode" class="element" href="#" onClick="pick(this)"><span class="attribute_name">ownercode</span>="<span class="attribute_value"></span>"</a> <a name="eacid/@syskey" class="element" href="#" onClick="pick(this)"><span class="attribute_name">syskey</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="eacid[@ownercode=''][@syskey='']"></div>
+<a name="mainhist" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">mainhist</span></a>&gt;<br><div class="indent" id="mainhist">
+<a name="mainevent%5B@maintype=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">mainevent</span></a> <a name="mainevent/@maintype" class="element" href="#" onClick="pick(this)"><span class="attribute_name">maintype</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="mainevent[@maintype='']">
+<a name="maindate%5B@calendar=''%5D%5B@normal=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">maindate</span></a> <a name="maindate/@calendar" class="element" href="#" onClick="pick(this)"><span class="attribute_name">calendar</span>="<span class="attribute_value"></span>"</a> <a name="maindate/@normal" class="element" href="#" onClick="pick(this)"><span class="attribute_name">normal</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="maindate[@calendar=''][@normal='']"></div>
+</div>
+<a name="mainevent%5B@maintype=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">mainevent</span></a> <a name="mainevent/@maintype" class="element" href="#" onClick="pick(this)"><span class="attribute_name">maintype</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="mainevent[@maintype='']">
+<a name="maindate%5B@calendar=''%5D%5B@normal=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">maindate</span></a> <a name="maindate/@calendar" class="element" href="#" onClick="pick(this)"><span class="attribute_name">calendar</span>="<span class="attribute_value"></span>"</a> <a name="maindate/@normal" class="element" href="#" onClick="pick(this)"><span class="attribute_name">normal</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="maindate[@calendar=''][@normal='']"></div>
+</div>
+</div>
+<a name="languagedecl" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">languagedecl</span></a>&gt;<br><div class="indent" id="languagedecl">
+<a name="language%5B@languagecode=''%5D%5B@scriptcode=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">language</span></a> <a name="language/@languagecode" class="element" href="#" onClick="pick(this)"><span class="attribute_name">languagecode</span>="<span class="attribute_value"></span>"</a> <a name="language/@scriptcode" class="element" href="#" onClick="pick(this)"><span class="attribute_name">scriptcode</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="language[@languagecode=''][@scriptcode='']"></div>
+</div>
+<a name="ruledecl" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">ruledecl</span></a>&gt;<br><div class="indent" id="ruledecl">
+<a name="rule%5B@id=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">rule</span></a> <a name="rule/@id" class="element" href="#" onClick="pick(this)"><span class="attribute_name">id</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="rule[@id='']"></div>
+</div>
+<a name="sourcedecl" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">sourcedecl</span></a>&gt;<br><div class="indent" id="sourcedecl">
+<a name="source%5B@ownercode=''%5D%5B@syskey=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">source</span></a> <a name="source/@ownercode" class="element" href="#" onClick="pick(this)"><span class="attribute_name">ownercode</span>="<span class="attribute_value"></span>"</a> <a name="source/@syskey" class="element" href="#" onClick="pick(this)"><span class="attribute_name">syskey</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="source[@ownercode=''][@syskey='']"></div>
+</div>
+</div>
+<a name="condesc" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">condesc</span></a>&gt;<br><div class="indent" id="condesc">
+<a name="identity" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">identity</span></a>&gt;<br><div class="indent" id="identity">
+<a name="pershead%5B@authorized=''%5D%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">pershead</span></a> <a name="pershead/@authorized" class="element" href="#" onClick="pick(this)"><span class="attribute_name">authorized</span>="<span class="attribute_value"></span>"</a> <a name="pershead/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="pershead/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="pershead[@authorized=''][@type=''][@typeauth='']">
+<a name="part%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">part</span></a> <a name="part/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="part/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="part[@type=''][@typeauth='']"></div>
+<a name="part%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">part</span></a> <a name="part/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="part/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="part[@type=''][@typeauth='']"></div>
+<a name="nameadd%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">nameadd</span></a> <a name="nameadd/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="nameadd/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="nameadd[@type=''][@typeauth='']"></div>
+<a name="existdate%5B@calendar=''%5D%5B@form=''%5D%5B@normal=''%5D%5B@scope=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">existdate</span></a> <a name="existdate/@calendar" class="element" href="#" onClick="pick(this)"><span class="attribute_name">calendar</span>="<span class="attribute_value"></span>"</a> <a name="existdate/@form" class="element" href="#" onClick="pick(this)"><span class="attribute_name">form</span>="<span class="attribute_value"></span>"</a> <a name="existdate/@normal" class="element" href="#" onClick="pick(this)"><span class="attribute_name">normal</span>="<span class="attribute_value"></span>"</a> <a name="existdate/@scope" class="element" href="#" onClick="pick(this)"><span class="attribute_name">scope</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="existdate[@calendar=''][@form=''][@normal=''][@scope='']"></div>
+<a name="place%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">place</span></a> <a name="place/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="place/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="place[@type=''][@typeauth='']"></div>
+<a name="usedate%5B@calendar=''%5D%5B@form=''%5D%5B@normal=''%5D%5B@scope=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">usedate</span></a> <a name="usedate/@calendar" class="element" href="#" onClick="pick(this)"><span class="attribute_name">calendar</span>="<span class="attribute_value"></span>"</a> <a name="usedate/@form" class="element" href="#" onClick="pick(this)"><span class="attribute_name">form</span>="<span class="attribute_value"></span>"</a> <a name="usedate/@normal" class="element" href="#" onClick="pick(this)"><span class="attribute_name">normal</span>="<span class="attribute_value"></span>"</a> <a name="usedate/@scope" class="element" href="#" onClick="pick(this)"><span class="attribute_name">scope</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="usedate[@calendar=''][@form=''][@normal=''][@scope='']"></div>
+</div>
+</div>
+<a name="desc" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">desc</span></a>&gt;<br><div class="indent" id="desc">
+<a name="persdesc" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">persdesc</span></a>&gt;<br><div class="indent" id="persdesc">
+<a name="existdesc" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">existdesc</span></a>&gt;<br><div class="indent" id="existdesc">
+<a name="existdate%5B@calendar=''%5D%5B@form=''%5D%5B@normal=''%5D%5B@scope=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">existdate</span></a> <a name="existdate/@calendar" class="element" href="#" onClick="pick(this)"><span class="attribute_name">calendar</span>="<span class="attribute_value"></span>"</a> <a name="existdate/@form" class="element" href="#" onClick="pick(this)"><span class="attribute_name">form</span>="<span class="attribute_value"></span>"</a> <a name="existdate/@normal" class="element" href="#" onClick="pick(this)"><span class="attribute_name">normal</span>="<span class="attribute_value"></span>"</a> <a name="existdate/@scope" class="element" href="#" onClick="pick(this)"><span class="attribute_name">scope</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="existdate[@calendar=''][@form=''][@normal=''][@scope='']"></div>
+<a name="place%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">place</span></a> <a name="place/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="place/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="place[@type=''][@typeauth='']"></div>
+</div>
+<a name="sex%5B@type=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">sex</span></a> <a name="sex/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="sex[@type='']"></div>
+<a name="env" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">env</span></a>&gt;<br><div class="indent" id="env"></div>
+<a name="locations" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">locations</span></a>&gt;<br><div class="indent" id="locations">
+<a name="location%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">location</span></a> <a name="location/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="location/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="location[@type=''][@typeauth='']"></div>
+</div>
+</div>
+<a name="bioghist" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">bioghist</span></a>&gt;<br><div class="indent" id="bioghist">
+<a name="didentifier%5B@href=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">didentifier</span></a> <a name="didentifier/@href" class="element" href="#" onClick="pick(this)"><span class="attribute_name">href</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="didentifier[@href='']"></div>
+<a name="p" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">p</span></a>&gt;<br><div class="indent" id="p"></div>
+</div>
+</div>
+<a name="eacrels" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">eacrels</span></a>&gt;<br><div class="indent" id="eacrels">
+<a name="eacrel%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">eacrel</span></a> <a name="eacrel/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="eacrel/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="eacrel[@type=''][@typeauth='']">
+<a name="persname" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">persname</span></a>&gt;<br><div class="indent" id="persname"></div>
+</div>
+<a name="eacrel%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">eacrel</span></a> <a name="eacrel/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="eacrel/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="eacrel[@type=''][@typeauth='']">
+<a name="corpname" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">corpname</span></a>&gt;<br><div class="indent" id="corpname"></div>
+</div>
+</div>
+<a name="resourcerels" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">resourcerels</span></a>&gt;<br><div class="indent" id="resourcerels">
+<a name="resourcerel" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">resourcerel</span></a>&gt;<br><div class="indent" id="resourcerel">
+<a name="bibunit" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">bibunit</span></a>&gt;<br><div class="indent" id="bibunit">
+<a name="name" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">name</span></a>&gt;<br><div class="indent" id="name"></div>
+<a name="title" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">title</span></a>&gt;<br><div class="indent" id="title"></div>
+<a name="edition" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">edition</span></a>&gt;<br><div class="indent" id="edition"></div>
+<a name="imprint" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">imprint</span></a>&gt;<br><div class="indent" id="imprint"></div>
+<a name="bibseries" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">bibseries</span></a>&gt;<br><div class="indent" id="bibseries"></div>
+<a name="descnote" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">descnote</span></a>&gt;<br><div class="indent" id="descnote">
+<a name="extref" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">extref</span></a>&gt;<br><div class="indent" id="extref"></div>
+</div>
+</div>
+</div>
+<a name="resourcerel" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">resourcerel</span></a>&gt;<br><div class="indent" id="resourcerel">
+<a name="musunit" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">musunit</span></a>&gt;<br><div class="indent" id="musunit">
+<a name="name" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">name</span></a>&gt;<br><div class="indent" id="name"></div>
+<a name="title" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">title</span></a>&gt;<br><div class="indent" id="title"></div>
+<a name="edition" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">edition</span></a>&gt;<br><div class="indent" id="edition"></div>
+<a name="imprint" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">imprint</span></a>&gt;<br><div class="indent" id="imprint"></div>
+<a name="bibseries" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">bibseries</span></a>&gt;<br><div class="indent" id="bibseries"></div>
+<a name="descnote" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">descnote</span></a>&gt;<br><div class="indent" id="descnote">
+<a name="extref" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">extref</span></a>&gt;<br><div class="indent" id="extref"></div>
+</div>
+</div>
+</div>
+<a name="resourcerel" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">resourcerel</span></a>&gt;<br><div class="indent" id="resourcerel">
+<a name="archunit" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">archunit</span></a>&gt;<br><div class="indent" id="archunit">
+<a name="repository" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">repository</span></a>&gt;<br><div class="indent" id="repository"></div>
+<a name="unittitle" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">unittitle</span></a>&gt;<br><div class="indent" id="unittitle"></div>
+<a name="unitid" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">unitid</span></a>&gt;<br><div class="indent" id="unitid"></div>
+<a name="unitdate" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">unitdate</span></a>&gt;<br><div class="indent" id="unitdate"></div>
+<a name="abstract" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">abstract</span></a>&gt;<br><div class="indent" id="abstract"></div>
+<a name="physdesc" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">physdesc</span></a>&gt;<br><div class="indent" id="physdesc">
+<a name="extent" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">extent</span></a>&gt;<br><div class="indent" id="extent"></div>
+<a name="physfacet" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">physfacet</span></a>&gt;<br><div class="indent" id="physfacet"></div>
+</div>
+</div>
+</div>
+</div>
+<a name="funactrels" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">funactrels</span></a>&gt;<br><div class="indent" id="funactrels">
+<a name="funactrel" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">funactrel</span></a>&gt;<br><div class="indent" id="funactrel">
+<a name="funact%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">funact</span></a> <a name="funact/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="funact/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="funact[@type=''][@typeauth='']"></div>
+<a name="date%5B@type=''%5D%5B@typeauth=''%5D%5B@calendar=''%5D%5B@form=''%5D%5B@normal=''%5D%5B@scope=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">date</span></a> <a name="date/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="date/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a> <a name="date/@calendar" class="element" href="#" onClick="pick(this)"><span class="attribute_name">calendar</span>="<span class="attribute_value"></span>"</a> <a name="date/@form" class="element" href="#" onClick="pick(this)"><span class="attribute_name">form</span>="<span class="attribute_value"></span>"</a> <a name="date/@normal" class="element" href="#" onClick="pick(this)"><span class="attribute_name">normal</span>="<span class="attribute_value"></span>"</a> <a name="date/@scope" class="element" href="#" onClick="pick(this)"><span class="attribute_name">scope</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="date[@type=''][@typeauth=''][@calendar=''][@form=''][@normal=''][@scope='']"></div>
+<a name="place%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">place</span></a> <a name="place/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="place/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="place[@type=''][@typeauth='']"></div>
+<a name="descnote" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">descnote</span></a>&gt;<br><div class="indent" id="descnote"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+<h2>NLA Corp EAC Record</h2>
+
+
+<div id="root">
+<a name="eac%5B@id=''%5D%5B@type='corpname'%5D%5B@schemaLocation='http://jefferson.village.virginia.edu/eac%20http://jefferson.village.virginia.edu/eac/shared/eac/eac.xsd'%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">eac</span></a> <a name="eac/@id" class="element" href="#" onClick="pick(this)"><span class="attribute_name">id</span>="<span class="attribute_value"></span>"</a> <a name="eac/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value">corpname</span>"</a> <a name="eac/@schemaLocation" class="element" href="#" onClick="pick(this)"><span class="attribute_name">schemaLocation</span>="<span class="attribute_value">http://jefferson.village.virginia.edu/eac http://jefferson.village.virginia.edu/eac/shared/eac/eac.xsd</span>"</a>&gt;<br><div class="indent" id="eac[@id=''][@type='corpname'][@schemaLocation='http://jefferson.village.virginia.edu/eac http://jefferson.village.virginia.edu/eac/shared/eac/eac.xsd']">
+<a name="eacheader%5B@detaillevel=''%5D%5B@status=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">eacheader</span></a> <a name="eacheader/@detaillevel" class="element" href="#" onClick="pick(this)"><span class="attribute_name">detaillevel</span>="<span class="attribute_value"></span>"</a> <a name="eacheader/@status" class="element" href="#" onClick="pick(this)"><span class="attribute_name">status</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="eacheader[@detaillevel=''][@status='']">
+<a name="eacid%5B@ownercode=''%5D%5B@syskey=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">eacid</span></a> <a name="eacid/@ownercode" class="element" href="#" onClick="pick(this)"><span class="attribute_name">ownercode</span>="<span class="attribute_value"></span>"</a> <a name="eacid/@syskey" class="element" href="#" onClick="pick(this)"><span class="attribute_name">syskey</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="eacid[@ownercode=''][@syskey='']"></div>
+<a name="mainhist" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">mainhist</span></a>&gt;<br><div class="indent" id="mainhist">
+<a name="mainevent%5B@maintype=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">mainevent</span></a> <a name="mainevent/@maintype" class="element" href="#" onClick="pick(this)"><span class="attribute_name">maintype</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="mainevent[@maintype='']">
+<a name="maindate%5B@calendar=''%5D%5B@normal=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">maindate</span></a> <a name="maindate/@calendar" class="element" href="#" onClick="pick(this)"><span class="attribute_name">calendar</span>="<span class="attribute_value"></span>"</a> <a name="maindate/@normal" class="element" href="#" onClick="pick(this)"><span class="attribute_name">normal</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="maindate[@calendar=''][@normal='']"></div>
+</div>
+</div>
+<a name="languagedecl" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">languagedecl</span></a>&gt;<br><div class="indent" id="languagedecl">
+<a name="language%5B@languagecode=''%5D%5B@scriptcode=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">language</span></a> <a name="language/@languagecode" class="element" href="#" onClick="pick(this)"><span class="attribute_name">languagecode</span>="<span class="attribute_value"></span>"</a> <a name="language/@scriptcode" class="element" href="#" onClick="pick(this)"><span class="attribute_name">scriptcode</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="language[@languagecode=''][@scriptcode='']"></div>
+</div>
+<a name="ruledecl" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">ruledecl</span></a>&gt;<br><div class="indent" id="ruledecl">
+<a name="rule%5B@id=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">rule</span></a> <a name="rule/@id" class="element" href="#" onClick="pick(this)"><span class="attribute_name">id</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="rule[@id='']"></div>
+</div>
+<a name="sourcedecl" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">sourcedecl</span></a>&gt;<br><div class="indent" id="sourcedecl">
+<a name="source%5B@ownercode=''%5D%5B@syskey=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">source</span></a> <a name="source/@ownercode" class="element" href="#" onClick="pick(this)"><span class="attribute_name">ownercode</span>="<span class="attribute_value"></span>"</a> <a name="source/@syskey" class="element" href="#" onClick="pick(this)"><span class="attribute_name">syskey</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="source[@ownercode=''][@syskey='']"></div>
+</div>
+</div>
+<a name="condesc" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">condesc</span></a>&gt;<br><div class="indent" id="condesc">
+<a name="identity" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">identity</span></a>&gt;<br><div class="indent" id="identity">
+<a name="corphead%5B@authorized=''%5D%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">corphead</span></a> <a name="corphead/@authorized" class="element" href="#" onClick="pick(this)"><span class="attribute_name">authorized</span>="<span class="attribute_value"></span>"</a> <a name="corphead/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="corphead/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="corphead[@authorized=''][@type=''][@typeauth='']">
+<a name="part%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">part</span></a> <a name="part/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="part/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="part[@type=''][@typeauth='']"></div>
+<a name="part%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">part</span></a> <a name="part/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="part/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="part[@type=''][@typeauth='']"></div>
+<a name="nameadd%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">nameadd</span></a> <a name="nameadd/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="nameadd/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="nameadd[@type=''][@typeauth='']"></div>
+<a name="existdate%5B@calendar=''%5D%5B@form=''%5D%5B@normal=''%5D%5B@scope=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">existdate</span></a> <a name="existdate/@calendar" class="element" href="#" onClick="pick(this)"><span class="attribute_name">calendar</span>="<span class="attribute_value"></span>"</a> <a name="existdate/@form" class="element" href="#" onClick="pick(this)"><span class="attribute_name">form</span>="<span class="attribute_value"></span>"</a> <a name="existdate/@normal" class="element" href="#" onClick="pick(this)"><span class="attribute_name">normal</span>="<span class="attribute_value"></span>"</a> <a name="existdate/@scope" class="element" href="#" onClick="pick(this)"><span class="attribute_name">scope</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="existdate[@calendar=''][@form=''][@normal=''][@scope='']"></div>
+<a name="place%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">place</span></a> <a name="place/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="place/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="place[@type=''][@typeauth='']"></div>
+<a name="usedate%5B@calendar=''%5D%5B@form=''%5D%5B@normal=''%5D%5B@scope=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">usedate</span></a> <a name="usedate/@calendar" class="element" href="#" onClick="pick(this)"><span class="attribute_name">calendar</span>="<span class="attribute_value"></span>"</a> <a name="usedate/@form" class="element" href="#" onClick="pick(this)"><span class="attribute_name">form</span>="<span class="attribute_value"></span>"</a> <a name="usedate/@normal" class="element" href="#" onClick="pick(this)"><span class="attribute_name">normal</span>="<span class="attribute_value"></span>"</a> <a name="usedate/@scope" class="element" href="#" onClick="pick(this)"><span class="attribute_name">scope</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="usedate[@calendar=''][@form=''][@normal=''][@scope='']"></div>
+</div>
+</div>
+<a name="desc" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">desc</span></a>&gt;<br><div class="indent" id="desc">
+<a name="corpdesc" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">corpdesc</span></a>&gt;<br><div class="indent" id="corpdesc">
+<a name="existdesc" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">existdesc</span></a>&gt;<br><div class="indent" id="existdesc">
+<a name="existdate%5B@calendar=''%5D%5B@form=''%5D%5B@normal=''%5D%5B@scope=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">existdate</span></a> <a name="existdate/@calendar" class="element" href="#" onClick="pick(this)"><span class="attribute_name">calendar</span>="<span class="attribute_value"></span>"</a> <a name="existdate/@form" class="element" href="#" onClick="pick(this)"><span class="attribute_name">form</span>="<span class="attribute_value"></span>"</a> <a name="existdate/@normal" class="element" href="#" onClick="pick(this)"><span class="attribute_name">normal</span>="<span class="attribute_value"></span>"</a> <a name="existdate/@scope" class="element" href="#" onClick="pick(this)"><span class="attribute_name">scope</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="existdate[@calendar=''][@form=''][@normal=''][@scope='']"></div>
+<a name="place%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">place</span></a> <a name="place/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="place/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="place[@type=''][@typeauth='']"></div>
+</div>
+<a name="env" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">env</span></a>&gt;<br><div class="indent" id="env"></div>
+<a name="locations" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">locations</span></a>&gt;<br><div class="indent" id="locations">
+<a name="location%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">location</span></a> <a name="location/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="location/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="location[@type=''][@typeauth='']"></div>
+</div>
+</div>
+<a name="bioghist" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">bioghist</span></a>&gt;<br><div class="indent" id="bioghist">
+<a name="didentifier%5B@href=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">didentifier</span></a> <a name="didentifier/@href" class="element" href="#" onClick="pick(this)"><span class="attribute_name">href</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="didentifier[@href='']"></div>
+<a name="p" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">p</span></a>&gt;<br><div class="indent" id="p"></div>
+</div>
+</div>
+<a name="eacrels" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">eacrels</span></a>&gt;<br><div class="indent" id="eacrels">
+<a name="eacrel%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">eacrel</span></a> <a name="eacrel/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="eacrel/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="eacrel[@type=''][@typeauth='']">
+<a name="persname" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">persname</span></a>&gt;<br><div class="indent" id="persname"></div>
+</div>
+<a name="eacrel%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">eacrel</span></a> <a name="eacrel/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="eacrel/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="eacrel[@type=''][@typeauth='']">
+<a name="corpname" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">corpname</span></a>&gt;<br><div class="indent" id="corpname"></div>
+</div>
+</div>
+<a name="resourcerels" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">resourcerels</span></a>&gt;<br><div class="indent" id="resourcerels">
+<a name="resourcerel" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">resourcerel</span></a>&gt;<br><div class="indent" id="resourcerel">
+<a name="bibunit" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">bibunit</span></a>&gt;<br><div class="indent" id="bibunit">
+<a name="name" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">name</span></a>&gt;<br><div class="indent" id="name"></div>
+<a name="title" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">title</span></a>&gt;<br><div class="indent" id="title"></div>
+<a name="edition" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">edition</span></a>&gt;<br><div class="indent" id="edition"></div>
+<a name="imprint" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">imprint</span></a>&gt;<br><div class="indent" id="imprint"></div>
+<a name="bibseries" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">bibseries</span></a>&gt;<br><div class="indent" id="bibseries"></div>
+<a name="descnote" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">descnote</span></a>&gt;<br><div class="indent" id="descnote">
+<a name="extref" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">extref</span></a>&gt;<br><div class="indent" id="extref"></div>
+</div>
+</div>
+</div>
+<a name="resourcerel" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">resourcerel</span></a>&gt;<br><div class="indent" id="resourcerel">
+<a name="musunit" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">musunit</span></a>&gt;<br><div class="indent" id="musunit">
+<a name="name" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">name</span></a>&gt;<br><div class="indent" id="name"></div>
+<a name="title" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">title</span></a>&gt;<br><div class="indent" id="title"></div>
+<a name="edition" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">edition</span></a>&gt;<br><div class="indent" id="edition"></div>
+<a name="imprint" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">imprint</span></a>&gt;<br><div class="indent" id="imprint"></div>
+<a name="bibseries" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">bibseries</span></a>&gt;<br><div class="indent" id="bibseries"></div>
+<a name="descnote" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">descnote</span></a>&gt;<br><div class="indent" id="descnote">
+<a name="extref" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">extref</span></a>&gt;<br><div class="indent" id="extref"></div>
+</div>
+</div>
+</div>
+<a name="resourcerel" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">resourcerel</span></a>&gt;<br><div class="indent" id="resourcerel">
+<a name="archunit" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">archunit</span></a>&gt;<br><div class="indent" id="archunit">
+<a name="repository" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">repository</span></a>&gt;<br><div class="indent" id="repository"></div>
+<a name="unittitle" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">unittitle</span></a>&gt;<br><div class="indent" id="unittitle"></div>
+<a name="unitid" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">unitid</span></a>&gt;<br><div class="indent" id="unitid"></div>
+<a name="unitdate" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">unitdate</span></a>&gt;<br><div class="indent" id="unitdate"></div>
+<a name="abstract" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">abstract</span></a>&gt;<br><div class="indent" id="abstract"></div>
+<a name="physdesc" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">physdesc</span></a>&gt;<br><div class="indent" id="physdesc">
+<a name="extent" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">extent</span></a>&gt;<br><div class="indent" id="extent"></div>
+<a name="physfacet" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">physfacet</span></a>&gt;<br><div class="indent" id="physfacet"></div>
+</div>
+</div>
+</div>
+</div>
+<a name="funactrels" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">funactrels</span></a>&gt;<br><div class="indent" id="funactrels">
+<a name="funactrel" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">funactrel</span></a>&gt;<br><div class="indent" id="funactrel">
+<a name="funact%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">funact</span></a> <a name="funact/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="funact/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="funact[@type=''][@typeauth='']"></div>
+<a name="date%5B@type=''%5D%5B@typeauth=''%5D%5B@calendar=''%5D%5B@form=''%5D%5B@normal=''%5D%5B@scope=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">date</span></a> <a name="date/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="date/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a> <a name="date/@calendar" class="element" href="#" onClick="pick(this)"><span class="attribute_name">calendar</span>="<span class="attribute_value"></span>"</a> <a name="date/@form" class="element" href="#" onClick="pick(this)"><span class="attribute_name">form</span>="<span class="attribute_value"></span>"</a> <a name="date/@normal" class="element" href="#" onClick="pick(this)"><span class="attribute_name">normal</span>="<span class="attribute_value"></span>"</a> <a name="date/@scope" class="element" href="#" onClick="pick(this)"><span class="attribute_name">scope</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="date[@type=''][@typeauth=''][@calendar=''][@form=''][@normal=''][@scope='']"></div>
+<a name="place%5B@type=''%5D%5B@typeauth=''%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">place</span></a> <a name="place/@type" class="element" href="#" onClick="pick(this)"><span class="attribute_name">type</span>="<span class="attribute_value"></span>"</a> <a name="place/@typeauth" class="element" href="#" onClick="pick(this)"><span class="attribute_name">typeauth</span>="<span class="attribute_value"></span>"</a>&gt;<br><div class="indent" id="place[@type=''][@typeauth='']"></div>
+<a name="descnote" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">descnote</span></a>&gt;<br><div class="indent" id="descnote"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2>Arrow Solr Record</h2>
+
+
+
+
+
+<div id="root">
+<a name="doc" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">doc</span></a>&gt;<br><div class="indent" id="doc">
+<a name="field%5B@name='title'%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">field</span></a> <a name="field/@name" class="element" href="#" onClick="pick(this)"><span class="attribute_name">name</span>="<span class="attribute_value">title</span>"</a>&gt;<br><div class="indent" id="field[@name='title']"></div>
+<a name="field%5B@name='description'%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">field</span></a> <a name="field/@name" class="element" href="#" onClick="pick(this)"><span class="attribute_name">name</span>="<span class="attribute_value">description</span>"</a>&gt;<br><div class="indent" id="field[@name='description']"></div>
+<a name="field%5B@name='subject'%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">field</span></a> <a name="field/@name" class="element" href="#" onClick="pick(this)"><span class="attribute_name">name</span>="<span class="attribute_value">subject</span>"</a>&gt;<br><div class="indent" id="field[@name='subject']"></div>
+<a name="field%5B@name='creator'%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">field</span></a> <a name="field/@name" class="element" href="#" onClick="pick(this)"><span class="attribute_name">name</span>="<span class="attribute_value">creator</span>"</a>&gt;<br><div class="indent" id="field[@name='creator']"></div>
+<a name="field%5B@name='date'%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">field</span></a> <a name="field/@name" class="element" href="#" onClick="pick(this)"><span class="attribute_name">name</span>="<span class="attribute_value">date</span>"</a>&gt;<br><div class="indent" id="field[@name='date']"></div>
+<a name="field%5B@name='decade'%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">field</span></a> <a name="field/@name" class="element" href="#" onClick="pick(this)"><span class="attribute_name">name</span>="<span class="attribute_value">decade</span>"</a>&gt;<br><div class="indent" id="field[@name='decade']"></div>
+<a name="field%5B@name='coverage'%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">field</span></a> <a name="field/@name" class="element" href="#" onClick="pick(this)"><span class="attribute_name">name</span>="<span class="attribute_value">coverage</span>"</a>&gt;<br><div class="indent" id="field[@name='coverage']"></div>
+<a name="field%5B@name='rights'%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">field</span></a> <a name="field/@name" class="element" href="#" onClick="pick(this)"><span class="attribute_name">name</span>="<span class="attribute_value">rights</span>"</a>&gt;<br><div class="indent" id="field[@name='rights']"></div>
+<a name="field%5B@name='identifier'%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">field</span></a> <a name="field/@name" class="element" href="#" onClick="pick(this)"><span class="attribute_name">name</span>="<span class="attribute_value">identifier</span>"</a>&gt;<br><div class="indent" id="field[@name='identifier']"></div>
+<a name="field%5B@name='relation'%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">field</span></a> <a name="field/@name" class="element" href="#" onClick="pick(this)"><span class="attribute_name">name</span>="<span class="attribute_value">relation</span>"</a>&gt;<br><div class="indent" id="field[@name='relation']"></div>
+<a name="field%5B@name='language'%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">field</span></a> <a name="field/@name" class="element" href="#" onClick="pick(this)"><span class="attribute_name">name</span>="<span class="attribute_value">language</span>"</a>&gt;<br><div class="indent" id="field[@name='language']"></div>
+<a name="field%5B@name='format'%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">field</span></a> <a name="field/@name" class="element" href="#" onClick="pick(this)"><span class="attribute_name">name</span>="<span class="attribute_value">format</span>"</a>&gt;<br><div class="indent" id="field[@name='format']"></div>
+<a name="field%5B@name='type'%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">field</span></a> <a name="field/@name" class="element" href="#" onClick="pick(this)"><span class="attribute_name">name</span>="<span class="attribute_value">type</span>"</a>&gt;<br><div class="indent" id="field[@name='type']"></div>
+<a name="field%5B@name='publisher'%5D" class="element" href="#" onClick="pick(this)">
+			&lt;<span class="element">field</span></a> <a name="field/@name" class="element" href="#" onClick="pick(this)"><span class="attribute_name">name</span>="<span class="attribute_value">publisher</span>"</a>&gt;<br><div class="indent" id="field[@name='publisher']"></div>
+</div>
+</div>
+
+
+
+</div>
+</body>
+</html>
+

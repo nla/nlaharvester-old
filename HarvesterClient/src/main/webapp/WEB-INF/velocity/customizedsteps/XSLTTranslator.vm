@@ -1,0 +1,475 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>NLA Harvester</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+  <style type="text/css"> @import url("_css/style.css"); </style>
+  <!--[if IE 7]> <style type="text/css"> @import url("_css/style-ie7.css"); </style> <![endif]-->
+  <script type="text/javascript" src="_js/jquery.js"></script>
+  <script type="text/javascript" src="_js/script.js"></script>
+  <script type="text/javascript" src="_js/jquery.validate.js"></script>
+  <script type="text/javascript" src="_js/jquery.form.js"></script>
+  <script type="text/javascript">
+  <!--
+  
+    function validate() {
+      $("#processingstepform").validate({
+        errorPlacement: function(error, element) {
+            if ( element.is(":radio") )
+                error.insertAfter(element.parent().parent().parent());
+            else
+                error.insertAfter(element);
+	}
+      });
+    }
+    
+    function replaceKey(e) {
+      if(e.keyCode == 13) {
+        replaceSubmit();
+        e.preventDefault();
+        return false;
+      }
+    }
+    
+    function addKey(e) {
+      if(e.keyCode == 13) {
+        addSubmit();
+        e.preventDefault();
+        return false;
+      }
+    }
+    
+    function replaceSubmit() {
+      var options = {
+        url : "SaveOrUpdateFile.htm",
+        success: replaceSucc
+      };
+      
+      $('#replaceStyleSheet').addClass('required');
+      $('#replaceDescription').addClass('required');
+			$('.fileid').removeClass('required');
+      
+      if($("#processingstepform").validate().form()) {
+        $('#processingstepform').ajaxSubmit(options);
+      }
+      return false;   
+    }
+    
+    function addSubmit() {
+      var options = {
+        url : "SaveOrUpdateFile.htm",
+        success: addSucc
+      };
+      
+      //clear this so the server can use it to determine if this is a update or a save
+      $('#replaceFileId').val('');
+      
+      $('#addStyleSheet').addClass('required');
+      $('#addDescription').addClass('required');
+      $('.fileid').removeClass('required');
+      
+      if($("#processingstepform").validate().form()) {
+        $('#processingstepform').ajaxSubmit(options);
+      }
+      return false;  
+    }
+    
+    $(document).ready(function(){
+      validate();
+
+      $("#addOK").click(addSubmit);
+    
+      registerPopups();
+      
+      $("#deleteOK").click( function(){
+     
+        var fileid = $('#deleteFileId').text();
+        
+        jQuery.post('DeleteFile.htm', { fileid: fileid }, deleteSucc);
+        return false;   
+      });
+      
+      $("#replaceOK").click(replaceSubmit);
+
+      if( jQuery.browser.mozilla ) {
+        $(".replaceField").keypress(replaceKey);
+        $(".addField").keypress(addKey);
+      } else {
+        $(".replaceField").keydown(replaceKey);
+        $(".addField").keydown(addKey);
+      }
+    });
+ 
+    function registerPopups() {
+      
+      $('.addPopup').click( function() {
+        $('#popup').css('display', 'block');
+        
+      });
+      
+      $('.deletePopup').click( function() {
+        //set the fileid and stylesheetname fields
+        var parentrow = $(this).parents('.stylesheetRow');
+        var fileid = $('.fileid', parentrow).val();
+        var filename = $('.filename', parentrow).text();
+        var msg = $('.clashes', parentrow).html();
+
+        $('#deleteFileId').text(fileid);
+        $('#deleteFileName').text(filename);
+        $('#deleteClashes').html(msg);
+        
+        //determine if we should allow the deletion to occur
+        if(msg != '') {
+          //hide the ok button and hide the are you sure message
+          $('#deleteMsg').css('display', 'none');
+          $('#deleteOK').css('display', 'none');
+        } else {
+          $('#deleteMsg').css('display', 'block');
+          $('#deleteOK').css('display', 'block');
+          $('#deleteCancel').css('display', 'block');
+        }
+        
+        $('#popup2').css('display', 'block');
+      });
+      
+      $('.replacePopup').click( function () {
+        var parentrow = $(this).parents('.stylesheetRow');
+        var fileid = $('.fileid', parentrow).val();
+        var filename = $('.filename', parentrow).text();
+        var msg = $('.replacemsgs', parentrow).html();
+        
+        $('#replaceFileId').val(fileid);
+        $('#replaceFileName').text(filename);
+        $('#replaceDescription').val('');
+        $('#replaceStyleSheet').val('');
+        $('.popupalert').html(msg);
+        
+        if(msg != '') {
+          $('.popupalert').prepend(" <img src=\"_img/li_alert.gif\" />");
+        }
+        
+        
+         $('#popup3').css('display', 'block');
+      });
+    }
+    
+    function deleteSucc(returned) {
+      $('#popup2').css('display', 'none'); //hide the popup
+      if(returned == 'deleted') {
+        $('#deleteerror').css("display", "none");
+        var fileid = $('#deleteFileId').text();
+        var row = $('.fileid[value=' + fileid +']').parents('.stylesheetRow');
+        row.remove();
+      } else {
+        $('#deleteerror').css("display", "inherit");
+      }
+    }
+    
+    function replaceSucc(returned) {
+      $('#popup3').css('display', 'none'); //hide the popup
+      $('#replaceStyleSheet').removeClass('required');
+      $('#replaceDescription').removeClass('required');
+ 			$('.fileid').addClass('required');
+
+      if(returned != 'invalid') {
+           var splitloc = returned.indexOf('=');
+           var fileid = returned.substring(0, splitloc);
+           var filename = returned.substring(splitloc+1);
+           var description = $('#replaceDescription').val();
+           //get the row that needs its details changed
+           var row = $('.fileid[value=' + fileid +']').parents('.stylesheetRow');
+           //change the name and description
+           $('.description', row).text(description);
+           $('.filename', row).text(filename);
+           
+      } else {
+          $('#replaceerror').css("display", "inherit");
+      }   
+    }
+    
+    function addSucc(returned) {
+      $('#popup').css('display', 'none'); //hide the popup
+      $('#addStyleSheet').removeClass('required');
+      $('#addDescription').removeClass('required');
+      $('.fileid').addClass('required');
+        
+      if(returned != 'invalid') {
+           $('#adderror').css("display", "none");
+           var description = $('#addDescription').val();
+           var splitloc = returned.indexOf('=');
+           var fileid = returned.substring(0, splitloc);
+           var filename = returned.substring(splitloc+1);
+            //add a new row with the added description and the new fileid
+            var newrow = $('#templateRow').clone().removeAttr('id');
+            $('.description', newrow).text(description);
+            $('.fileid', newrow).val(fileid);
+            $('.filename', newrow).text(filename);
+            $('.viewbutton', newrow).attr('href', 'GetFile.htm?fileid=' + fileid);
+            
+            $(newrow).css('display', 'table-row');
+            $('#stylesheetTable').append(newrow);
+            $('#addDescription').val('');
+            $('#addStyleSheet').val('');
+
+            registerPopups(); //so that the buttons get wired in
+         } else {
+           $('#adderror').css("display", "inherit");
+         }   
+    }
+    
+    function changefield(element, name)
+    {
+      if(element.href.search(/&field/) == -1 )
+        element.href = element.href + '&field=' + name;
+      else {
+        positionofendnum = element.href.search(/&field=/);
+        element.href = element.href.substr(0, positionofendnum+7);
+        element.href = element.href + name;
+      }
+    }
+    
+    //returns a reference to the opened window
+    function popup(mylink, windowname)
+    {
+      if (! window.focus)return true;
+      var href;
+      if (typeof(mylink) == 'string')
+         href=mylink;
+      else
+         href=mylink.href;
+         
+      window.open(href, windowname, 'width=800,height=400,scrollbars=yes');
+      return false;
+    }
+    
+  -->
+  </script>
+</head>
+<body class="con">
+  <h1>NLA Harvester</h1>
+  <h2><span>&gt;</span> <a href="ListCollections.htm">Collections</a> <span>&gt;</span> $collectionname <a class="logout" href="Logout.htm">Logout </a><br/><label class="user">$userUtil.userName</label></h2>
+  <div id="container">
+    #if($colview)
+    <ul id="nav">
+      <li>Collection Details</li>
+    </ul>
+    <ul id="subnav">
+      <li>Create/Edit Processing Profile</li>
+    </ul>
+    #else
+    <ul id="nav">
+      <li><a href="ViewCollection.htm?collectionid=$collectionid">Collection Details</a></li>
+
+      <li class="on"><a href="ListContributors.htm?collectionid=$collectionid">Contributors</a></li>
+      <li><a href="ListHarvests.htm?collectionid=$collectionid">Harvests</a></li>
+      <li><a href="ListReports.htm?collectionid=$collectionid">Reports</a></li>
+    </ul>
+    <ul id="subnav">
+      <li><a href="ViewContributor.htm?contributorid=$contributorid">Contributor Details</a></li>
+      <li><a href="ViewNotes.htm?contributorid=$contributorid">Notes</a></li>
+
+      <li><a href="ViewHarvestDetails.htm?contributorid=$contributorid">Connection Settings</a></li>
+      #if($contributortype == 1)<li><a href="ViewHarvestSchedule.htm?contributorid=$contributorid">Schedule Production Harvest</a></li>#end
+      <li><a href="EditManualHarvest.htm?contributorid=$contributorid">Perform Test Harvest</a></li>
+      <li class="on"><a href="ViewProcessingSteps.htm?contributorid=$contributorid">Processing Steps</a></li>
+      <li><a href="ListHarvestLogs.htm?contributorid=$contributorid">Logs</a></li>
+    </ul>
+    #end
+
+    #macro(picker $n $name)
+          #if($n.subtype == $n.XPATH) <a name="$!name" href="Help.htm?type=xpathpicker" class="help picker" target="_blank" onClick="changefield(this); return popup(this, 'xpath')">Pick</a> #{end}
+    #end
+
+    <div id="content">
+      <h3>#if($colview)$collectionname#{else}$contributorname#end</h3>
+      
+      <form method="post" action="$preserveProfileEditUrl" enctype="multipart/form-data" id="processingstepform" class="cloner">
+        
+      <!-- ****************************************************************************************************** -->
+          
+          <input type="text" style="display:none" id="stepid" name="stepid" value="$!step.stepid" />
+          
+          <div id="popup">
+            <div class="message">
+             <h3>Add stylesheet</h3>
+    
+              <dl>
+                <dt>Description: <span class="requiredfield">*</span></dt>
+                <dd><input type="text" id="addDescription" class="addField" name="sdescription" value="" /></dd>  
+              </dl>
+              
+              <dl>
+                <dt>New File: <span class="requiredfield">*</span></dt>
+                <dd><input id="addStyleSheet" class="addField" name="stylesheetfile" type="file" /></dd>  
+              </dl>
+              
+              <ul class="buttons">
+                <li><a href="#" class="cancel addCancel">Cancel</a></li>
+                <li><a href="#" id="addOK" class="saveStyle">OK</a></li>
+              </ul>
+              
+              <div class="clearfix"></div>
+            </div>
+          </div>
+          
+          <div id="popup2">
+            <div class="message">
+             <h3>Delete stylesheet</h3>
+    
+              <dl>
+                <dt>Stylesheet:</dt>
+                <dd id="deleteFileName">stylesheetname</dd>  
+              </dl>
+              <div style="display:none" id="deleteFileId"></div>
+              
+              
+              <p id="deleteMsg">Remove this stylesheet?</p>
+              <div id="deleteClashes"></div>
+              
+              <ul class="buttons">
+                <li><a href="#" id="deleteCancel" class="cancel">Cancel</a></li>
+                <li><a href="#" id="deleteOK" class="saveStyle">OK</a></li>
+              </ul>
+              
+              <div class="clearfix"></div>
+            </div>
+          </div>
+          
+          <div id="popup3">
+            <div class="message">
+             <h3>Replace stylesheet</h3>
+              <p>Overwrite the existing stylesheet?</p>
+              <input type="text" style="display:none" id="replaceFileId" name="replacefileid" value="" />
+              <dl>     
+               <dt>Stylesheet: </dt> <dd id="replaceFileName">strip-namespace.xsl</dd>
+              </dl>
+              
+              <dl>
+                <dt>Description: <span class="requiredfield">*</span></dt>
+                <dd><input type="text" class="replaceField" id="replaceDescription" name="replacesdescription" value="" /></dd>  
+              </dl>
+              
+              <dl>
+                <dt>New File: <span class="requiredfield">*</span></dt>
+                <dd><input id="replaceStyleSheet" class="replaceField" name="replacestylesheetfile" type="file" /></dd>  
+              </dl>
+              
+              <div class="popupalert"></div>
+              
+              <ul class="buttons">
+                <li><a href="#" class="cancel replaceCancel">Cancel</a></li>
+                <li><a href="#" id="replaceOK" class="saveStyle">OK</a></li>
+              </ul>
+              
+              <div class="clearfix"></div>
+            </div>
+          </div>
+
+      <!-- ****************************************************************************************************** -->
+        
+      <dl>
+        ##show some readonly information about the step
+        <dt>
+                   $sessionStateHTML ##ouputs a bunch of hidden input statements to maintain the session information with         
+          Name:
+        </dt><dd>$!step.name</dd>
+        <dt>Description:</dt> <dd>$step.description</dd>
+        <dt>Input:</dt> <dd>$step.inputtype</dd>
+        <dt>Output:</dt> <dd>$step.outputtype</dd>
+        <dt>Sequence: </dt>
+        <dd><input type="text" name="newposition" value="$position" /></dd>
+        #if($colview)
+          <dt>Restriction Type</dt>
+          <dd>
+            <input name="restriction" type="radio" class="required" value="$None" #if($restriction == $None)checked="checked"#end />
+              <img src="_img/pencil.png" title="None"/> None &nbsp;&nbsp;
+            <input name="restriction" type="radio" class="required" value="$Locked" #if($restriction == $Locked)checked="checked"#end />
+              <img src="_img/lock.png" title="Locked"/> Locked &nbsp;&nbsp;
+            <input name="restriction" type="radio" class="required" value="$Mandatory" #if($restriction == $Mandatory)checked="checked"#end />
+              <img src="_img/lock_edit.png" title="Mandatory"/>Mandatory &nbsp;&nbsp;
+          </dd>
+        #end
+        <dt>Description of function: </dt>
+        <dd><input type="text" name="description" value="$!description" /></dd>          
+        <dt> <br /> </dt> <dd> <br /></dd>
+          <!-- *************************************************************** -->
+  
+          <dt title="fields matching field name will be converted using the given regular expression"> Stylesheet:  <span class="requiredfield">*</span></dt>
+          <dd>
+          
+            <div><span>The xslt document describing the transformation</span></div>
+              
+            <table summary="stylesheet table" id="stylesheetTable">
+              <tr>
+                <th >&nbsp;</th>
+                <th >Description</th>
+                <th >File</th>
+                <th >Actions</th>    
+              </tr>
+              
+              ## this row is used to clone the other ones from
+              <tr style="display:none" id="templateRow" class="stylesheetRow">
+                <td>
+                  <div style="display:none" class="clashes"></div>
+                  <div style="display:none" class="replacemsgs"></div>                  
+                  <input type="radio" class="fileid required" name="stylesheet" value="">
+                </td>
+                <td class="description" ></td>
+                <td class="filename" ></td>
+                <td>
+                  <ul class="buttons">
+                    <li><a href="#" class="replacePopup" >Replace</a></li>      
+                    <li><a href="#" class="deletePopup" >Delete</a></li>
+                    <li><a href="#" class="viewbutton" >View</a></li>
+                  </ul>
+                </td>
+              </tr>
+            
+            #foreach($file in $files)
+              <tr class="stylesheetRow">
+                <td>
+                  <div style="display:none" class="clashes">$!clashes.get($file.fileid)</div>
+                  <div style="display:none" class="replacemsgs">$!replacemsgs.get($file.fileid)</div>
+                  <input type="radio" class="fileid required" name="stylesheet" #if($fileid == $file.fileid)checked="checked"#{end} value="$file.fileid">
+                </td>
+                <td class="description" >$file.description</td>
+                <td class="filename" >$file.filename</td>
+                <td>
+                  <ul class="buttons">
+                    <li><a href="#" class="replacePopup" >Replace</a></li>      
+                    <li><a href="#" class="deletePopup" >Delete</a></li>
+                    <li><a href="GetFile.htm?fileid=${file.fileid}" class="viewbutton" >View</a></li>
+                  </ul>
+                </td>
+              </tr>              
+            #end
+            
+            </table>
+            <label id="replaceerror" class="error" style="display:none">file used for replace operation was invalid</label>
+            <ul class="buttons">
+              <li><a href="#" id="addstylesheet" class="addPopup">Add a new stylesheet</a><label id="adderror" class="error" style="display:none">Added file was invalid</label></li>
+            </ul>
+            <br />
+
+          
+         <!-- *************************************************************** -->
+        </dd>
+
+      </dl>
+      <ul class="buttons">
+        #if($new)
+          <li><a href="${goBackInStepWizardUrl}&amp;position=${position}" class="back">Change Step</a></li>
+          <li><a href="${deleteProfileStepUrl}&amp;position=${position}" class="cancel">Cancel</a>
+        #else
+          <li><a href="$editProfileUrl" class="cancel">Cancel</a></li>
+        #end
+        <li><input type="submit" id="mainsubmit" value="Done" class="save" /></li>
+      </ul>
+
+      <p><span class="requiredfield">*</span> Compulsory Field</p>
+      </form>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</body>
+</html>

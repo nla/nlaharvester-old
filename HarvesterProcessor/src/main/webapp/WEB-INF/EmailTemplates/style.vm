@@ -1,0 +1,49 @@
+<style type="text/css">
+    dl {
+        margin:1em 0;
+        padding:0;
+        display:block;
+        font-family:arial,sans-serif;
+        line-height:1.4;
+    }
+    dt {
+        border-top:1px solid #DDDDDD;
+        clear:both;
+        font-weight:bold;
+        width:9em;
+        margin:0;
+        padding:0;
+        display:block;
+        line-height:1.4;
+    }
+    dt.date {
+        font-weight:normal;
+    }
+    .table {
+        font-family:arial,sans-serif;        
+    }
+    dl.smallFont {
+        
+    }
+    dd {
+        margin: -1.2em 0 0 10em;
+        min-height:1em;
+        padding:0;
+        display:block;
+        line-height:1.4;
+    }
+    h3 {
+        font-size:1.5em;
+        letter-spacing:-1px;
+        margin:2em -20px 0;
+        padding:0.5em 0 0.5em 20px;
+        clear:both;
+        display:block;
+        font-weight:bold;
+        font-family:arial,sans-serif;
+        font-size-adjust:none;
+        font-style:normal;
+        font-variant:normal;
+        line-height:1.4;
+    }
+</style>

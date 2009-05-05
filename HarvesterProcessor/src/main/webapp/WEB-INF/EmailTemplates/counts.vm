@@ -1,0 +1,13 @@
+<dl>
+    #set($errors = ($harvest.totalrecords - $harvest.recordscompleted) )
+    <dt>Records Harvested:</dt><dd>$harvest.totalrecords</dd>
+    <dt>Records Without Errors:</dt><dd>$harvest.recordscompleted</dd>
+    <dt>Record Errors:</dt><dd>$errors</dd>
+    #set( $harvesttime = $formatter.formatDateTime($harvest.starttime) )
+    <dt>Harvest Time:</dt><dd>$harvesttime</dd>
+    <dt>Duration:</dt>        
+      #set( $seconds = $duration % 60)
+      #set( $minutes = ($duration/60) % 60)
+      #set( $hours = ($duration/60/60) % 12)
+    <dd>$!hours hours $!minutes minutes $!seconds seconds</dd>
+</dl>

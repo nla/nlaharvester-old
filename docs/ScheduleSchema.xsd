@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:element name="schedules">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="schedule" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="description" type="xs:string"/>
+                      <xs:element name="cron" type="xs:string" maxOccurs="unbounded" />
+                      <xs:element name="jobdetails">
+                        <xs:complexType>
+                            <xs:sequence>
+                                <xs:element name="detail" maxOccurs="unbounded">
+                                    <xs:complexType>
+                                        <xs:simpleContent>
+                                            <xs:extension base="xs:string">
+                                                <xs:attribute name="key" type="xs:string" />
+                                            </xs:extension>
+                                        </xs:simpleContent>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                        </xs:complexType>
+                      </xs:element>
+                      <xs:element name="lastjob" type="xs:string"/>
+                      <xs:element name="nextjob" type="xs:string"/>
+                    </xs:sequence>
+                    <xs:attribute name="id" type="xs:positiveInteger"/>
+                    <xs:attribute name="enabled" type="xs:boolean"/>
+                  </xs:complexType>
+                </xs:element>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+</xs:schema>

@@ -1,0 +1,293 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>NLA Harvester</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+	<link rel="stylesheet" type="text/css" href="_css/style.css" media="screen" />
+  <!--[if IE 7]> 
+	<link rel="stylesheet" type="text/css" href="_css/style-ie7.css" media="screen" />
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="_css/print.css" media="print" />
+  <script type="text/javascript" src="_js/jquery.js"></script>
+  <script type="text/javascript" src="_js/script.js"></script>
+  <script type="text/javascript" src="_js/jquery.validate.js"></script>
+  <script type="text/javascript">
+  <!--
+    $(document).ready(function(){
+      contributorname = $("#contributorname").attr("innerHTML");
+      //escape function doesn't escape + signs for some reason
+      contributorname = escape(contributorname).replace(new RegExp( "\\+", "g" ),"%2B");
+      $("#contributorform").validate(
+                                     { rules : { name : { required: true, remote: "AjaxValidation.htm?oldname=" + contributorname
+                                            + "&collectionid=${contributor.collection.collectionid}&type=contributorname" }},
+                                       messages: { name: { required: "This field is required", remote: "Name already in use" }}}
+                                     );
+    });
+
+      jQuery.validator.addMethod("reqemail", function(value, element)
+        {
+
+          //We need to extract the field number of the element in question,
+          //then check if any of the tickboxes for that number are ticked
+          suffix = element.name.replace(/^[a-z]*(\w*)/,"$1");
+                                        //record, harvest, failure, success
+          record = $("input[@name=record" + suffix + "]").attr("checked");
+          harvest = $("input[@name=harvest" + suffix + "]").attr("checked");
+          success = $("input[@name=success" + suffix + "]").attr("checked");
+          failure = $("input[@name=failure" + suffix + "]").attr("checked");
+          if(record == true || harvest == true || success == true || failure == true) {                        
+            if(value.length == 0 )
+              return false;
+          }
+          return true;
+	}, "An email address must be provided when set to notifiy");
+
+
+
+  -->
+  </script>
+</head>
+<body #if(!$new)class="con"#{end}>
+  <h1>NLA Harvester</h1>
+  <h2><span>&gt;</span> <a href="ListCollections.htm">Collections</a> <span>&gt;</span> $contributor.collection.name <a class="logout" href="Logout.htm">Logout </a><br/><label class="user">$userUtil.userName</label></h2>
+  <div id="container">
+    <ul id="nav">
+      <li><a href="ViewCollection.htm?collectionid=${contributor.collection.collectionid}">Collection Details</a></li>
+      <li class="on"><a href="ListContributors.htm?collectionid=${contributor.collection.collectionid}">Contributors</a></li>
+      <li><a href="ListHarvests.htm?collectionid=${contributor.collection.collectionid}">Harvests</a></li>
+      <li><a href="ListReports.htm?collectionid=${contributor.collection.collectionid}">Reports</a></li>
+    </ul>
+    #if(!$new)
+    <ul id="subnav">
+      <li class="on"><a href="ViewContributor.htm?contributorid=${contributor.contributorid}">Contributor Details</a></li>
+      <li><a href="ViewNotes.htm?contributorid=${contributor.contributorid}">Notes</a></li>
+      <li><a href="ViewConnectionSettings.htm?contributorid=${contributor.contributorid}">Connection Settings</a></li>
+      #if($contributor.type == 1)<li><a href="ViewHarvestSchedule.htm?contributorid=${contributor.contributorid}">Schedule Production Harvest</a></li>#end
+      <li><a href="EditManualHarvest.htm?contributorid=${contributor.contributorid}">Perform Test Harvest</a></li>
+      <li><a href="ViewProcessingSteps.htm?contributorid=${contributor.contributorid}">Processing Steps</a></li>
+      <li><a href="ListHarvestLogs.htm?contributorid=${contributor.contributorid}">Logs</a></li>
+    </ul>
+    #end
+
+     <div id="content">
+      #if($new)
+        <p  class="step">Step 1 of 3</p>
+      #else
+        <h3 id="contributorname">$contributor.name</h3>
+      #end
+      
+      <form method="post" action="#if($new)ModifyNewContributor.htm#{else}ModifyContributor.htm#{end}" id="contributorform">      
+      <fieldset class="cloner">
+        
+      <input type="text" style="display:none"  name="contributorid" value="$!contributor.contributorid" />
+      
+        <legend>#if($new)Create New Contributor#{else}Edit Contributor Details#end</legend>
+        <h3>#if($new)Contributor Details#{else}Overview#end</h3>
+        <dl>
+          <dt>Name: <span class="requiredfield">*</span></dt>
+          <!--?collectionid=${contributor.collection.collectionid}&amp;type=contributorname" -->
+          <dd><input name="name" type="text" value="$!contributor.name" /></dd>
+          <dt>Description:</dt>
+          <dd><input name="description" type="text" value="$!contributor.description" /></dd>
+          <dt>Collection:</dt>
+          <dd>$!contributor.collection.name</dd>
+          #if(!$new)          
+            <dt>Status:</dt>
+            <dd>$!contributor.lastharvest.status</dd>
+          #end
+
+          <dt>Platform:</dt>
+          <dd><input name="platform" type="text" value="$!contributor.platform" /><span>eg. DSpace, VITAL</span></dd>
+          
+          #if($new)
+          <dt>Harvest Type: <span class="requiredfield">*</span> </dt>
+          <dd><select name="harvesttype">
+              #foreach($type in $harvesttypes)
+                <option value="$!type.value" #if($selectedtype && ($type.value == $selectedtype))selected="selected"#{end}>
+                  $!type.key
+                </option>
+              #end
+            </select></dd>
+          #end
+          
+          #if(!$new)
+          <dt>Repository:</dt>
+          <dd><ul class="buttons">
+            <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=identify" class="external">Identify</a></li>
+            <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=listrecordsforoneweek" class="external">View records for this week</a></li>
+            <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=listrecordsforonemonth" class="external">View records for this month</a></li></ul>
+          </dd>
+          #end
+        </dl>
+          
+          
+        <input type="text" style="display:none"  name="biggestcontact"
+                 value="#if($numcontacts == 0)2#{else}$numcontacts#{end}" />  
+
+        #macro( contacteditmacro $c $s $i $cloneid)  
+            <tr class="clone$cloneid">
+              <td><input name="name$i" class="required" type="text" value="$!c.name" /></td>
+              <td><input name="jobtitle$i" type="text" value="$!c.jobtitle"/></td>
+              <td><input name="email$i" type="text" value="$!c.email" class="reqemail email"/></td>
+              <td><input name="phone$i" type="text" value="$!c.phone"/></td>
+  
+              <td><input name="record$i" type="checkbox"  #if($s.record == 1)checked="checked"#end /></td>
+              <!-- <td><input name="harvest$i" type="checkbox" #if($s.harvest == 1)checked="checked"#end /></td> -->
+              <td><input name="failure$i" type="checkbox" #if($s.failure == 1)checked="checked"#end /></td>
+              <td><input name="success$i" type="checkbox" #if($s.success == 1)checked="checked"#end /></td>
+              <td><select name="type$i" class="required">
+                <option value="">&nbsp;</option>
+                <option value="$s.BUSINESS_CONTACT()" #if($s.type == $s.BUSINESS_CONTACT())selected="selected"#end >Business</option>
+                <option value="$s.TECHNICAL_CONTACT()" #if($s.type == $s.TECHNICAL_CONTACT())selected="selected"#end> Technical</option>
+              </select></td>
+              <td>
+                <ul class="buttons">
+                  <li><a href="#" class="delete$cloneid">Remove Contact</a></li>
+                </ul>
+              <input class="leavealone" type="text" style="display:none"  name="businesstype$i" value="$FROM_OTHER" />
+              <input type="text" style="display:none"  name="contactid$i" value="$!c.contactid" />                
+              </td>
+            </tr>
+        #end
+        #macro( collectioncontacteditmacro $c $s $i $cloneid)  
+            <tr class="clone$cloneid">
+              <td><input name="name$i" style="display:none" type="text" value="$!c.name" /> $!c.name</td>
+              <td><input name="jobtitle$i" style="display:none" type="text" value="$!c.jobtitle"/> $!c.jobtitle</td>
+              <td><input name="email$i" style="display:none" type="text" value="$!c.email"/> <a href="mailto:$!c.email">$!c.email</a></td>
+              <td><input name="phone$i" style="display:none" type="text" value="$!c.phone"/> $!c.phone</td>
+              <td><input name="record$i" type="checkbox"  #if($s.record == 1)checked="checked"#end /></td>
+              <!-- <td><input name="harvest$i" type="checkbox" #if($s.harvest == 1)checked="checked"#end /></td> -->
+              <td><input name="failure$i" type="checkbox" #if($s.failure == 1)checked="checked"#end /></td>
+              <td><input name="success$i" type="checkbox" #if($s.success == 1)checked="checked"#end /></td>
+              <td><input name="type$i" style="display:none" type="text" value="$c.type" />#if($c.type == $s.BUSINESS_CONTACT())Business#{else}Technical#{end}</td>
+              <td>
+              <input class="leavealone" type="text" style="display:none" name="businesstype$i" value="$FROM_NLA" />
+              <input class="leavealone" type="text" style="display:none" name="selection$i" value="$s.selectionid" />
+              <input type="text" style="display:none"  name="contactid$i" value="$c.contactid" />                
+              </td>
+            </tr>
+        #end
+        
+        
+        #macro( blankrowmacro $i $cloneid)
+              <td><input disabled="disabled" name="name$i" class="required" type="text" value="" /></td>
+              <td><input disabled="disabled" name="jobtitle$i" type="text" value=""/></td>
+              <td><input disabled="disabled" name="email$i" type="text" value="" class="reqemail email"/></td>
+              <td><input disabled="disabled" name="phone$i" type="text" value=""/></td>
+  
+              <td><input disabled="disabled" name="record$i" type="checkbox"  /></td>
+              <!-- <td><input disabled="disabled" name="harvest$i" type="checkbox" /></td> -->
+              <td><input disabled="disabled" name="failure$i" type="checkbox" /></td>
+              <td><input disabled="disabled" name="success$i" type="checkbox" /></td>
+              <td><select disabled="disabled" class="required" name="type$i">
+                <option value="">&nbsp;</option>
+                <option value="$BUSINESS_CONTACT"  >Business</option>
+                <option value="$TECHNICAL_CONTACT" > Technical</option>
+              </select></td>
+              <td>
+                <ul class="buttons">
+                  <li><a href="#" class="delete$cloneid">Remove Contact</a></li>
+                </ul>
+        #end
+          
+        <h3>Contacts</h3>
+
+        <ul class="buttons">
+          <li><a href="#" onclick="document.getElementById('contributorform').biggestcontact.value++" class="add">Add a Contact from #if($new)this Contributor#{else}$contributor.name#end</a></li>
+          <!-- <li><a href="#" onclick="document.getElementById('contributorform').biggestcontact.value++" class="add2">Add a Contact from NLA</a></li>          -->
+        </ul>
+        <table class="contacts">
+          <!-- header -->
+          <tr>
+            <th rowspan="2">Name <span class="requiredfield">*</span></th>
+            <th rowspan="2">Job Title</th>
+
+            <th rowspan="2">Email</th>
+            <th rowspan="2">Phone</th>
+            <th colspan="3" class="spancol">Notify On</th> <!-- change to 4 if harvest errors is added back -->
+            <th rowspan="2">Type</th>
+            <th rowspan="2"></th>
+          </tr>
+          <tr>
+
+            <th>Record Errors</th>
+            <!-- <th>Harvest Errors</th> -->
+            <th>Harvest Failure</th>
+            <th>Harvest Success</th>
+          </tr>
+          <!-- header finished -->
+          
+          <tr>
+            <th colspan="10">
+              <h4>From #if($new)this Contributor#{else}$contributor.name#end</h4>
+            </th>
+          </tr>
+          ##we need to keep track of how many we put in each area so that each has at least one of some sort
+          #set( $Acount = 0 )
+          #foreach($contact in $contributor.contacts)
+              #set( $i = "A$velocityCount")
+              #contacteditmacro($contact $contact $i "")
+              #set( $Acount = $Acount+1 )
+          #end
+          
+          #if( $Acount == 0 )
+            ##add an extra blank row
+            <tr class="clone hidden">
+              #blankrowmacro("A1" "" )
+              <input class="leavealone" type="text" style="display:none"  name="businesstypeA1" value="$FROM_OTHER" /> 
+              </td>
+            </tr>                       
+          #end
+          
+          
+          
+          <tr>
+            <th colspan="10">
+              <h4>From NLA</h4>
+            </th>
+          </tr>
+          #set( $Bcount = 0 )
+          #foreach( $contact in $contributor.contactselections)
+              #set( $i = "B$velocityCount")
+              #collectioncontacteditmacro($contact.contact $contact $i "2")
+              #set( $Bcount = $Bcount+1 )              
+          #end
+          
+          #if( $Bcount == 0 )
+            ##add an extra blank row
+            <tr class="clone2 hidden">
+              #blankrowmacro("B1" "2")
+              <input class="leavealone" type="text" style="display:none"  name="businesstypeB1" value="$FROM_NLA" />
+              </td>
+            </tr>            
+          #end
+        </table>
+
+       <!-- <h3>Advanced Settings</h3>
+        <div class="advanced collapsed">
+          <h4>Harvested Record Format</h4>
+ 	<div>
+          <select name="Select2">
+          </select>
+ 	</div>
+        </div>
+      -->
+        <div class="clearfix"></div>
+      </fieldset>
+              
+      <ul class="buttons">
+      #if($new)
+        <li><a href="ListContributors.htm?collectionid=$!{contributor.collection.collectionid}" class="cancel">Cancel</a></li>
+      #else
+        <li><a href="ViewContributor.htm?contributorid=$!{contributor.contributorid}" class="cancel">Cancel</a></li>
+      #end
+        <li><input type="submit" #if($new) class="next" value="Step 2: Set Connection Details"#{else} class="save" value="Save"#end id="mainsubmit"/></li>
+
+      </ul>
+      <p><span class="requiredfield">*</span> Compulsory Field</p>
+      <div class="clearfix"></div>
+      </form>              
+    </div>
+  </div>
+</body>
+</html>

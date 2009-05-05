@@ -1,0 +1,546 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+    <head>
+      <title>NLA Harvester</title>
+      <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+      <script type="text/javascript" src="_js/jquery.js"></script>
+      <script type="text/javascript" src="_js/script.js"></script>
+    </head>
+    
+    <body>
+        
+        
+        
+    <table border="1">
+
+  
+      <tr bgcolor="#C0C0C0" align="center">    
+        <th rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315698"> </a>
+          <div style="color: #000000; font-family: Arial, Verdana, Helvetica, sans-serif; font-size: 12px; font-style: oblique; font-variant: normal; font-weight: bold; margin-bottom: 0pt; margin-left: 0pt; margin-right: 0pt; margin-top: 0pt; text-align: left; text-decoration: none; text-indent: 0pt; text-transform: none">
+Example
+
+          </div>
+
+        </th>
+    
+        <th rowspan="1" colspan="1">
+
+          <a shape="rect" name="wp1315700"> </a>
+          <div style="color: #000000; font-family: Arial, Verdana, Helvetica, sans-serif; font-size: 12px; font-style: oblique; font-variant: normal; font-weight: bold; margin-bottom: 0pt; margin-left: 0pt; margin-right: 0pt; margin-top: 0pt; text-align: left; text-decoration: none; text-indent: 0pt; text-transform: none">
+Description
+
+          </div>
+
+        </th>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315702"> </a>
+
+          <div class="pCellBody">
+
+            <code class="cCode">para</code>
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315704"> </a>
+
+          <div class="pCellBody">
+Selects the 
+            <code class="cCode">para</code> children of the context node
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315706"> </a>
+
+          <div class="pCellBody">
+
+            <code class="cCode">*</code>
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315708"> </a>
+
+          <div class="pCellBody">
+Selects all element children of the context node
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315710"> </a>
+          <div class="pCellBody">
+
+node_test
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315712"> </a>
+          <div class="pCellBody">
+Evaluates all children of the context node and returns those that test 
+            <code class="cCode">true</code> for the particular node_test
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315714"> </a>
+          <div class="pCellBody">
+
+            <code class="cCode">*/para</code>
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315716"> </a>
+          <div class="pCellBody">
+Selects all 
+            <code class="cCode">para</code> grandchildren of the context node
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315718"> </a>
+          <div class="pCellBody">
+
+            <code class="cCode">para[1]</code>
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315720"> </a>
+          <div class="pCellBody">
+Selects the first 
+            <code class="cCode">para</code> child of the context node
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315722"> </a>
+          <div class="pCellBody">
+
+            <code class="cCode">para[last()]</code>
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315724"> </a>
+          <div class="pCellBody">
+Selects the last 
+            <code class="cCode">para</code> child of the context node
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315726"> </a>
+          <div class="pCellBody">
+
+            <code class="cCode">/doc/chapter[5]/section[2]</code>
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315728"> </a>
+          <div class="pCellBody">
+Selects the second 
+            <code class="cCode">section</code> of the fifth 
+            <code class="cCode">chapter</code> of the 
+            <code class="cCode">doc</code> child of the context node
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315730"> </a>
+          <div class="pCellBody">
+
+            <code class="cCode">para[@type="warning"]</code>
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315732"> </a>
+          <div class="pCellBody">
+Selects 
+            <code class="cCode">para</code> children of the context node that have 
+            <code class="cCode">type</code> attributes with a value of 
+            <code class="cCode">warning</code>
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315734"> </a>
+          <div class="pCellBody">
+
+            <code class="cCode">para[@type="warning"][5]</code>
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315736"> </a>
+          <div class="pCellBody">
+
+Selects the fifth 
+            <code class="cCode">para</code> child of the context node that has a 
+            <code class="cCode">type</code> attribute with a value of 
+            <code class="cCode">warning</code>
+
+          </div>
+
+        </td>
+
+      </tr>
+
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315738"> </a>
+          <div class="pCellBody">
+
+            <code class="cCode">para[5][@type="warning"]</code>
+
+          </div>
+
+        </td>
+
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315740"> </a>
+          <div class="pCellBody">
+Selects the fifth 
+            <code class="cCode">para</code> child of the context node if that child has a 
+            <code class="cCode">type</code> attribute with a value of 
+            <code class="cCode">warning</code>
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315742"> </a>
+          <div class="pCellBody">
+
+            <code class="cCode">chapter[title]</code>
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315744"> </a>
+          <div class="pCellBody">
+Selects the 
+            <code class="cCode">chapter</code> children of the context node that have one or more 
+            <code class="cCode">title</code> children
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315746"> </a>
+          <div class="pCellBody">
+
+            <code class="cCode">//para</code>
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315748"> </a>
+          <div class="pCellBody">
+Selects all 
+            <code class="cCode">para</code> descendants of the document root
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315750"> </a>
+          <div class="pCellBody">
+
+            <code class="cCode">chapter//para</code>
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315752"> </a>
+          <div class="pCellBody">
+Selects all 
+            <code class="cCode">para</code> descendants of 
+            <code class="cCode">chapter</code> children of the context node
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315754"> </a>
+          <div class="pCellBody">
+
+            <code class="cCode">//olist/item</code>
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315756"> </a>
+          <div class="pCellBody">
+Selects all 
+            <code class="cCode">item</code> elements that have 
+            <code class="cCode">olist</code> parents
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315758"> </a>
+          <div class="pCellBody">
+
+            <code class="cCode">.</code>
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315760"> </a>
+          <div class="pCellBody">
+Selects the context node
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315762"> </a>
+          <div class="pCellBody">
+
+            <code class="cCode">.//para</code>
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315764"> </a>
+          <div class="pCellBody">
+Selects the 
+            <code class="cCode">para</code> descendants of the context node
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315766"> </a>
+          <div class="pCellBody">
+
+            <code class="cCode">..</code>
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315768"> </a>
+          <div class="pCellBody">
+Selects the parent of the context node
+
+          </div>
+
+        </td>
+
+      </tr>
+
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315770"> </a>
+          <div class="pCellBody">
+
+            <code class="cCode">@*</code>
+
+          </div>
+
+        </td>
+
+    
+        <td rowspan="1" colspan="1">
+          <a shape="rect" name="wp1315772"> </a>
+          <div class="pCellBody">
+Selects all attributes of the context node
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+
+          <a shape="rect" name="wp1315774"> </a>
+          <div class="pCellBody">
+
+            <code class="cCode">@name</code>
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+
+          <a shape="rect" name="wp1315776"> </a>
+          <div class="pCellBody">
+Selects the 
+            <code class="cCode">name</code> attribute of the context node
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <tr bgcolor="#E8E8E8" align="left">    
+        <td rowspan="1" colspan="1">
+
+          <a shape="rect" name="wp1315778"> </a>
+          <div class="pCellBody">
+
+            <code class="cCode">../@name</code>
+
+          </div>
+
+        </td>
+    
+        <td rowspan="1" colspan="1">
+
+          <a shape="rect" name="wp1315780"> </a>
+          <div class="pCellBody">
+Selects the 
+            <code class="cCode">name</code> attribute of the parent of the context node
+
+          </div>
+
+        </td>
+
+      </tr>
+  
+      <caption align="bottom">
+
+        <a shape="rect" name="wp1315604"> </a>
+        <div style="color: #000000; font-family: Arial, Verdana, Helvetica, sans-serif; font-size: 12px; font-style: normal; font-variant: normal; font-weight: bold; margin-bottom: 0pt; margin-left: 0pt; margin-right: 0pt; margin-top: 6pt; text-align: left; text-decoration: none; text-indent: 0pt; text-transform: none">
+Table&#160;62. Abbreviations in XPath Expressions
+
+        </div>
+
+      </caption>
+
+    </table>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+    </body>
+
+</html>
+
+

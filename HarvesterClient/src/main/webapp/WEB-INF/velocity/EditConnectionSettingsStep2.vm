@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>NLA Harvester</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+	<link rel="stylesheet" type="text/css" href="_css/style.css" media="screen" />
+  <!--[if IE 7]> 
+	<link rel="stylesheet" type="text/css" href="_css/style-ie7.css" media="screen" />
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="_css/print.css" media="print" />
+  <script type="text/javascript" src="_js/jquery.js"></script>
+  <script type="text/javascript" src="_js/script.js"></script>
+  <script type="text/javascript" src="_js/jquery.validate.js"></script>
+  <script type="text/javascript">
+  <!--
+    $(document).ready(function(){
+      $("#settingsform").validate();
+    });
+  -->
+  </script>
+</head>
+<body #if(!$new)class="con"#{end}>
+  <h1>NLA Harvester</h1>
+  <h2><span>&gt;</span> <a href="ListCollections.htm">Collections</a> <span>&gt;</span> $contributor.collection.name <a class="logout" href="Logout.htm">Logout </a><br/><label class="user">$userUtil.userName</label></h2>
+  <div id="container">
+    <ul id="nav">
+      <li><a href="ViewCollection.htm?collectionid=$!{contributor.collection.collectionid}">Collection Details</a></li>
+
+      <li class="on"><a href="ListContributors.htm?collectionid=$!{contributor.collection.collectionid}">Contributors</a></li>
+      <li><a href="ListHarvests.htm?collectionid=$!{contributor.collection.collectionid}">Harvests</a></li>
+      <li><a href="ListReports.htm?collectionid=$!{contributor.collection.collectionid}">Reports</a></li>
+    </ul>
+    #if(!$new)
+      <ul id="subnav">
+          <li><a href="ViewContributor.htm?contributorid=$!{contributor.contributorid}">Contributor Details</a></li>
+          <li><a href="ViewNotes.htm?contributorid=$!{contributor.contributorid}">Notes</a></li>
+          <li class="on"><a href="ViewConnectionSettings.htm?contributorid=$!{contributor.contributorid}">Connection Settings</a></li>
+          #if($contributor.type == 1)<li><a href="ViewHarvestSchedule.htm?contributorid=$!{contributor.contributorid}">Schedule Production Harvest</a></li>#end
+          <li><a href="EditManualHarvest.htm?contributorid=$!{contributor.contributorid}">Perform Test Harvest</a></li>
+          <li><a href="ViewProcessingSteps.htm?contributorid=$!{contributor.contributorid}">Processing Steps</a></li>
+          <li><a href="ListHarvestLogs.htm?contributorid=$!{contributor.contributorid}">Logs</a></li>
+      </ul>
+    #end
+
+    <div id="content">
+      #if(!$new)<h3>$contributor.name</h3>#{end}
+      <p class="step">Step 2 of 3</p>
+      <form method="post" action="PersistConnectionSettingsStep2.htm" id="settingsform">
+      <fieldset>
+        <input type="text" style="display:none"  name="contributorid" value="$!contributor.contributorid" />
+        #if($new)
+          <input type="text" style="display:none"  name="new" value="true" />
+          <legend>Create New Contributor</legend>
+          <h3 class="nestedheading">Connection Settings</h3>
+        #else        
+          <legend>Edit Connection Settings</legend>
+        #end
+        <dl>
+          
+          #if($new)
+            <dt>Name:</dt>
+            <dd>$contributor.name</dd>
+          #end
+          <dt>Harvest Type:</dt>
+          <dd>$harvesttype</dd>
+          
+          #foreach($parm in $parameters)
+          <dt>$parm.name: #if($parm.editibility == 1)<span class="requiredfield">*</span>#end</dt>
+          #if($parm.type == $parm.DROP_DOWN)
+              <dd><select #if($parm.editibility == 1)class="required"#{end} name="$parm.id">
+                #foreach($option in $parm.options)
+                  <option  value="$!option.key" #if($option.key == $parm.value)selected="selected"#{end}>$option.value</option>
+                #end
+              </select>
+              #if($parm.description)<span>$parm.description</span>#end
+              </dd>
+          #else
+            <dd><input name="$parm.id" #if($parm.editibility == 1)class="required"#end type="text" value="$!parm.value" />
+              #if($parm.description)<span>$parm.description</span>#end</dd>#end
+          #end
+        </dl>
+      </fieldset>
+      <ul class="buttons">
+        #if($new)
+          <li><a href="EditContributor.htm?contributorid=${contributor.contributorid}&amp;back=true&amp;new=true" class="back">Change Harvest Details</a></li>
+          <li><a href="ListContributors.htm?collectionid=$!{contributor.collection.collectionid}" class="cancel">Cancel</a></li>          
+        #else
+          <li><a href="EditConnectionSettingsStep1.htm?contributorid=${contributor.contributorid}" class="back">Change Harvest Type</a></li>
+          <li><a href="ViewConnectionSettings.htm?contributorid=$!{contributor.contributorid}" class="cancel">Cancel</a></li>          
+        #end
+        <li><a href="javascript:document.getElementById('settingsform').submit();" class="next"><strong>Step 3</strong> : Set Harvest Details</a></li>
+
+      </ul>
+      <p><span class="requiredfield">*</span> Compulsory Field</p>
+      </form>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</body>
+</html>

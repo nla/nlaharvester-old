@@ -1,0 +1,146 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>NLA Harvester</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+	<link rel="stylesheet" type="text/css" href="_css/style.css" media="screen" />
+  <!--[if IE 7]> 
+	<link rel="stylesheet" type="text/css" href="_css/style-ie7.css" media="screen" />
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="_css/print.css" media="print" />
+  <script type="text/javascript" src="_js/jquery.js"></script>
+  <script type="text/javascript" src="_js/script.js"></script>
+
+</head>
+<body>
+  <h1>NLA Harvester</h1>
+  <h2><span>&gt;</span> <a href="ListCollections.htm">Collections</a> <span>&gt;</span>$collection.name <a class="logout" href="Logout.htm">Logout </a><br/><label class="user">$userUtil.userName</label></h2>
+  <div id="container">
+    <ul id="nav">
+      <li><a href="ViewCollection.htm?collectionid=${collection.collectionid}">Collection Details</a></li>
+
+      <li class="on"><a href="ListContributors.htm?collectionid=${collection.collectionid}">Contributors</a></li>
+      <li><a href="ListHarvests.htm?collectionid=${collection.collectionid}">Harvests</a></li>
+      <li><a href="ListReports.htm?collectionid=${collection.collectionid}">Reports</a></li>
+    </ul>
+    <div id="content">
+      <ul class="buttons">
+        <li><a href="AddContributor.htm?collectionid=${collection.collectionid}" class="addStyle">Add a Contributor</a></li>
+
+      </ul>
+      
+      ##since we have to list of contributors, I've abstracted it into a macro
+      #macro(ContributorRowMacro $contributor)
+        <tr #if($contributor.ismonitored == 1)class="monitored"#{end}>
+          <td><a href="ViewContributor.htm?contributorid=${contributor.contributorid}">
+              $!contributor.name</a>#if($contributor.ismonitored == 1) <span> [Monitored] </span>#end</td>
+          
+          #if($contributor.lastharvest)
+						<td class="hilite">#if($contributor.type == 0)Test#{else}Production#{end}</td>
+            #set ($h = $contributor.lastharvest)  
+            #set ( $rejected = $h.totalrecords - $h.recordscompleted)
+            #if( $h.totalrecords && $h.totalrecords > 0)
+              #set ( $percentage = ($rejected * 100) / $h.totalrecords)
+            #else
+              #set ( $percentage = 0)
+            #end
+            #set ( $percentageaccepted = 100 - $percentage)
+            <td class="#if($h.statuscode == $h.FAILED())
+                          failed
+                       #{else}
+                          #if($h.statuscode == $h.RUNNING())
+                            running
+                          #{else}
+                            hilite
+                          #{end}
+                       #{end}">
+              $!h.status</td>
+            <td class="hilite">$dateformat.formatFuzzyDate($h.starttime)</td>
+            <td class="hilite rejected" style="background-position:-${percentageaccepted}px bottom" >$!rejected ($!{percentage}%)</td>
+          #else
+ 						<td colspan="4" class="hilite never">Never had a harvest</td>
+          #end
+
+          <td>#if($contributor.htype==0)OAI#{elseif}($contributor.htype==1)WebCrawl#{else}Other/unset#{end}</td>
+          <td>#if($contributor.isscheduled > 0)<img src="_img/icon-tick.gif" alt="Yes" />#end</td>
+          <td>$contributor.totalrecords</td>
+          <td>
+            #if($contributor.htype==0)
+            <ul class="buttons">
+              <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=identify"
+                     class="external">Identify</a></li>
+              <li><a class="external" href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=listrecords">List Records</a></li>
+            </ul>
+            #elseif($contributor.htype==1)
+            <ul class="buttons">
+              <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=starturl"
+                     class="external">Start URL</a></li>
+            </ul>
+            #else
+            <!-- no buttons for "other" option -->
+            #end
+          </td>
+        </tr>
+      #end
+      
+      ## #if($collection.contributors.length() != 0)
+      <table summary="contributor list" class="harvests">
+        <colgroup>
+          <col /><col /><col /><col /><col /><col /><col /><col />
+          <col width="150px" />
+        </colgroup>
+        <tr>
+          <th colspan="9">
+            <h3>New Contributors <small>(have not been accepted for scheduling in production)</small></h3>
+          </th>
+        </tr>
+        <tr>
+          <th rowspan="2">Name</th>
+          <th colspan="4" class="hilite spancol">Last Harvest Details</th>
+          <th rowspan="2">Type</th>
+          <th rowspan="2"></th>
+          <th rowspan="2">Total Records</th>
+          <th rowspan="2">Repository</th>
+        </tr>
+        <tr>
+          <th class="hilite">Environment</th>
+          <th class="hilite">Status</th>
+          <th class="hilite">Time</th>
+          <th class="hilite">Records Rejected</th>
+        </tr>
+        #foreach( $contributor in $collection.contributors)
+           #if($contributor.type == 0) #ContributorRowMacro($contributor) #end
+        #end
+
+        <tr>
+          <th colspan="9">
+            <h3>Existing Contributors</h3>
+          </th>
+        </tr>
+        <tr>
+          <th rowspan="2">Name</th>
+          <th colspan="4" class="hilite spancol">Last Harvest Details</th>
+          <th rowspan="2">Type</th>
+          <th rowspan="2">Schedule</th>
+          <th rowspan="2">Total Records</th>
+          <th rowspan="2">Repository</th>
+        </tr>
+        <tr>
+          <th class="hilite">Environment</th>
+          <th class="hilite">Status</th>
+          <th class="hilite">Time</th>
+          <th class="hilite">Records Rejected</th>
+        </tr>
+         #foreach( $contributor in $collection.contributors)
+           #if($contributor.type == 1) #ContributorRowMacro($contributor) #end
+         #end
+      </table>
+      ###else
+      ##<h4>No Contributors Configured</h4>
+      ###end
+      <div class="clearfix"></div>
+    </div>
+  </div>
+
+</body>
+</html>

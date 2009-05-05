@@ -1,0 +1,17 @@
+#!/bin/bash
+cd ..
+mvn package
+cd scripts
+echo -----------------COMPILING COMPLETE
+echo deleting current deployment folder
+rm -rf ../deployment
+echo copying to ../deployment folder
+mkdir ../deployment
+mkdir ../deployment/HarvesterClient
+mkdir ../deployment/HarvesterProcessor
+mkdir ../deployment/Scheduler
+rsync -r --exclude=.svn ../HarvesterClient/target/HarvesterClient/* ../deployment/HarvesterClient/
+rsync -r --exclude=.svn ../HarvesterProcessor/target/HarvesterProcessor/* ../deployment/HarvesterProcessor/
+rsync -r --exclude=.svn ../Scheduler/target/Scheduler/* ../deployment/Scheduler/
+
+echo ---------------FINISHED COPYING

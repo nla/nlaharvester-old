@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>NLA Harvester</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+	<link rel="stylesheet" type="text/css" href="_css/style.css" media="screen" />
+        <link href="_css/styles.css" media="screen" rel="stylesheet" type="text/css" />
+  <!--[if IE 7]> 
+	<link rel="stylesheet" type="text/css" href="_css/style-ie7.css" media="screen" />
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="_css/print.css" media="print" />
+  <!-- <script type="text/javascript" src="_js/jquery.js"></script> -->
+ <!--  <script type="text/javascript" src="_js/script.js"></script> -->
+<script type="text/javascript">
+    //this sets the value of the form field in div field with the value just selected
+    function select(selected)
+    {
+    }
+    
+    function pick(element)
+    {   
+    }
+</script>
+</head>
+<body class="con">
+  <h1>NLA Harvester</h1>
+  <h2><span>&gt;</span> <a href="ListCollections.htm">Collections</a> <span>&gt;</span> $model.contributor.collection.name <a class="logout" href="Logout.htm">Logout </a><br/><label class="user">$userUtil.userName</label></h2>
+  <div id="container">
+    <ul id="nav">
+      <li><a href="ViewCollection.htm?collectionid=$!{model.contributor.collection.collectionid}">Collection Details</a></li>
+
+      <li class="on"><a href="ListContributors.htm?collectionid=$!{model.contributor.collection.collectionid}">Contributors</a></li>
+      <li><a href="ListHarvests.htm?collectionid=$!{model.contributor.collection.collectionid}">Harvests</a></li>
+      <li><a href="ListReports.htm?collectionid=$!{model.contributor.collection.collectionid}">Reports</a></li>
+    </ul>
+    <ul id="subnav">
+      <li><a href="ViewContributor.htm?contributorid=$!{model.contributor.contributorid}">Contributor Details</a></li>
+      <li><a href="ViewNotes.htm?contributorid=$!{model.contributor.contributorid}">Notes</a></li>
+
+      <li><a href="ViewConnectionSettings.htm?contributorid=$!{model.contributor.contributorid}">Connection Settings</a></li>
+      #if($model.contributor.type == 1)<li><a href="ViewHarvestSchedule.htm?contributorid=$!{model.contributor.contributorid}">Schedule Production Harvest</a></li>#end
+      <li><a href="EditManualHarvest.htm?contributorid=$!{model.contributor.contributorid}">Perform Test Harvest</a></li>
+      <li><a href="ViewProcessingSteps.htm?contributorid=$!{model.contributor.contributorid}">Processing Steps</a></li>
+      <li class="on"><a href="ListHarvestLogs.htm?contributorid=$!{model.contributor.contributorid}">Logs</a></li>
+    </ul>
+
+    <div id="content">
+      <h3>$model.contributor.name</h3>
+      
+      #set($nextpage = $model.pagenumber + 1 )
+      #set($previouspage = $model.pagenumber - 1)
+      #set($displaypagenum = $model.pagenumber + 1)
+      #set($displaytotal = $model.totalpages +1)
+      #if($model.style) #set($style = "&amp;style=xml") #end
+        
+        
+      <p>
+        #if($model.pagenumber != 0) <a href="ViewRecords.htm?harvestid=${model.harvest.harvestid}&amp;page=${previouspage}$!style" > &lt; </a>#end
+        Page $displaypagenum of $displaytotal
+        #if($model.pagenumber != $model.totalpages)<a href="ViewRecords.htm?harvestid=${model.harvest.harvestid}&amp;page=${nextpage}$!style" > > </a>#end
+      </p>
+      <table summary="list of records" class="datatable">
+        <tr>
+          <th>Internal ID</th>
+          <th>Stage</th>
+          <th>Data</th>
+          <th>Download</th>
+        </tr>
+        #foreach($datarow in $model.rows)
+        <tr>
+          <td>$datarow.harvestdataid</td>
+          <td>$datarow.stage</td>
+          <td>
+            <!-- this seems to cause problems when the width is in pixels, so its in chars now. This could result in scaling issues -->
+             ##<!-- <pre>$datarow.data</pre> -->
+             $datarow.data
+             
+          </td>
+          <td>
+            <ul class="buttons">
+              <li><a href="ViewRecord.htm?harvestdataid=${datarow.harvestdataid}">Download Data</a></li>
+            </ul>
+          </td>
+        </tr>
+        #end
+      </table>
+      <p>
+        #if($model.pagenumber != 0) <a href="ViewRecords.htm?harvestid=${model.harvest.harvestid}&amp;page=${previouspage}$!style" > &lt; </a>#end
+        Page $displaypagenum of $displaytotal
+        #if($model.pagenumber != $model.totalpages)<a href="ViewRecords.htm?harvestid=${model.harvest.harvestid}&amp;page=${nextpage}$!style" > > </a>#end
+      </p>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</body>
+
+</html>

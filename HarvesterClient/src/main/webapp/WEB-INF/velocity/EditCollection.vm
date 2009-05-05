@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>NLA Harvester</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+	<link rel="stylesheet" type="text/css" href="_css/style.css" media="screen" />
+  <!--[if IE 7]> 
+	<link rel="stylesheet" type="text/css" href="_css/style-ie7.css" media="screen" />
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="_css/print.css" media="print" />
+  <script type="text/javascript" src="_js/jquery.js"></script>
+  <script type="text/javascript" src="_js/script.js"></script>
+  <script type="text/javascript" src="_js/jquery.validate.js"></script>
+  <script type="text/javascript">
+  <!--
+  
+    $(document).ready(function(){
+      //click any delete buttons if there are no contacts
+      #if($nocontacts == true)
+      #end
+      
+      $("#collectionform").validate(
+          { rules : { name : { required: true, remote: "AjaxValidation.htm?oldname=${collection.name}&type=collectionname" }},
+            messages: { name: { required: "This field is required", remote: "Name already in use" }}}
+          );
+    });
+  -->
+  </script>
+</head>
+<body class="col">
+  <h1>NLA Harvester</h1>
+  <h2><span>&gt;</span> <a href="ListCollections.htm">Collections</a> <span>&gt;</span>$!collection.name <a class="logout" href="Logout.htm">Logout </a><br/><label class="user">$userUtil.userName</label></h2>
+  <div id="container">
+    <ul id="nav">
+      #if(!$newcollection)
+        <li class="on"><a href="ViewCollection.htm?collectionid=${collection.collectionid}">Collection Details</a></li>
+        <li><a href="ListContributors.htm?collectionid=${collection.collectionid}">Contributors</a></li>
+        <li><a href="ListHarvests.htm?collectionid=${collection.collectionid}">Harvests</a></li>
+        <li><a href="ListReports.htm?collectionid=${collection.collectionid}">Reports</a></li>
+      #else
+        <li class="on">Collection Details</li>
+      #end
+    </ul>
+    <div id="content">
+    <form method="post" action="ModifyCollection.htm" id="collectionform">
+      <fieldset class="cloner">
+	<input type="text" style="display:none"  name="collectionid" value="$!collection.collectionid" />
+	<input type="text" style="display:none"  name="editprofile" value="" />
+        <input type="hidden" name="isMainSubmit" value="true" />
+        <legend>#if($newcollection)Add#{else}Edit#{end} Collection</legend>
+
+        <h3>Overview</h3>
+        <dl>
+          <dt>Name: <span class="requiredfield">*</span></dt>
+          <dd><input name="name" type="text" value="$!collectionnameescaped" /></dd>
+          <dt>Description:</dt>
+          <dd><input name="description" type="text" value="$!collectiondescriptionescaped" /></dd>
+          <dt>User Guide:</dt>
+          <dd><input name="userguide" type="text" value="$!collectionuserguideescaped" /><span>URL</span></dd>
+          #if(!$newcollection)
+            <dt>Size:</dt>
+            <dd>#if(!$collection.size)No collection store associated#{else}$!collection.size#{end}</dd>
+          #end
+          <dt>Data Store:</dt>
+          <dd> <select name="outputstage">
+          <option value="-1" #if(!$outputstage)selected="selected"#end>
+            None selected
+          </option>
+            #foreach($os in $outputstages)
+            <option value="$os.psid"
+                    #if($outputstage && ($outputstage.psid == $os.psid))selected="selected"#end>
+              $os.description
+            </option>
+            #end
+          </select>
+          </dd>
+        </dl>
+
+        <h3>Contacts</h3>
+        <ul class="buttons">
+          <li><a href="#" onclick="document.getElementById('collectionform').biggestcontact.value++" class="add">Add a Contact</a></li>
+        </ul>
+	
+	  ## we need to keep track of the number of contacts in the list. defaults to size of contacts set min 1.
+          ## since we don't decrease the count when they remove a contact, its always at least as big as the
+          ## highest used contact index.
+          <input type="text" style="display:none"  name="biggestcontact"
+                 value="#if(!$contacts || $contacts.size() == 0)1#{else}$!contacts.size()#{end}" />
+	
+        <table>
+          <tr>
+            <th>Name: <span class="requiredfield">*</span></th>
+            <th>Job Title</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Notes</th>
+            <th>Type</th>
+            <th></th>
+          </tr>
+	  #foreach( $contact in $contacts)
+	  <input type="text" style="display:none"  name="contactid$velocityCount" value="$!contact.contactid" />
+          <tr class="clone">            
+            <td><input name="name$velocityCount" type="text" value="$!contact.name" class="required"/></td>
+            <td><input name="title$velocityCount" type="text" value="$!contact.jobtitle" /></td>
+            <td><input name="email$velocityCount" type="text" value="$!contact.email" class="required email"/></td>
+            <td><input name="phone$velocityCount" type="text" value="$!contact.phone" /></td>
+            <td><input name="notes$velocityCount" type="text" value="$!contact.note" /></td>
+            <td><select name="type$velocityCount">
+              <option value="0" #if($contact.type == 0 )selected="selected"#end>
+                Business
+              </option>
+              <option value="1" #if($contact.type == 1 )selected="selected"#end>
+                Technical
+              </option>
+            </select></td>
+            <td>
+              <ul class="buttons">
+                <li><a href="#" class="delete">Remove Contact</a></li>
+              </ul>
+            </td>
+          </tr>
+          #end
+          ## the java script copies the last contact line to create a new one when add button is pressed
+          ## so there has to be at least one to begin with.
+          #if($nocontacts == true)
+          <tr class="clone hidden">
+            <td><input disabled="disabled" name="name1" type="text" value="" class="required"/></td>
+            <td><input disabled="disabled" name="title1" type="text" value="" /></td>
+            <td><input disabled="disabled" name="email1" type="text" value="" class="required email"/></td>
+            <td><input disabled="disabled" name="phone1" type="text" value="" /></td>
+            <td><input disabled="disabled" name="notes1" type="text" value="" /></td>
+
+            <td><select disabled="disabled" name="type1">
+              <option value="0">
+                Business
+              </option>
+              <option value="1" selected="selected">
+                Technical
+              </option>
+            </select></td>
+            <td>
+              <ul class="buttons">
+                <li><a href="#" class="delete">Remove Contact</a></li>
+              </ul>
+            </td>
+          </tr>
+          #end
+        </table>
+      </fieldset>
+      <ul class="buttons">
+      #if(!$newcollection)
+        <li><a href="ViewCollection.htm?collectionid=$!{collection.collectionid}" class="cancel">Cancel</a></li>
+      #else
+        <li><a href="ListCollections.htm" class="cancel">Cancel</a></li>
+      #end        
+        <li><input type="submit" name="mainsubmit" class="save" value="Save" /></li>
+      </ul>
+      <p><span class="requiredfield">*</span> Compulsory Field</p>
+      <div class="clearfix"></div>
+    </form>
+    </div>
+  </div>
+</body>
+
+</html>

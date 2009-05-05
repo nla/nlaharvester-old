@@ -1,0 +1,8 @@
+2009-05-04 16:35:42,749 [main] INFO  org.apache.velocity - FileResourceLoader : adding path '.'
+2009-05-04 16:36:35,158 [main] INFO  org.apache.velocity - FileResourceLoader : adding path '.'
+2009-05-04 16:39:14,592 [main] INFO  org.apache.velocity - FileResourceLoader : adding path '.'
+2009-05-05 09:05:41,568 [main] INFO  org.apache.velocity - FileResourceLoader : adding path '.'
+2009-05-05 09:15:46,763 [main] INFO  org.apache.velocity - FileResourceLoader : adding path '.'
+2009-05-05 10:31:55,811 [main] INFO  org.apache.velocity - FileResourceLoader : adding path '.'
+2009-05-05 10:33:38,188 [main] INFO  org.apache.velocity - FileResourceLoader : adding path '.'
+2009-05-05 10:38:51,462 [main] INFO  org.apache.velocity - FileResourceLoader : adding path '.'

@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>NLA Harvester</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+	<link rel="stylesheet" type="text/css" href="_css/style.css" media="screen" />
+  <!--[if IE 7]> 
+	<link rel="stylesheet" type="text/css" href="_css/style-ie7.css" media="screen" />
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="_css/print.css" media="print" />
+  <script type="text/javascript" src="_js/jquery.js"></script>
+  <script type="text/javascript" src="_js/script.js"></script>
+  <script type="text/javascript" src="_js/validation.js"></script>  
+  <script type="text/javascript" src="_js/jquery.validate.js"></script>
+  <script type="text/javascript">
+  <!--
+    $(document).ready(function()
+    {
+      $("#manualharvestform").validate();
+      
+        jQuery.validator.addMethod("formatfuture", function(value, element)
+        {
+          var name = $(element).parent().children("[value='42']").attr("name");
+		if( $("input:radio[ @name='" + name + "']:checked").val() == "42" ) //a magic number for the value of the radio
+			return validateDateFormat(value);  //this adds a minute, over validateDate
+		else return true;
+	}, "This date is not in the correct format (DD.MM.YYYY#if($model.contributor.granularity != 0) HH:MM#{end})");
+      
+        jQuery.validator.addMethod("mydateinfuture", function(value, element)
+        {
+          var name = $(element).parent().children("[value='42']").attr("name");
+		if( $("input:radio[ @name='" + name + "']:checked").val() == "42" ) //a magic number for the value of the radio
+			return validateDate2(value, 1, 0); 
+		else return true;
+	}, "This date is not in the future");
+        
+        jQuery.validator.addMethod("formatpast", function(value, element)
+        {
+          var name = $(element).parent().children("[value='42']").attr("name");
+		if( $("input:radio[ @name='" + name + "']:checked").val() == "42" ) //a magic number for the value of the radio
+			return validateDateFormat#if($model.contributor.granularity == 0)Short#{end}(value);
+		else return true;
+	}, "This date is not in the correct format (DD.MM.YYYY#if($model.contributor.granularity != 0) HH:MM#{end})");
+        
+        jQuery.validator.addMethod("mydateinpast", function(value, element)
+        {
+          var name = $(element).parent().children("[value='42']").attr("name");
+		if( $("input:radio[ @name='" + name + "']:checked").val() == "42" ) //a magic number for the value of the radio
+			return validateDate#if($model.contributor.granularity == 0)Short#{end}(value, 0);
+		else return true;
+	}, "This date is not in the past");
+      
+    });
+  -->
+  </script>
+</head>
+<body class="con">
+  <h1>NLA Harvester</h1>
+  <h2><span>&gt;</span> <a href="ListCollections.htm">Collections</a> <span>&gt;</span> $model.contributor.collection.name <a class="logout" href="Logout.htm">Logout </a><br/><label class="user">$userUtil.userName</label></h2>
+  <div id="container">
+    <ul id="nav">
+      <li><a href="ViewCollection.htm?collectionid=$!{model.contributor.collection.collectionid}">Collection Details</a></li>
+
+      <li class="on"><a href="ListContributors.htm?collectionid=$!{model.contributor.collection.collectionid}">Contributors</a></li>
+      <li><a href="ListHarvests.htm?collectionid=$!{model.contributor.collection.collectionid}">Harvests</a></li>
+      <li><a href="ListReports.htm?collectionid=$!{model.contributor.collection.collectionid}">Reports</a></li>
+    </ul>
+    <ul id="subnav">
+      <li><a href="ViewContributor.htm?contributorid=$!{model.contributor.contributorid}">Contributor Details</a></li>
+      <li><a href="ViewNotes.htm?contributorid=$!{model.contributor.contributorid}">Notes</a></li>
+
+      <li><a href="ViewConnectionSettings.htm?contributorid=$!{model.contributor.contributorid}">Connection Settings</a></li>
+      #if($model.contributor.type == 1)<li><a href="ViewHarvestSchedule.htm?contributorid=$!{model.contributor.contributorid}">Schedule Production Harvest</a></li>#end
+      <li class="on"><a href="EditManualHarvest.htm?contributorid=$!{model.contributor.contributorid}">Perform Test Harvest</a></li>
+      <li><a href="ViewProcessingSteps.htm?contributorid=$!{model.contributor.contributorid}">Processing Steps</a></li>
+      <li><a href="ListHarvestLogs.htm?contributorid=$!{model.contributor.contributorid}">Logs</a></li>
+    </ul>
+
+    <div id="content">
+      <h3>$model.contributor.name</h3>
+      ##<ul class="buttons">
+      ##  <li><a href="Interact.htm?contributorid=${model.contributor.contributorid}&amp;action=deletetestrecords" class="delete">Remove all local Test Records</a></li>
+      ##</ul>
+      
+       <form method="post" action="ModifyManualHarvest.htm" id="manualharvestform">
+      <dl id="manual">
+        <dt>
+	  <!-- have to put these somewhere... -->
+	  <input type="text" style="display:none"  name="contributorid" value="$!model.contributor.contributorid" />
+	  <input type="text" name="delete" style="display:none" value="1" />	  
+	  Last Successful Harvest:
+        </dt>
+
+        <dd>$model.lastsuccessfulharvest</dd>
+        <dt>Begin:</dt>
+        <dd><input name="begin" type="radio" checked="checked" value="1" />Now<br />
+        <input name="begin" type="radio" class="datevalidation" value="42" />At <input name="begindate" type="text" class="required formatfuture mydateinfuture dateformat" value="$!model.now"/></dd>
+        <dt>Records:</dt>
+        <dd>
+
+          <dl class="option active listen2">
+            <dt><label class="choice">
+	    <input name="records" type="radio" checked="checked" value="all" class="broadcast1" />
+	    Several Records</label></dt>
+            <dt class="listen2">Beginning:</dt>
+            <dd>
+              #if($model.lastsuccessfulharvest && $model.lastsuccessfulharvest != "None")
+                <input name="from" class="greyer1" type="radio" checked="checked" value="1" />From the last successful harvest in this environment<br />
+                <input name="from"  class="greyer1" type="radio" value="2" />From the earliest record<br />
+              #else
+                <input name="from"  class="greyer1" type="radio" value="2" checked="checked"/>From the earliest record<br />
+              #end
+              <input name="from"  class="greyer2" type="radio" value="42"/>Since <input name="fromdate" type="text" class="required formatpast mydateinpast dateformat greyee1" value="01.01.1970#if($model.contributor.granularity == 1) 12:00#{end}"/>
+            </dd>
+
+            <dt class="listen2">Ending:</dt>
+            <dd><input name="until" type="radio" class="greyer3" checked="checked" value="1" />At the latest record<br />
+            <input name="until" type="radio"  class="greyer4" value="42" />At <input name="untildate" type="text" class="required formatpast mydateinpast dateformat greyee3" value="#if($model.contributor.granularity == 1)$model.now#{else}$model.shortnow#{end}" /><br />
+            <input name="until" type="radio"  class="greyer3" value="2" />After 50 records</dd>
+          
+          <!--
+	    <dt class="listen2">Delete:</dt>
+            <dd>
+              <input name="delete" type="radio" checked="checked" value="1" />Nothing<br />
+              <input name="delete" type="radio" value="2" />After harvest, delete records that were not harvested<br />
+              <input name="delete" type="radio" value="3" />Before harvest, delete all records
+            </dd>
+	  -->       
+          </dl>
+        </dd>
+	<dd><p class="or">OR</p></dd>
+        <dd>
+          <dl class="right option listen1">
+            <dt><label class="choice"><input name="records" type="radio" value="single" class="broadcast2" />Single Record</label></dt>
+            <dd>OAI ID: <input name="recordid" type="text" disabled="disabled" class="widetext required" /></dd>
+          </dl>
+        </dd>
+
+      </dl>
+      <div class="clearfix"></div>
+      <ul class="buttons">
+        <li><a href="ViewContributor.htm?contributorid=$!{model.contributor.contributorid}" class="cancel">Cancel</a></li>
+        <li><input type="submit" value="Harvest" id="mainsubmit" class="save"/></li>
+        <!--<li><a href="ModifyManualHarvest.htm" class="save">Harvest</a></li> -->
+      </ul>
+      <div class="clearfix"></div>
+      </form>
+    </div>
+  </div>
+</body>
+
+</html>

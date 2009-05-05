@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>NLA Harvester</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+	<link rel="stylesheet" type="text/css" href="_css/style.css" media="screen" />
+  <!--[if IE 7]> 
+	<link rel="stylesheet" type="text/css" href="_css/style-ie7.css" media="screen" />
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="_css/print.css" media="print" />
+  <script type="text/javascript" src="_js/jquery.js"></script>
+  <script type="text/javascript" src="_js/script.js"></script>
+  <script type="text/javascript" src="_js/jquery.validate.js"></script>
+  <script type="text/javascript" src="_js/validation.js"></script>  
+  <script type="text/javascript">
+  <!--
+  
+    $(document).ready(function()
+    {
+      $("#sf").validate();
+
+        jQuery.validator.addMethod("formatfuture", function(value, element)
+        {
+          var name = $(element).parent().children("[value='2']").attr("name");
+		if( $("input:radio[ @name='" + name + "']:checked").val() == "2" ) //a magic number for the value of the radio
+			return validateDateFormat(value);  //adds a minute to the date as well
+		else return true;
+	}, "This date is not in the correct format (DD.MM.YYYY#if($model.contributor.granularity != 0) HH:MM#{end})");
+
+      
+        jQuery.validator.addMethod("mydateinfuture", function(value, element)
+        {
+          var name = $(element).parent().children("[value='2']").attr("name");
+		if( $("input:radio[ @name='" + name + "']:checked").val() == "2" ) //a magic number for the value of the radio
+			return validateDate2(value, 1, 0);  //adds a minute to the date as well
+		else return true;
+	}, "This date is not in the future");
+        
+        jQuery.validator.addMethod("formatpast", function(value, element)
+        {
+          var name = $(element).parent().children("[value='3']").attr("name");
+		if( $("input:radio[ @name='" + name + "']:checked").val() == "3" ) //a magic number for the value of the radio
+			return validateDateFormat#if($model.contributor.granularity == 0)Short#{end}(value);
+		else return true;
+	}, "This date is not in the correct format (DD.MM.YYYY#if($model.contributor.granularity != 0) HH:MM#{end})");
+        
+        jQuery.validator.addMethod("mydateinpast", function(value, element)
+        {
+          var name = $(element).parent().children("[value='3']").attr("name");
+		if( $("input:radio[ @name='" + name + "']:checked").val() == "3" ) //a magic number for the value of the radio
+			return validateDate#if($model.contributor.granularity == 0)Short#{end}(value, 0);
+		else return true;
+	}, "This date is not in the past");
+      
+    });
+  -->
+  </script>
+  
+</head>
+<body class="con">
+  <h1>NLA Harvester</h1>
+  <h2><span>&gt;</span> <a href="ListCollections.htm">Collections</a> <span>&gt;</span> $model.contributor.collection.name <a class="logout" href="Logout.htm">Logout </a><br/><label class="user">$userUtil.userName</label></h2>
+  <div id="container">
+    <ul id="nav">
+      <li><a href="ViewCollection.htm?collectionid=$!{model.contributor.collection.collectionid}">Collection Details</a></li>
+      <li class="on"><a href="ListContributors.htm?collectionid=$!{model.contributor.collection.collectionid}">Contributors</a></li>
+      <li><a href="ListHarvests.htm?collectionid=$!{model.contributor.collection.collectionid}">Harvests</a></li>
+      <li><a href="ListReports.htm?collectionid=$!{model.contributor.collection.collectionid}">Reports</a></li>
+    </ul>
+    <ul id="subnav">
+      <li><a href="ViewContributor.htm?contributorid=$!{model.contributor.contributorid}">Contributor Details</a></li>
+      <li><a href="ViewNotes.htm?contributorid=$!{model.contributor.contributorid}">Notes</a></li>
+      <li><a href="ViewConnectionSettings.htm?contributorid=$!{model.contributor.contributorid}">Connection Settings</a></li>
+      <li class="on"><a href="ViewHarvestSchedule.htm?contributorid=$!{model.contributor.contributorid}">Schedule Production Harvest</a></li>
+      <li><a href="EditManualHarvest.htm?contributorid=$!{model.contributor.contributorid}">Perform Test Harvest</a></li>
+      <li><a href="ViewProcessingSteps.htm?contributorid=$!{model.contributor.contributorid}">Processing Steps</a></li>
+      <li><a href="ListHarvestLogs.htm?contributorid=$!{model.contributor.contributorid}">Logs</a></li>
+    </ul>
+
+    <div id="content">
+    <h3>$model.contributor.name</h3>
+    <h4>Set Schedule</h4>
+    <form method="post" action="ModifySchedule.htm" id="sf">
+	  <p class="enabled">
+            <input type="text" style="display:none"  name="contributorid" value="$!model.contributor.contributorid" />
+            <input type="text" style="display:none"  name="biggesttime" value="#if($model.schedule.times.size() == 0)1#{else}$model.schedule.times.size()#{end}" />
+            <input type="text" style="display:none"  name="biggestdate" value="#if($model.schedule.dates.size() == 0)1#{else}$model.schedule.dates.size()#{end}" />            
+            <label>
+	  <input name="enabled" type="checkbox" #if($model.schedule.isEnabled())checked="checked"#{end} class="broadcast1" />
+	  <strong>Schedule Enabled</strong></label></p>
+      <div id="schedule">
+        <dl class="active option listen1 listen3">
+          <dt class="listen1"><label class="choice">
+	  <input name="period" type="radio" value="weekly" #if($model.schedule.isWeekly())checked="checked"#{end} class="broadcast2" />Weekly</label></dt>
+
+          <dd class="date">On every:</dd>
+          <dd><label><input name="day" value="SUN" type="checkbox" #if($model.schedule.days.SUN)checked="checked"#{end} />Sunday</label></dd>
+          <dd><label><input name="day" value="MON" type="checkbox" #if($model.schedule.days.MON)checked="checked"#{end}/>Monday</label></dd>
+          <dd><label><input name="day" value="TUE" type="checkbox" #if($model.schedule.days.TUE)checked="checked"#{end}/>Tuesday</label></dd>
+          <dd><label><input name="day" value="WED" type="checkbox" #if($model.schedule.days.WED)checked="checked"#{end}/>Wednesday</label></dd>
+          <dd><label><input name="day" value="THU" type="checkbox" #if($model.schedule.days.THU)checked="checked"#{end}/>Thursday</label></dd>
+          <dd><label><input name="day" value="FRI" type="checkbox" #if($model.schedule.days.FRI)checked="checked"#{end}/>Friday</label></dd>
+          <dd><label><input name="day" value="SAT" type="checkbox" #if($model.schedule.days.SAT)checked="checked"#{end}/>Saturday</label></dd>
+        </dl>
+        <p class="or">OR</p>
+        <dl class="right option listen1 listen2 cloner">
+          <dt class="listen1"><label class="choice">
+	  <input name="period" type="radio" value="monthly" class="broadcast3" #if(!$model.schedule.isWeekly())checked="checked"#{end} />Monthy</label></dt>
+        
+          #foreach($date in $model.schedule.dates)
+              <dd class="date disabled clone #if($velocityCount == 1)first#{end}">
+                On the
+                <select name="date$velocityCount" disabled="disabled">
+                  <option value="1" #if($date == 1)selected="selected"#{end}>1st</option>
+                  <option value="2" #if($date == 2)selected="selected"#{end}>2nd</option>
+                  <option value="3" #if($date == 3)selected="selected"#{end}>3rd</option>
+                  #foreach($datenum in [4..31])
+                   <option value="${datenum}" #if($date == $datenum)selected="selected"#{end}>${datenum}th</option>
+                  #end
+                </select> of
+                  <ul class="buttons">
+                  <li><a href="#" class="delete">Remove Day</a></li>
+                  </ul>
+              </dd>
+          #end
+	  <dd class="disabled whichday">
+	    <ul class="buttons">
+              <li><a href="#" onclick="document.getElementById('sf').biggestdate.value++" class="add">Add Another Date</a></li>
+            </ul>
+	  </dd>
+          <dd class="disabled"><label><input #if($model.schedule.months.JAN)checked="checked"#end type="checkbox" disabled="disabled" name="month" value="JAN"/>January</label></dd>
+          <dd class="disabled"><label><input #if($model.schedule.months.FEB)checked="checked"#end type="checkbox" disabled="disabled" name="month" value="FEB"/>February</label></dd>
+          <dd class="disabled"><label><input #if($model.schedule.months.MAR)checked="checked"#end type="checkbox" disabled="disabled" name="month" value="MAR"/>March</label></dd>
+          <dd class="disabled"><label><input #if($model.schedule.months.APR)checked="checked"#end type="checkbox" disabled="disabled" name="month" value="APR"/>April</label></dd>
+          <dd class="disabled"><label><input #if($model.schedule.months.MAY)checked="checked"#end type="checkbox" disabled="disabled" name="month" value="MAY"/>May</label></dd>
+          <dd class="disabled"><label><input #if($model.schedule.months.JUN)checked="checked"#end type="checkbox" disabled="disabled" name="month" value="JUN"/>June</label></dd>
+          <dd class="disabled"><label><input #if($model.schedule.months.JUL)checked="checked"#end type="checkbox" disabled="disabled" name="month" value="JUL"/>July</label></dd>
+          <dd class="disabled"><label><input #if($model.schedule.months.AUG)checked="checked"#end type="checkbox" disabled="disabled" name="month" value="AUG"/>August</label></dd>
+          <dd class="disabled"><label><input #if($model.schedule.months.SEP)checked="checked"#end type="checkbox" disabled="disabled" name="month" value="SEP"/>September</label></dd>
+          <dd class="disabled"><label><input #if($model.schedule.months.OCT)checked="checked"#end type="checkbox" disabled="disabled" name="month" value="OCT"/>October</label></dd>
+          <dd class="disabled"><label><input #if($model.schedule.months.NOV)checked="checked"#end type="checkbox" disabled="disabled" name="month" value="NOV"/>November</label></dd>
+          <dd class="disabled"><label><input #if($model.schedule.months.DEC)checked="checked"#end type="checkbox" disabled="disabled" name="month" value="DEC"/>December</label></dd>
+        </dl>
+      </div>
+      <dl class="cloner listen1">
+      
+        <dt class="listen1">Time of Day</dt>
+        #foreach($time in $model.schedule.times)
+            <dd class="clone #if($velocityCount == 1)first#{end}">
+              <div class="time">
+              <select name="hour${velocityCount}">
+                #foreach($hour in [0..23])
+                  <option value="$hour" #if($time.hour == $hour)selected="selected"#{end}>$hour</option>
+                #end
+              </select> : <select name="minute${velocityCount}">
+                    <option value="0" #if($time.minute == 0)selected="selected"#{end}>00</option>
+                    <option value="15" #if($time.minute == 15)selected="selected"#{end}>15</option>
+                    <option value="30" #if($time.minute == 30)selected="selected"#{end}>30</option>
+                    <option value="45" #if($time.minute == 45)selected="selected"#{end}>45</option>
+              </select>
+              <ul class="buttons">
+                <li><a href="#" class="delete">Remove Time</a></li>
+              </ul>
+              </div>
+            </dd>
+         #end<dd>
+          <ul class="buttons">
+            <li><a href="#" onclick="document.getElementById('sf').biggesttime.value++" class="add">Add Another Time</a></li>
+          </ul>
+	</dd>
+      </dl>
+    
+    <h3>Next Harvest</h3>
+
+    <dl class="listen1">
+        <dt>Begin:</dt>
+        <dd>
+          <input name="begin" class="greyer1" type="radio" #if($model.schedule.begin == 1)checked="checked"#{end} value="1"/>At scheduled time<br />
+          <input name="begin" class="greyer2" type="radio" #if($model.schedule.begin == 2)checked="checked"#{end} value="2"/>At
+          <input name="begindate" type="text" class="required formatfuture mydateinfuture dateformat greyee1" value="#if($model.schedule.begindate)$model.schedule.begindate#{else}$!model.now#{end}" /><br />
+          <br />
+        </dd>
+        <dt>Records Beginning:</dt>
+          <dd>
+            #if($model.lastsuccessfulharvest)
+              <input name="from" class="greyer3 greyer5" type="radio" #if($model.schedule.from == 1)checked="checked"#{end} value="1"/>From the last successful harvest in this environment<br />
+            #end
+            <input name="from" class="greyer3" type="radio" #if($model.schedule.from == 2 || ($model.schedule.from == 1 && (!$model.lastsuccessfulharvest || $model.lastsuccessfulharvest == "None")) )checked="checked"#{end} value="2" />From the earliest record<br />
+            <input name="from" class="greyer4 greyer5" type="radio" #if($model.schedule.from == 3)checked="checked"#{end} value="3"/>Since
+            <input name="fromdate" type="text" class="required formatpast mydateinpast dateformat greyee3" value="#if($model.schedule.fromdate)$model.schedule.fromdate#{else}01.01.1970#if($model.contributor.granularity == 1) 12:00#{end}#{end}" />
+          </dd>
+    <!--
+        <br />
+        <dt>Delete:</dt>
+        <dd><input name="delete" class="greyee5" type="checkbox" #if($model.schedule.isDelete())checked="checked"#{end}/>After harvest, delete records from this contributor that were not updated<br /></dd>
+        <br />
+        -->
+    </dl>
+      <ul class="buttons">
+        <li><a href="ViewHarvestSchedule.htm?contributorid=$!{model.contributor.contributorid}" class="cancel">Cancel</a></li>
+        <li><input type="submit" class="save" value="Save" id="mainsubmit"/></li>
+      </ul>
+
+      <div class="clearfix"></div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

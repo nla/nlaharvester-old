@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>NLA Harvester</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+	<link rel="stylesheet" type="text/css" href="_css/style.css" media="screen" />
+  <!--[if IE 7]> 
+	<link rel="stylesheet" type="text/css" href="_css/style-ie7.css" media="screen" />
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="_css/print.css" media="print" />
+  <script type="text/javascript" src="_js/jquery.js"></script>
+  <script type="text/javascript" src="_js/script.js"></script>
+  <script type="text/javascript" src="_js/jquery.validate.js"></script>
+  <script type="text/javascript" src="_js/validation.js"></script>
+  
+   <script type="text/javascript">
+  <!--
+  
+    function deleteWarning(url) {
+      $("#deleteReportButton").attr('href', url);
+      Harvester.showPopUp(true);
+      return false;
+    }
+  
+    $(document).ready(function()
+    {
+      $("#reportform").validate();
+
+      jQuery.validator.addMethod("dateformat", function(value, element)
+      {
+        return validateDateFormatShort(value);
+      }, "This date is not in the correct format (DD.MM.YYYY)");
+
+      jQuery.validator.addMethod("daterange", function(value, element)
+      {
+        var startdatetxt = $('#startdate').val();
+        var enddatetxt = $('#enddate').val();
+        if(!validateDateFormatShort(startdatetxt) || !validateDateFormatShort(enddatetxt))
+          return false;
+        var startdate = toDate(startdatetxt, 0);
+        var enddate = toDate(enddatetxt, 1);
+        
+        return startdate < enddate;
+          
+      }, "Invalid date range");
+      
+      $("#enddate").blur(function(){
+        $("#reportform").validate().element("#startdate");
+      });
+      
+      if( jQuery.browser.mozilla ) {
+        $("#enddate").keypress(function(){
+          $("#reportform").validate().element("#startdate");
+          return true;
+        });
+      } else {
+        $("#enddate").keydown(function(){
+          $("#reportform").validate().element("#startdate");
+          return true;
+        });
+      }
+
+    });
+  -->
+  </script>
+  
+  
+  
+</head>
+<body>
+  <h1>NLA Harvester</h1>
+  <h2><span>&gt;</span> <a href="ListCollections.htm">Collections</a> <span>&gt;</span>$collection.name <a class="logout" href="Logout.htm">Logout </a><br/><label class="user">$userUtil.userName</label></h2>
+  <div id="container">
+    <ul id="nav">
+      <li><a href="ViewCollection.htm?collectionid=${collection.collectionid}">Collection Details</a></li>
+
+      <li><a href="ListContributors.htm?collectionid=${collection.collectionid}">Contributors</a></li>
+      <li><a href="ListHarvests.htm?collectionid=${collection.collectionid}">Harvests</a></li>
+      <li class="on"><a href="ListReports.htm?collectionid=${collection.collectionid}">Reports</a></li>
+    </ul>
+    <div id="content">
+      
+      
+      
+      <div id="popup">
+        <div class="message">
+          <h3>Delete Report</h3>
+          <p>Are you sure you wish to delete this report?</p>
+          <ul class="buttons">
+            <li><a href="#" class="cancel">Cancel</a></li>
+            <li><a href="#" id="deleteReportButton" class="save">Delete</a></li>
+          </ul>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+      
+      
+      <h3>Generate Report</h3>
+      <form  method="post" action="GenerateReport.htm" id="reportform">
+        <input name="collectionid" type="text" style="display:none" value="${collection.collectionid}" />
+        <dl>
+          <dt>Report: </dt>
+          <dd>
+            <select name="reporttype" class="required">
+              <option value=""></option>
+              #foreach($key in $typemap.keySet())
+                <option value="$key">$typemap.get($key)</option>
+              #end
+            </select>
+          </dd>
+          <dt>Between:</dt>
+          <dd>
+            <input id="startdate" name="startdate" type="text" class="required dateformat daterange" value="$!startdatedefault"/>
+            and
+            <input id="enddate" name="enddate" type="text" class="required dateformat" value="$!enddatedefault" />
+          </dd>
+        </dl>
+        <ul class="buttons">
+          <li><input type="submit" class="save" value="Generate"/></li>
+        </ul>
+      </form>
+        
+      <br />
+      <h3>View Reports</h3>
+      
+      <table>
+        <tr>
+          <th>Time</th>
+          <th>Contributor</th>
+          <th>Type</th>
+          <th>Report Start</th>
+          <th>Report End</th>
+          <th>View</th>
+          <th>Actions</th>
+        </tr>
+        #foreach($r in $reports)
+          <tr>
+            <td>$dateformat.formatFuzzyDate($r.timestamp)</td>
+            <td>
+              #if($r.contributor)
+                <a href="ViewContributor.htm?contributorid=$r.contributor.contributorid">$r.contributor.name</a>
+              #else
+                All
+              #end
+            </td>
+            <td>$typemap.get($r.type)</td>
+            <td>#if($r.startdate)$dateformat.currentTZShortFormat($r.startdate)#end</td>
+            <td>#if($r.enddate)$dateformat.currentTZShortFormat($r.enddate)#end</td>
+            <td><a href="ViewCSVReport.htm?reportid=${r.reportid}">CSV</a></td>
+            <td>
+              <ul class="buttons">
+                <li><a href="DeleteReport.htm?collectionid=${collection.collectionid}&amp;reportid=${r.reportid}"
+                       onclick="return deleteWarning($(this).attr('href'));" class="delete">Remove Report</a></li>
+              </ul>
+            </td>
+          </tr>
+        #end
+      </table>    
+    
+    </div>
+  </div>
+
+</body>
+</html>

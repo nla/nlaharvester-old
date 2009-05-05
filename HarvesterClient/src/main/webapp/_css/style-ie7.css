@@ -1,0 +1,37 @@
+/* CSS BUGS */
+
+.buttons a { position:relative; } /* hasLayout */
+dl { width:100%; } /* WEIRD LINES  */
+dd input[type="text"] { margin-left:-10.5em; } /* DOUBLE MARGIN */
+dl.big dd input[type="text"] { margin-left:-13.5em; } /* DOUBLE MARGIN */
+.buttons input { padding:.3em; width:1%; }
+#manual > dd { float:left; }
+#manual .right { margin-left:-10em; }
+table { display:inline; } /* ROLLOVER JOG */
+
+/* MINOR VISUAL DISCREPENCIES */
+
+.step { position:relative; margin-bottom:-.5em; margin-top:-1.5em; }
+legend { margin-bottom:0; margin-top:-4.3em; }
+input[type="text"] { padding-bottom:0; padding-top:.2em; }
+.con #content { margin-top:0; }
+table h3 small { font-size:0.8em; }
+#content > .buttons:first-child { margin-top:-2em; }
+#content > h3:first-child + .buttons { margin-top:-1em; }
+.con #content h3 + h4 { margin-top:-1em; }
+dd .buttons a, td .buttons a { padding:.2em .3em; }
+#content legend + h3 { margin-top:0; }
+
+#manual .right { margin-top:1em; }
+#manual .or { left:-5em; }
+
+#schedule label { padding:.5em; width:100px; }
+#schedule .date { margin-bottom:2em; }
+#schedule .right dd { float:left; width:100px; }
+#schedule .right .date { float:none; margin-bottom:1em; width:200px; }
+#schedule .right .buttons { clear:both; }
+dd .buttons { margin-top:1em; }
+dd .time .delete, .date .delete { margin:-2.6em 0 0 110px; }
+.date .delete { margin-left:130px; }
+#schedule .right .whichday { margin:0 0 1.2em 0; width:300px; }
+

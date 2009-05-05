@@ -1,0 +1,2 @@
+#if(!$model.data)Empty document was returned.#end
+$!model.data

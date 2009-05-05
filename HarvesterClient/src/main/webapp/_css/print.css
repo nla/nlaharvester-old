@@ -1,0 +1,62 @@
+/* NLA Harvester print CSS stylesheet */
+
+
+body {
+	font-size: 11pt;
+	font-family: Arial, sans-serif;
+}
+
+
+
+/* Hide items */
+
+#nav, #subnav, tr th:last-child, tr td:last-child, h2 span:first-child, dd ul {
+	display: none;
+}
+
+
+
+dt {
+	font-weight: bold;
+	width: 9em;
+	text-align: left;
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+	}
+
+dd {
+	margin-top: -1.75em;
+	padding-left: 0pt;
+	margin-left: 9.5em;
+	text-align: left;	
+	}
+
+ 
+
+table {
+	border-collapse: collapse;
+	width: 100%;
+}
+
+th {
+	color: #FFF;
+	background: #000;
+	text-align: left;
+}
+
+tr {
+	border-bottom: 1px solid #000;
+	vertical-align: baseline;
+}
+
+tr.error {
+	background: #EEE;
+}
+
+tr td:first-child {
+	white-space: nowrap;
+}
+
+th, td {
+	padding: 0.5em;
+}

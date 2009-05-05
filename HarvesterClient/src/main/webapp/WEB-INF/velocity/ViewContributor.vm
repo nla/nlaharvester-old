@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>NLA Harvester</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+	<link rel="stylesheet" type="text/css" href="_css/style.css" media="screen" />
+  <!--[if IE 7]> 
+	<link rel="stylesheet" type="text/css" href="_css/style-ie7.css" media="screen" />
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="_css/print.css" media="print" />
+  <script type="text/javascript" src="_js/jquery.js"></script>
+  <script type="text/javascript" src="_js/script.js"></script>
+
+</head>
+<body class="con">
+  <h1>NLA Harvester</h1>
+  <h2><span>&gt;</span> <a href="ListCollections.htm">Collections</a> <span>&gt;</span> $contributor.collection.name <a class="logout" href="Logout.htm">Logout </a><br/><label class="user">$userUtil.userName</label></h2>
+  <div id="container">
+    <ul id="nav">
+      <li><a href="ViewCollection.htm?collectionid=${contributor.collection.collectionid}">Collection Details</a></li>
+
+      <li class="on"><a href="ListContributors.htm?collectionid=${contributor.collection.collectionid}">Contributors</a></li>
+      <li><a href="ListHarvests.htm?collectionid=${contributor.collection.collectionid}">Harvests</a></li>
+      <li><a href="ListReports.htm?collectionid=${contributor.collection.collectionid}">Reports</a></li>
+    </ul>
+    <ul id="subnav">
+      <li class="on"><a href="ViewContributor.htm?contributorid=${contributor.contributorid}">Contributor Details</a></li>
+      <li><a href="ViewNotes.htm?contributorid=${contributor.contributorid}">Notes</a></li>
+
+      <li><a href="ViewConnectionSettings.htm?contributorid=${contributor.contributorid}">Connection Settings</a></li>
+      #if($contributor.type == 1)<li><a href="ViewHarvestSchedule.htm?contributorid=${contributor.contributorid}">Schedule Production Harvest</a></li>#end
+      <li><a href="EditManualHarvest.htm?contributorid=${contributor.contributorid}">Perform Test Harvest</a></li>
+      <li><a href="ViewProcessingSteps.htm?contributorid=${contributor.contributorid}">Processing Steps</a></li>
+      <li><a href="ListHarvestLogs.htm?contributorid=${contributor.contributorid}">Logs</a></li>
+    </ul>
+
+    <div id="content">
+      <h3>$contributor.name</h3>
+      <div id="popup">
+        <div class="message">
+          <h3>$contributor.name</h3>
+          <dl>
+            <dt>Description:</dt>
+            <dd>$!contributor.description</dd>
+            <dt>Harvest Status:</dt>
+            <dd>#if($contributor.lastharvest)$contributor.lastharvest.status (#if($contributor.type==0)Test#{else}Production#{end}) #end 
+	  </dd>
+          </dl>
+		  		#if($contributor.totalrecords == 0)
+	          <p>Are you sure you wish to delete this contributor?</p>
+	          <ul class="buttons">
+	            <li><a href="#" class="cancel">Cancel</a></li>
+	            <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;collectionid=${contributor.collection.collectionid}&amp;action=deletecontributor" class="save">Delete</a></li>
+	          </ul>
+					#else
+						<p>This contributor can not be deleted since it is still contributing records to this collection.</p>
+						<ul class="buttons">
+	            <li><a href="#" class="cancel">OK</a></li>
+	          </ul>
+					#end
+          <div class="clearfix"></div>
+        </div>
+      </div>
+	  <ul class="buttons">
+        <li><a href="StartEditContributor.htm?contributorid=${contributor.contributorid}">Edit Contributor Details</a></li>
+        #if($contributor.ismonitored != 1)
+          <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=togglemonitor">Monitor Contributor</a></li>
+        #else
+          <li><a class="delete" href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=togglemonitor">Stop Monitoring Contributor</a></li>
+        #end
+	#if($contributor.viewrecordsurl)
+          <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=viewrecords"> View Records </a> </li>
+        #end
+        <li><a href="#" class="delete popup">Delete Contributor</a></li>
+      </ul>
+      <h3>Overview</h3>
+      <dl>
+        <dt>Name:</dt>
+        <dd>$!contributor.name</dd>
+
+        <dt>Description:</dt>
+        <dd>$!contributor.description</dd>
+        <dt>Collection:</dt>
+        <dd><a href="ViewCollection.htm?collectionid=${contributor.collection.collectionid}">$contributor.collection.name</a></dd>
+        <dt>Last Harvest:</dt>
+        <dd>#if($contributor.lastharvest)$contributor.lastharvest.status (#if($contributor.type==0)Test#{else}Production#{end}) #end </dd>
+
+        <dt>Platform:</dt>
+        <dd>$!contributor.platform</dd>
+        
+        <dt>Monitored:</dt>
+        <dd>#if($contributor.ismonitored == 1)Yes#{else}No#{end}</dd>
+        <dt>Type: </dt>
+        <dd>#if($contributor.type == 0)Test#{else}Production#{end}</dd>
+        
+        <dt>Repository:</dt>
+        <dd>
+          <ul class="buttons">
+            #if($contributor.htype==0)
+              <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=identify" class="external">Identify</a></li>
+              <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=listrecords" class="external">List Records</a></li>
+              <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=listrecordsforoneweek" class="external">List records for this week</a></li>
+          <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=listrecordsforonemonth" class="external">List records for this month</a></li>
+            #elseif($contributor.htype==1)
+              <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=starturl"
+                     class="external">Start URL</a></li>
+            #else
+            <!-- no buttons for "other" option -->
+            #end
+          </ul>
+        </dd>
+      </dl>
+      
+      ##since we have two sets of contacts, it makes sense to seperate the display code into a macro
+      #macro( contactmacro $cc $s)
+          <tr>
+          <td>$cc.name</td>
+          <td>$!cc.jobtitle</td>
+          <td>#if($cc.email)<a href="mailto:$!cc.email">$!cc.email#end</a></td>
+          <td>$!cc.phone</td>
+	  <td>$!cc.note</td>
+          <td>#if($s.record== 1)<img src="_img/icon-tick.gif" alt="Yes" />#end</td>
+          <!-- <td>#if($s.harvest == 1)<img src="_img/icon-tick.gif" alt="Yes" />#end</td> -->
+          <td>#if($s.failure == 1)<img src="_img/icon-tick.gif" alt="Yes" />#end</td>
+          <td>#if($s.success == 1)<img src="_img/icon-tick.gif" alt="Yes" />#end</td>
+          <td>#if($cc.type == 0)Business#{else}Technical#{end}</td>
+        </tr>
+      #end
+      
+      
+      <h3>Contacts</h3>
+      <table summary="list ofcontacts" class="contacts">
+        <tr>
+          <th rowspan="2">Name</th>
+          <th rowspan="2">Job Title</th>
+          <th rowspan="2">Email</th>
+          <th rowspan="2">Phone</th>
+          <th rowspan="2">Notes</th>
+          <th colspan="3" class="spancol">Notify On</th> <!-- changed from 4 to remove harvest errors -->
+          <th rowspan="2">Type</th>
+        </tr>
+        <tr>
+          <th>Record Errors</th>
+          <!-- <th>Harvest Errors</th> -->
+          <th>Harvest Failure</th>
+          <th>Harvest Success</th>
+        </tr>
+
+        <tr>
+          <th colspan="10">
+            <h4>From $contributor.name</h4>
+          </th>
+        </tr>
+	#foreach($cc in $contributor.contacts)
+	  #contactmacro($cc $cc)
+	#end
+        <tr>
+          <th colspan="10">
+            <h4>From NLA</h4>
+          </th>
+        </tr>
+	#foreach($cc in $contributor.contactselections)
+	  #contactmacro($cc.contact $cc)
+	#end
+      </table>
+
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</body>
+</html>

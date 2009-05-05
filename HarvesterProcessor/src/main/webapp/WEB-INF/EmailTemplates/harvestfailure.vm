@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    #parse("style.vm")
+</head>
+<body>
+    <p>The National Library of Australia harvester failed to complete a $type harvest from contributor
+    $contributor.name into the $contributor.collection.name collection, on server $serverName.</p>
+
+    #parse("harvestDetails.vm")
+
+    <h3>Harvest Results</h3>
+    #parse("counts.vm")
+    
+    #if($harvestErrors.size() > 0)<h3>Harvest Errors</h3>#end
+    <dl>
+        #foreach($log in $harvestErrors)
+            <dt class="date">$formatter.formatDateTime($log.timestamp)</dt>
+            <dd>$log.description</dd>
+        #end
+    </dl>
+    
+    #if($internal)<p>See the <a href="$viewlogurl">logs</a> for more details </p>    #end
+    
+    <p>This is an automatically generated message. Please do not reply.</p>
+</body>
+</html>

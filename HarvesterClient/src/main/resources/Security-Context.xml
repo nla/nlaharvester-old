@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+  xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd
+              http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-2.0.4.xsd">
+    
+    <http auto-config="false" >
+        <intercept-url pattern="/**" access="ROLE_nlaharvester:administrator" />
+        <!-- ><intercept-url pattern="/Login.html" filters="none"/>  -->
+				<intercept-url pattern="/Login.htm" filters="none"/>  
+        <form-login login-page="/Login.htm" />
+        <logout logout-url="/Logout.htm" logout-success-url="/LogoutBye.html" />
+    </http>
+    
+    <authentication-provider>
+      <user-service>
+        <user name="admin" password="admin" authorities="ROLE_nlaharvester:administrator" />
+      </user-service>
+    </authentication-provider>
+    
+    
+   <!-- <beans:bean id="userManagementSecurityProvider" class="security.UserMgtSecurityProvider">
+	    <custom-authentication-provider/>		
+	    <beans:property name="userManagementServiceUrl" value="${user.management.service.url}"/>
+      <beans:property name="securityConstants" ref="securityConstants"/>
+	    <beans:property name="userDetailsService" ref="userManagementSecurityProvider"/>		
+    </beans:bean>
+    
+    <beans:bean id="securityConstants" class="harvester.client.security.HarvesterSecurityConstants" /> -->
+
+   <!-- <beans:bean id="logoutFilter" class="org.springframework.security.ui.logout.LogoutFilter">
+            <custom-filter position="LOGOUT_FILTER"/>
+            <beans:constructor-arg value="/LogoutBye.html"/>
+            <beans:constructor-arg>
+                    <beans:list>
+                            <beans:bean class="org.springframework.security.ui.logout.SecurityContextLogoutHandler"/>
+                            <beans:ref bean="userManagementSecurityProvider"/>	
+                    </beans:list>
+            </beans:constructor-arg>
+            <beans:property name="filterProcessesUrl" value="/Logout.htm"/>
+    </beans:bean> -->
+    
+</beans:beans>

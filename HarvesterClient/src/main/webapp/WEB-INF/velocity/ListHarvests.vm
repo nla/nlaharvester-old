@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>NLA Harvester</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
+	<link rel="stylesheet" type="text/css" href="_css/style.css" media="screen" />
+  <!--[if IE 7]> 
+	<link rel="stylesheet" type="text/css" href="_css/style-ie7.css" media="screen" />
+	<![endif]-->
+	<link rel="stylesheet" type="text/css" href="_css/print.css" media="print" />
+  <script type="text/javascript" src="_js/jquery.js"></script>
+  <script type="text/javascript" src="_js/script.js"></script>
+  <script type="text/javascript">
+  
+    function acceptContributor(cid) {
+      //change popup's contributor id      
+      $("#contributorid").html(cid);
+
+    //CheckTestProfile.htm?contributorid=
+      jQuery.post('CheckTestProfile.htm', { contributorid: cid }, acceptCallback);
+      //show popup
+      //$('#popup').css('display','block');
+      
+      return false; // so the screen is not moved to the top of the page
+    }
+    
+    function acceptCallback(returned) {
+      
+      if(returned == 'true') {
+        $('#popupHeading').text("Copy processing steps to production?");
+        $('#popupMsg').text("Before Accepting, Copy test processing steps over production processing steps?");
+        $('#copyNo').show();
+      } else {
+        $('#popupHeading').text("Can not copy processing steps to production");
+        $('#popupMsg').text("Unable to copy test steps to production since one or more locked or mandatory steps are disabled. Accept anyway?");
+        $('#copyNo').hide();
+      }
+      
+      $('#popup').css('display','block');
+    }
+    
+    
+    function doAccept(shouldCopy) {
+      url = "Interact.htm?collectionid=${model.collection.collectionid}&action=toggleproduction&contributorid=" + $("#contributorid").html();
+      if(shouldCopy)
+        url = url + "&copyProfile=true";
+        
+      window.location = url;
+      return false;
+    }
+    
+  </script>
+</head>
+<body>
+  <h1>NLA Harvester</h1>
+  <h2><span>&gt;</span> <a href="ListCollections.htm">Collections</a> <span>&gt;</span>$model.collection.name <a class="logout" href="Logout.htm">Logout </a><br/><label class="user">$userUtil.userName</label></h2>
+  <div id="container">
+    <ul id="nav">
+      <li><a href="ViewCollection.htm?collectionid=${model.collection.collectionid}">Collection Details</a></li>
+      <li><a href="ListContributors.htm?collectionid=${model.collection.collectionid}">Contributors</a></li>
+      <li class="on"><a href="ListHarvests.htm?collectionid=${model.collection.collectionid}">Harvests</a></li>
+      <li><a href="ListReports.htm?collectionid=${model.collection.collectionid}">Reports</a></li>
+    </ul>
+    <div id="content">
+
+      <div id="popup">        
+        <div class="message">
+        <span style="display: none" id="contributorid"></span>
+         <h3 id="popupHeading" >Copy processing steps to production?</h3>       
+          <p id="popupMsg">Before Accepting, Copy test processing steps over production processing steps?</p>
+          <ul class="buttons">
+            <li><a href="#" class="cancel">Cancel</a></li>
+            <li><a id="copyNo" href="#" onClick="doAccept(false)" class="cancel">No</a></li>
+            <li><a id="copyYes" href="#" onClick="doAccept(true)" class="save">Yes</a></li>
+          </ul>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+
+      #macro(HeadingMacro $type $sortby)
+        <tr>
+          <th><a class="blacklink" href="ListHarvests.htm?collectionid=${model.collection.collectionid}&amp;${type}=${model.SORT_BY_NAME}$!{model.sortmemory}">
+                 Contributor #if($sortby == $model.SORT_BY_NAME) v #end</a></th>
+          <th><a class="blacklink" href="ListHarvests.htm?collectionid=${model.collection.collectionid}&amp;${type}=${model.SORT_BY_DATE}$!{model.sortmemory}">
+                 Time #if($sortby == $model.SORT_BY_DATE) v #end</a></th>
+          <th><a class="blacklink" href="ListHarvests.htm?collectionid=${model.collection.collectionid}&amp;${type}=${model.SORT_BY_STATUS}$!{model.sortmemory}">
+                 Status #if($sortby == $model.SORT_BY_STATUS) v #end</a></th>
+          <th>Records Rejected</th>
+          <th>Record Count</th>
+          <th>Type</th>
+          <th>View</th>
+          <th>Actions</th>
+          <th>Workflow</th>
+        </tr>
+      #end
+      
+      ##all of a row except the actions bit at the end
+      #macro(PartialRowMacro $h $typemsg $isfuture)
+        <tr #if(!$h.harvestid && !$isfuture)class="never"#end >
+          <td><a href="ViewContributor.htm?contributorid=$h.contributorid">$h.contributorname</a></td>
+          #if($h.harvestid)
+            <td>$h.time</td>
+            <td #if($h.statuscode == $h.FAILED)class="failed"#{end} #if($h.statuscode == $h.RUNNING)class="running"#{end}>$h.status</td>
+            #set($goodpercentage = 100-$h.rejectedpercentage)
+            <td class="rejected" style="background-position:-${h.goodpercentage}px bottom">$h.recordsrejected (${h.rejectedpercentage}%)</td>
+            <td>$h.recordcount</td>
+            #if($h.type == $h.OAI)<td>OAI</td>#end
+            #if($h.type == $h.WEB_CRAWL)<td>Web Crawl</td>#end
+            #if($h.type == $h.OTHER)<td>Other</td>#end
+          #else
+            #if($isfuture)
+            <td colspan="4">#if($h.statuscode == $h.SCHEDULED_DISABLED)<span class="failed">(Disabled)</span>#{end}$h.time</td>
+            #else
+              <td colspan="4">Never had a $typemsg harvest</td>
+            #end
+            #if($h.type == $h.OAI)<td>OAI</td>#end
+            #if($h.type == $h.WEB_CRAWL)<td>Web Crawl</td>#end
+            #if($h.type == $h.OTHER)<td>Other</td>#end
+          #end
+          <td>
+            <ul class="buttons">
+              #if($h.harvestid)
+                <li><a href="ViewHarvest.htm?harvestid=$h.harvestid">Log</a></li>
+                <li><a href="ViewRecords.htm?harvestid=${h.harvestid}&amp;page=0">Records</a></li>
+              #end
+              <li><a href="ViewNotes.htm?contributorid=$h.contributorid" class="notes">Notes</a></li>
+            </ul>
+          </td>
+      #end
+      
+      #macro(ViewAllMacro $categoryname $categoryobject)
+        #if($categoryobject.isOverflowed())
+          <tr><td colspan="9"> <a href="ListHarvests.htm?collectionid=${model.collection.collectionid}&amp;viewall${categoryname}=true$!{model.sortmemory}">View All</a><td></tr>
+        #end
+        #if($categoryobject.isViewall())
+          <tr><td colspan="9"> <a href="ListHarvests.htm?collectionid=${model.collection.collectionid}&amp;viewall${categoryname}=false$!{model.sortmemory}">View Less</a><td></tr>
+        #end
+      #end
+      
+      
+      <table summary="list of harvests" class="harvests">
+        <colgroup>
+          <col /><col /><col /><col /><col /><col />
+          <col width="155px"/>
+          <col width="190px"/>
+          <col />
+        </colgroup>
+        <tr>
+          <th colspan="9">
+            <h3>Test Harvests</h3>
+          </th>
+        </tr>
+        #HeadingMacro("sortTestHarvests" $model.harvests.categories.TestHarvests.sort)
+        
+        #foreach($row in $model.harvests.categories.TestHarvests.Harvests)
+          #PartialRowMacro($row "Test" false)
+            <td>
+              <ul class="buttons">
+                <li><a href="Interact.htm?contributorid=${row.contributorid}&amp;action=listrecords" class="external">#if($row.type == $row.OAI)List Records#{else}Start Page#{end}</a></li> 
+                <li><a href="EditManualHarvest.htm?contributorid=${row.contributorid}">Test Harvest</a></li>            
+              </ul>
+            </td>
+            <td>
+              <ul class="buttons">
+                <li> <a href="#" onClick="acceptContributor(${row.contributorid})" class="accept">Accept</a></li> 
+                <!-- <li><a href="Interact.htm?collectionid=${model.collection.collectionid}&amp;contributorid=${row.contributorid}&amp;action=toggleproduction" class="accept">Accept</a></li> -->
+              </ul>
+            </td>            
+          </tr>      
+        #end
+        #ViewAllMacro("TestHarvests" $model.harvests.categories.TestHarvests)
+        
+        <tr>
+          <th colspan="9">
+            <h3>Production Harvests</h3>
+            <h4>Waiting for a Schedule</h4>
+          </th>
+        </tr>
+        
+        #HeadingMacro("sortUnScheduled" $model.harvests.categories.UnScheduled.sort)
+        
+        #foreach($row in $model.harvests.categories.UnScheduled.Harvests)
+          #PartialRowMacro($row "Production" false)
+            <td>
+              <ul class="buttons">
+                <li><a href="Interact.htm?contributorid=${row.contributorid}&amp;action=harvestnownoschedule" >Harvest Now</a></li>
+                <li><a href="ViewHarvestSchedule.htm?contributorid=${row.contributorid}" >Schedule</a></li>
+              </ul>
+            </td>
+            <td>
+                <ul class="buttons">
+                 <li><a href="Interact.htm?collectionid=${model.collection.collectionid}&amp;action=removeharvest&amp;contributorid=${row.contributorid}" class="delete">Remove</a></li>
+                </ul>
+            </td>            
+          </tr>
+        #end
+        #ViewAllMacro("UnScheduled" $model.harvests.categories.UnScheduled)
+        <tr>
+          <th colspan="9">
+            <h4>From Monitored Contributors</h4>
+          </th>
+        </tr>
+
+        #HeadingMacro("sortMonitored" $model.harvests.categories.Monitored.sort)
+        
+        #foreach($row in $model.harvests.categories.Monitored.Harvests)
+          #PartialRowMacro($row "Production" false)
+            <td>
+              <ul class="buttons">
+                <li><a href="Interact.htm?contributorid=${row.contributorid}&amp;action=listrecords" class="external">#if($row.type == $row.OAI)List Records#{else}Start Page#{end}</a></li>              
+              </ul>
+            </td>
+            <td>
+              <ul class="buttons">
+                <li><a href="Interact.htm?collectionid=${model.collection.collectionid}&amp;contributorid=${row.contributorid}&amp;action=togglemonitor&amp;harvestview=true" class="delete">Stop Monitoring</a></li>
+              </ul>
+            </td>            
+          </tr>
+        #end
+        #ViewAllMacro("Monitored" $model.harvests.categories.Monitored)
+        
+        <tr>
+          <th colspan="9">
+            <h4>Unsuccessful</h4>
+          </th>
+        </tr>     
+        #HeadingMacro("sortUnsuccessful" $model.harvests.categories.Unsuccessful.sort)
+        
+        #foreach($row in $model.harvests.categories.Unsuccessful.Harvests)
+          #PartialRowMacro($row "Production" false)
+            <td>
+              <ul class="buttons">
+                <li><a href="EditManualHarvest.htm?contributorid=${row.contributorid}">Test Harvest</a></li>
+                <li><a href="Interact.htm?collectionid=${model.collection.collectionid}&amp;contributorid=${row.contributorid}&amp;action=togglemonitor&amp;harvestview=true">Monitor</a></li>
+              </ul>
+            </td>
+            <td>
+              <ul class="buttons">
+                <li><a href="Interact.htm?collectionid=${model.collection.collectionid}&amp;action=removeharvest&amp;harvestid=${row.harvestid}&amp;contributorid=${row.contributorid}" class="delete">Remove</a></li>
+              </ul>
+            </td>            
+          </tr>
+        #end
+        #ViewAllMacro("Unsuccessful" $model.harvests.categories.Unsuccessful)
+        <tr>
+          <th colspan="9">
+            <h4 class="collapsed">Recent Successful</h4>
+          </th>
+        </tr>
+        #HeadingMacro("sortRecentSuccessful" $model.harvests.categories.RecentSuccessful.sort)
+        
+        #foreach($row in $model.harvests.categories.RecentSuccessful.Harvests)
+          #PartialRowMacro($row "Production" false)
+            <td>
+            </td>
+            <td></td>
+          </tr>
+        #end
+        #ViewAllMacro("RecentSuccessful" $model.harvests.categories.RecentSuccessful)
+        <tr>
+          <th colspan="9">
+            <h4 class="collapsed">#if($model.scheduleerror)Unable to contact scheduler for schedules#{else}Scheduled#{end}</h4>
+          </th>
+        </tr>
+        <tr>
+          <th><a class="blacklink" href="ListHarvests.htm?collectionid=${model.collection.collectionid}&amp;sortScheduled=${model.SORT_BY_NAME}$!{model.sortmemory}">
+                 Contributor #if( $model.harvests.categories.Scheduled.sort == $model.SORT_BY_NAME) v #end</a></th>
+          <th colspan="4"><a class="blacklink" href="ListHarvests.htm?collectionid=${model.collection.collectionid}&amp;sortScheduled=-${model.SORT_BY_DATE}$!{model.sortmemory}">
+                 Time #if( $model.harvests.categories.Scheduled.sort == $model.SORT_BY_REVERSE_DATE) v #end</a></th>
+          <th>Type</th>
+          <th>View</th>
+          <th>Actions</th>
+          <th>Workflow</th>
+        </tr>
+        
+        #foreach($row in $model.harvests.categories.Scheduled.Harvests)
+          #PartialRowMacro($row "Production" true)
+            <td>
+              <ul class="buttons">
+                <li><a href="Interact.htm?contributorid=${row.contributorid}&amp;action=harvestnow" >Harvest Now</a></li>
+                <li><a href="ViewHarvestSchedule.htm?contributorid=${row.contributorid}" >Schedule</a></li>
+              </ul>
+            </td>
+            <td></td>
+          </tr>
+        #end
+        #ViewAllMacro("Scheduled" $model.harvests.categories.Scheduled)
+        
+      </table>
+      <div class="clearfix"></div>
+
+    </div>
+  </div>
+</body>
+</html>

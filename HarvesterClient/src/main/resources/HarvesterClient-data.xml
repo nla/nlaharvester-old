@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd">
+    
+ 
+ <!-- Hibernate stuff-->
+ <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+  	<property name="driverClassName" value="${db.driver}" />
+  	<property name="url" value="${db.url}" />
+  	<property name="username" value="${db.username}" />
+  	<property name="password" value="${db.password}" />
+  </bean>
+    
+  <bean id="mySessionFactory" class="org.springframework.orm.hibernate3.annotation.AnnotationSessionFactoryBean">
+  	<property name="dataSource" ref="dataSource" />
+  	<property name="annotatedClasses">
+  		<list>
+  		    <value>harvester.data.Harvest</value>
+  		    <value>harvester.data.Profile</value>
+  		    <value>harvester.data.ProfileStepParameter</value>
+  		    <value>harvester.data.ParameterInformation</value>
+  		    <value>harvester.data.ProfileStep</value>
+  		    <value>harvester.data.Step</value>
+  		    <value>harvester.data.HarvestData</value>
+  		    <value>harvester.data.HarvestLog</value>
+  		    <value>harvester.data.Collection</value>
+  		    <value>harvester.data.Contributor</value>
+  		    <value>harvester.data.ContributorContact</value>
+          <value>harvester.data.CollectionContact</value>                
+          <value>harvester.data.Note</value>
+          <value>harvester.data.ParameterOption</value>
+  		    <value>harvester.data.HarvestCluster</value>
+  		    <value>harvester.data.HarvestClusterData</value>
+          <value>harvester.data.ContactSelections</value>
+          <value>harvester.data.StepFile</value>
+          <value>harvester.data.Report</value>
+  		</list>
+  	</property>
+  	<property name="hibernateProperties">
+  	    <value>
+              hibernate.connection.useUnicode=true
+              hibernate.connection.characterEncoding=UTF-8                  
+              hibernate.dialect=org.hibernate.dialect.Oracle9iDialect
+              hibernate.jdbc.batch_size=30
+  	    </value>
+  	</property>
+  </bean>
+    
+    
+    
+    
+    <!-- transaction stuff -->
+    
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"/>
+
+    <bean class="org.springframework.transaction.interceptor.TransactionAttributeSourceAdvisor">
+     <property name="transactionInterceptor" ref="txInterceptor"/>
+    </bean>
+
+    <bean id="txInterceptor" class="org.springframework.transaction.interceptor.TransactionInterceptor">
+        <property name="transactionManager" ref="txManager"/>
+        <property name="transactionAttributeSource">
+            <bean class="org.springframework.transaction.annotation.AnnotationTransactionAttributeSource"/>
+        </property>
+    </bean>
+
+    <bean id="txManager" class="org.springframework.orm.hibernate3.HibernateTransactionManager">
+        <property name="sessionFactory" ref="mySessionFactory" />
+    </bean>
+         <!-- DAO related stuff -->
+    <bean id="collectionDao" class="harvester.client.data.dao.HCollectionDAO">
+        <property name="sessionFactory" ref="mySessionFactory" />
+    </bean>
+    
+    <bean id="contributorDao"
+          class="harvester.client.data.dao.HContributorDAO">
+        <property name="sessionFactory" ref="mySessionFactory" />
+    </bean>
+    
+    <bean id="profileDao"
+          class="harvester.client.data.dao.HProfileDAO">
+        <property name="sessionFactory" ref="mySessionFactory" />
+    </bean>
+        
+    <bean id="noteDao"
+          class="harvester.client.data.dao.HNoteDAO">
+        <property name="sessionFactory" ref="mySessionFactory" />
+    </bean>
+    <bean id="harvestDao"
+          class="harvester.client.data.dao.HHarvestDAO">
+        <property name="sessionFactory" ref="mySessionFactory" />
+    </bean>
+    <bean id="stepDao"
+          class="harvester.client.data.dao.HStepDAO">
+        <property name="sessionFactory" ref="mySessionFactory" />
+    </bean>
+    <bean id="recordDao"
+          class="harvester.client.data.dao.HRecordDAO">
+        <property name="sessionFactory" ref="mySessionFactory" />
+    </bean>
+    <bean id="stepFileDao"
+          class="harvester.client.data.dao.HStepFileDAO">
+        <property name="sessionFactory" ref="mySessionFactory" />
+    </bean>
+    <bean id="reportDao"
+          class="harvester.client.data.dao.HReportDAO">
+        <property name="sessionFactory" ref="mySessionFactory" />
+    </bean>    
+    
+    <bean id="DAOFactoryImpl"
+          class="harvester.client.data.dao.DAOFactoryImpl">
+        <property name="collectionDAO" ref="collectionDao" />
+        <property name="contributorDAO" ref="contributorDao" />
+        <property name="noteDAO" ref="noteDao" />
+        <property name="harvestDAO" ref="harvestDao" />
+        <property name="stepDAO" ref="stepDao" />
+        <property name="profileDAO" ref="profileDao" />
+        <property name="recordDAO" ref="recordDao" />
+        <property name="stepFileDAO" ref="stepFileDao" />
+        <property name="reportDAO" ref="reportDao" />
+    </bean>
+    
+    
+</beans>

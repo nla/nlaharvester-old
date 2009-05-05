@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<schedules>
+<schedule id="1003" enabled="true">
+<description>At 3:15,17:0 every WED,MON,TUE</description>
+<cron>0 02 12 21 05 ? 2008</cron>
+<cron>0 15 3 ? * WED,MON,TUE *</cron>
+<cron>0 0 17 ? * WED,MON,TUE *</cron>
+<jobdetails>
+<detail key="action">start</detail>
+<detail key="type">1</detail>
+<detail key="contributorid">1003</detail>
+<detail key="beginjobat">0 02 12 21 05 ? 2008</detail>
+<detail key="from">LASTRUN</detail>
+<detail key="profileid">1007</detail>
+<detail key="url">http://localhost:8080/HarvesterProcessor</detail>
+<detail key="task">0</detail>
+</jobdetails>
+<lastjob/>
+<nextjob>Wednesday, May 21, 2008 12:02 PM</nextjob>
+</schedule>
+</schedules>
