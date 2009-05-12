@@ -142,6 +142,12 @@
       <artifactId>utils</artifactId>
       <version>1.07.00</version>
     </dependency>
+    <dependency>
+      <groupId>com.sun.jersey</groupId>
+      <artifactId>jersey</artifactId>
+      <version>0.8-ea</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
 
   <build>
