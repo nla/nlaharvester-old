@@ -2,7 +2,6 @@ package harvester.processor.main;
 
 import harvester.processor.task.TaskDispatcher;
 import harvester.processor.task.TaskProcessor;
-import harvester.processor.util.FolderRefresher;
 import harvester.processor.util.HibernateUtil;
 
 import java.io.IOException;
