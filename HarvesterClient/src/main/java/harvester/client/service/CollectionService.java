@@ -3,6 +3,7 @@ package harvester.client.service;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -229,6 +230,26 @@ public class CollectionService {
 		col.setSize(size);	//size can be null
 		daofactory.getCollectionDAO().modifyCollection(col);	
 
+	}
+	
+	public HashMap<String, Contributor> getScheduledContributors(int collectionid) {
+		Collection col = daofactory.getCollectionDAO().getCollectionContributorsAndLastHarvests(collectionid);		
+		Set<Contributor> contributors = col.getContributors();
+		
+		HashMap<String, Contributor> cons = new HashMap<String, Contributor>();
+		
+		for(Contributor con : contributors) {
+			//Does this contributor have a schedule?
+			if(con.getType() != 0 && con.getIsscheduled() != 0) {
+				cons.put(String.valueOf(con.getContributorid()), con);
+			}
+		}
+		
+		return cons;
+	}
+	
+	public List<Harvest> getRunningHarvests(int collectionid) {
+		return daofactory.getCollectionDAO().getRunningHarvests(collectionid);
 	}
 	
 }

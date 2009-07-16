@@ -262,3 +262,21 @@ pre {
 
 .shortnestedheading { margin-right: 0px; margin-top: -3em;}
 .nestedheading { margin-right: 0px;}
+
+.placeholder {
+	-moz-background-clip:border;
+	-moz-background-inline-policy:continuous;
+	-moz-background-origin:padding;background:#DDDDFF url(../_img/button.gif) repeat-x scroll 0 bottom;
+	text-align: center;
+}
+
+.placeholder:hover {
+	background-color:#FFE; 
+	background-image:url("../_img/button-hover.gif"); 
+	cursor:pointer;	
+}
+
+.harvests {
+	width: 1200px;
+}
+

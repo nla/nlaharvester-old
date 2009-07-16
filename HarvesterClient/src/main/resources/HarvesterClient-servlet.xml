@@ -45,6 +45,11 @@
         <property name="harvesterurl" value="${harvesterurl}" />
     </bean>
     
+    <!-- Queue stuff -->
+    <bean id="harvestQueue" class="harvester.client.harvest.HarvestQueue" >
+        <property name="harvesterurl" value="${harvesterurl}" />
+    </bean>
+    
     <!-- session stuff -->
     
     <bean id="sessionconnectionhandler" class="harvester.client.connconfig.SessionConnectionHandler" scope="session">
@@ -66,6 +71,7 @@
     <bean id="OAIOptionProcessor" class="harvester.client.connconfig.actions.OAIOptionProcessor" >
         <property name="setspecid" value="56" />
     </bean>
+    <bean id="Z3950OptionProcessor" class="harvester.client.connconfig.actions.Z3950OptionProcessor" />
     
     <!-- this class holds information on the specific settings for each input stage -->
     <bean id="inputpluginconfigurer" class="harvester.client.connconfig.InputPluginConfigurer">
@@ -84,6 +90,7 @@
         <property name="processors">
             <map>
                  <entry key="harvester.processor.steps.HarvesterThroughWS" value-ref="OAIOptionProcessor" />
+                 <entry key="harvester.processor.steps.HarvestMarcXML" value-ref="Z3950OptionProcessor" />
             </map>
         </property>
         <property name="daofactory" ref="DAOFactoryImpl" /> <!-- it might need database access -->

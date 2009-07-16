@@ -21,7 +21,7 @@ public class StepLoggerImpl implements StepLogger {
 	
 	private static Logger logger = Logger.getLogger(StepLoggerImpl.class);
 	
-	private int MAX_FAILED_RECORDS = 100;
+	private int MAX_FAILED_RECORDS = 10000;
 	
 	private int harvestid;
 	private int failedRecordsLoggedThisHarvest = 0;

@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -106,7 +108,14 @@ public class TaskPool {
 		return 1;
 	}	
    	
-   	
+   	public List<TaskProcessor> getQueuedTasks() {
+   		List<TaskProcessor> queued = new LinkedList<TaskProcessor>();
+   		
+		for(Iterator itor = threadPool.getQueue().iterator(); itor.hasNext();)
+			queued.add((TaskProcessor)itor.next());
+   		
+   		return queued;
+   	}
    	
 	public int stopTask(String harvesterid) {
 		

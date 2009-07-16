@@ -164,8 +164,9 @@ public class ListHarvestsController implements Controller{
 				continue;
 			}
 			
-			
-			if(con.getType() == 0)	//if it is a test contributor, add it to the test list
+			if(con.getLastharvest() != null && con.getLastharvest().getStatuscode() == Harvest.RUNNING)
+				logger.info("running");	//Don't display it here
+			else if(con.getType() == 0)	//if it is a test contributor, add it to the test list
 				harvests.getCategories().get("TestHarvests").getHarvests().add(toHarvestInfo(con));
 			else if(con.getIsscheduled() == 0)
 				harvests.getCategories().get("UnScheduled").getHarvests().add(toHarvestInfo(con));

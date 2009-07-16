@@ -9,116 +9,227 @@
 	<![endif]-->
 	<link rel="stylesheet" type="text/css" href="_css/print.css" media="print" />
   ## if I enable jquery on this page it takes forever to load. must be a problem with jquery.
-  
+  <script type="text/javascript" src="_js/jquery.js"></script>
+  <script type="text/javascript">
+    <!--
+    
+    var newestlogdate = "$!lastDateShown";
+
+    function replacePlaceholder(p) {      
+      var range = $(p).attr('id').substring(5)
+      
+      jQuery.getJSON("GetLogRange.json?harvestid=${harvest.harvestid}&range=" + escape(range),
+        function(data){
+          
+          var last_added = $(p);
+          
+          jQuery.each(data.logs, function(i, item){
+            rowDom = buildLogRow(item);
+            
+            last_added.after(rowDom);
+            $(rowDom).fadeIn("slow");
+            last_added = $(rowDom);
+          });          
+          
+          $(p).hide();
+        });
+      
+    }
+
+    function buildLogRow(item) {
+      if(item.errorlevel == $HarvestLogInfoConst) 
+        row = "<tr>";
+      else
+        row = '<tr class="error">';
+      row += "<td>" + item.timestamp + "</td>\n";
+      row += "<td  class=\"wordwrap\">" + item.description + "</td>\n";
+      row += "<td>";
+      if(item.hasdata == 1) {
+        row += '<ul class="buttons">'
+             + '  <li><a href="ViewRecord.htm?harvestlogid=' + item.harvestlogid + '">View Data</a></li>'
+             + '</ul>';
+      }
+      row += "</td></tr>";
+      rowDom = jQuery(row);
+      rowDom.hide();
+      
+      return rowDom;
+    }
+
+    function isScrollBottom() {
+      var documentHeight = $(document).height();
+      var scrollPosition = $(window).height() + $(window).scrollTop();
+      return (documentHeight == scrollPosition);
+    }
+    
+    function isScrollTop() {
+      return ($(window).scrollTop() == 0);
+    }
+
+    function poll() {
+      jQuery.getJSON("GetNewLogs.json?harvestid=${harvest.harvestid}&fromdate=" + escape(newestlogdate),
+        function(data){
+          var wasAtBottom = isScrollBottom();
+          var wasAtTop = isScrollTop();
+          
+          var rejected = data.totalrecords - data.recordscompleted;
+          var percentage = (data.totalrecords > 0) ? ((rejected * 100.0) / data.totalrecords) : 0;
+          $("#status").text(data.status);
+          $("#totalrecordsread").text(data.totalrecords + data.deletionsread);
+          $("#totalrecords").text(data.totalrecords);
+          $("#updatesrejected").text(rejected + " (" + percentage.toFixed(2) + "%)");
+          $("#deletionsread").text(data.deletionsread);
+          $("#deletionsperformed").text(data.deletionsperformed);
+          $("#duration").text(data.duration);
+          
+          if(data.errors.length > 0) {
+            $(".errortable").show();
+          }
+          
+          $(".errorrow").remove();
+          
+          jQuery.each(data.errors, function(i, item){
+            row='<tr class="errorrow">';
+            row += "<td>" + item.stage + "</td>\n";
+            row += "<td>" + item.error + "</td>\n";
+            row += "<td>" + item.recordcount + "</td>\n";
+            row += "</tr>";
+            rowDom = jQuery(row);
+            $('#errortable tr:last').after(rowDom);
+          })
+          
+          jQuery.each(data.logs, function(i, item){
+            rowDom = buildLogRow(item);
+            $('#logtable tr:last').after(rowDom);
+            $(rowDom).fadeIn("slow");
+            newestlogdate = item.timestamp;
+            
+            //move the screen back to the bottom
+            if(wasAtBottom && !wasAtTop) {
+              $(window).scrollTop($(document).height());
+            }
+            
+          });
+          
+            
+          setTimeout(poll,100); 
+          //poll();
+        });
+
+    }
+    
+    $(document).ready(function(){
+      
+      $('.placeholder').click(function() {
+        replacePlaceholder(this);
+      });
+      
+       poll();
+    });
+      
+    -->
+  </script>      
 </head>
 <body class="con">
   <h1>NLA Harvester</h1>
-  <h2><span>&gt;</span> <a href="ListCollections.htm">Collections</a> <span>&gt;</span> $model.contributor.collection.name <a class="logout" href="Logout.htm">Logout </a><br/><label class="user">$userUtil.userName</label></h2>
+  <h2><span>&gt;</span> <a href="ListCollections.htm">Collections</a> <span>&gt;</span> $contributor.collection.name <a class="logout" href="Logout.htm">Logout </a><br/><label class="user">$userUtil.userName</label></h2>
   <div id="container">
     <ul id="nav">
-      <li><a href="ViewCollection.htm?collectionid=$!{model.contributor.collection.collectionid}">Collection Details</a></li>
+      <li><a href="ViewCollection.htm?collectionid=$!{contributor.collection.collectionid}">Collection Details</a></li>
 
-      <li class="on"><a href="ListContributors.htm?collectionid=$!{model.contributor.collection.collectionid}">Contributors</a></li>
-      <li><a href="ListHarvests.htm?collectionid=$!{model.contributor.collection.collectionid}">Harvests</a></li>
-      <li><a href="ListReports.htm?collectionid=$!{model.contributor.collection.collectionid}">Reports</a></li>
+      <li class="on"><a href="ListContributors.htm?collectionid=$!{contributor.collection.collectionid}">Contributors</a></li>
+      <li><a href="ListHarvests.htm?collectionid=$!{contributor.collection.collectionid}">Harvests</a></li>
+      <li><a href="ListReports.htm?collectionid=$!{contributor.collection.collectionid}">Reports</a></li>
     </ul>
     <ul id="subnav">
-      <li><a href="ViewContributor.htm?contributorid=$!{model.contributor.contributorid}">Contributor Details</a></li>
-      <li><a href="ViewNotes.htm?contributorid=$!{model.contributor.contributorid}">Notes</a></li>
+      <li><a href="ViewContributor.htm?contributorid=$!{contributor.contributorid}">Contributor Details</a></li>
+      <li><a href="ViewNotes.htm?contributorid=$!{contributor.contributorid}">Notes</a></li>
 
-      <li><a href="ViewConnectionSettings.htm?contributorid=$!{model.contributor.contributorid}">Connection Settings</a></li>
-      #if($model.contributor.type == 1)<li><a href="ViewHarvestSchedule.htm?contributorid=$!{model.contributor.contributorid}">Schedule Production Harvest</a></li>#end
-      <li><a href="EditManualHarvest.htm?contributorid=$!{model.contributor.contributorid}">Perform Test Harvest</a></li>
-      <li><a href="ViewProcessingSteps.htm?contributorid=$!{model.contributor.contributorid}">Processing Steps</a></li>
-      <li class="on"><a href="ListHarvestLogs.htm?contributorid=$!{model.contributor.contributorid}">Logs</a></li>
+      <li><a href="ViewConnectionSettings.htm?contributorid=$!{contributor.contributorid}">Connection Settings</a></li>
+      #if($contributor.type == 1)<li><a href="ViewHarvestSchedule.htm?contributorid=$!{contributor.contributorid}">Schedule Production Harvest</a></li>#end
+      <li><a href="EditManualHarvest.htm?contributorid=$!{contributor.contributorid}">Perform Test Harvest</a></li>
+      <li><a href="ViewProcessingSteps.htm?contributorid=$!{contributor.contributorid}">Processing Steps</a></li>
+      <li class="on"><a href="ListHarvestLogs.htm?contributorid=$!{contributor.contributorid}">Logs</a></li>
     </ul>
 
-        #set ( $rejected = ${model.harvest.totalrecords} - ${model.harvest.recordscompleted})
-        #if($model.harvest.totalrecords && $model.harvest.totalrecords > 0)
-          #set ( $percentage = (${rejected} * 100) / ${model.harvest.totalrecords})
+        #set ( $rejected = ${harvest.totalrecords} - ${harvest.recordscompleted})
+        #if($harvest.totalrecords && $harvest.totalrecords > 0)
+          #set ( $percentage = (${rejected} * 100) / ${harvest.totalrecords})
         #else
           #set ( $percentage = 0)
         #end
         
     <div id="content">
-      <h3>$model.contributor.name</h3>
+      <h3>$contributor.name</h3>
       <h3>Summary</h3>
       <dl class="reallybig">
         <dt>Status:</dt>
-        <dd>$!model.harvest.status</dd>
+        <dd id="status">$!harvest.status</dd>
         <dt>Environment:</dt>        
-        <dd>#if($model.harvest.type == 0)Test#{else}Production#{end}</dd>
+        <dd>#if($harvest.type == 0)Test#{else}Production#{end}</dd>
         
         <dt>Total records read:</dt>
-        #set( $totalRecords = ${model.harvest.totalrecords} + ${model.harvest.deletionsread})
-        <dd>$totalRecords</dd>
+        #set( $totalRecords = ${harvest.totalrecords} + ${harvest.deletionsread})
+        <dd id="totalrecordsread">$totalRecords</dd>
         
         <dt>
         <dt>Record updates read:</dt>
         <dd>
-          $!model.harvest.totalrecords
+          <span id="totalrecords" style="font-size:1em; color: black">$!harvest.totalrecords</span>
           <ul class="buttons">
-            <li><a href="ViewRecords.htm?harvestid=${model.harvest.harvestid}&amp;page=0">View Records</a></li>
-            <li><a href="ViewRecords.htm?harvestid=${model.harvest.harvestid}&amp;page=0&amp;style=xml">View Records as XML</a></li>
-            <li><a href="ViewAllRecords.htm?harvestid=${model.harvest.harvestid}">Download All Records</a></li>
-	    #if($model.hasClusters)<li><a href="ViewClusters.htm?harvestid=${model.harvest.harvestid}">View Generated Cluster</a></li>#end
+            <li><a href="ViewRecords.htm?harvestid=${harvest.harvestid}&amp;page=0">View Records</a></li>
+            <li><a href="ViewRecords.htm?harvestid=${harvest.harvestid}&amp;page=0&amp;style=xml">View Records as XML</a></li>
+            <li><a href="ViewAllRecords.htm?harvestid=${harvest.harvestid}">Download All Records</a></li>
+	    #if($hasClusters)<li><a href="ViewClusters.htm?harvestid=${harvest.harvestid}">View Generated Cluster</a></li>#end
           </ul>
         </dd>
 
         <dt>Records updates rejected:</dt>
-        <dd> $!rejected ($!{percentage}%)</dd>
+        <dd id="updatesrejected"> $!rejected ($!{percentage}%)</dd>
         
-        #if($model.errors.size() != 0)
-          <dt>Record Errors:</dt>
-          <dd>
-            <table>
+          <dt class="errortable" #if($errors.size() == 0)style="display:none" #end >Record Errors:</dt>
+          <dd class="errortable" #if($errors.size() == 0)style="display:none" #end >
+            <table id="errortable">
               <tr>
                 <th>Stage</th>
                 <th>Error</th>
                 <th>Record Count</th>
-              </tr>
-              #foreach($error in $model.errors)
-                <tr>
+              </tr>     
+              #foreach($error in $errors)
+                <tr class="errorrow">
                   <td>$error.stepName</td>
                   <td>$error.error</td>
                   <td>$error.recordCount</td>
                 </tr>
-            #end
-            
+              #end      
             </table>
           </dd>
-        #end
         
         <dt>Record deletions read:</dt>
-        <dd>$!model.harvest.deletionsread</dd>
+        <dd id="deletionsread">$!harvest.deletionsread</dd>
         <dt>Record deletions performed:</dt>
-        <dd>$!model.harvest.deletionsperformed</dd>
+        <dd id="deletionsperformed">$!harvest.deletionsperformed</dd>
 
-        
-        #if($model.harvest.statuscode != $model.harvest.RUNNING())
-          <dt>Duration:</dt>        
-          #set( $seconds = $model.duration % 60)
-          #set( $minutes = ($model.duration/60) % 60)
-          #set( $hours = ($model.duration/60/60) % 12)
-          <dd>$!hours hours $!minutes minutes $!seconds seconds</dd>
-        #else
+        <dt>Duration:</dt>   
+        <dd id="duration">$!duration</dd>  
+        #if($harvest.statuscode == $harvest.RUNNING())   
           <dt>Actions:</dt>
           <dd>
             <ul class="buttons">
-            <li><a href="Interact.htm?action=stopharvest&amp;harvestid=${model.harvest.harvestid}&amp;contributorid=${model.contributor.contributorid}">Stop Harvest</a></li>       
+            <li><a href="Interact.htm?action=stopharvest&amp;harvestid=${harvest.harvestid}&amp;contributorid=${contributor.contributorid}">Stop Harvest</a></li>       
             </ul>
           </dd>
         #end
       </dl>
       <h3>Harvest Details</h3>
       <dl>
-        #foreach($prop in $model.props)
+        #foreach($prop in $props)
           <dt>$prop.key</dt>
           <dd>$prop.value</dd>
         #end
       </dl>
       <h3>Log</h3>
-      <table summary="list of log messages" >
+      <table id="logtable" summary="list of log messages" >
         <colgroup>
           <col />
           <col width="900px"/>
@@ -129,17 +240,22 @@
           <th>Message</th>
           <th>Attached Data</th>
         </tr>
-        #foreach($log in $model.logs)
-        <tr #if($log.errorlevel != $log.INFO())class="error"#{end} >
-          <td>$model.dateformat.userformat($log.timestamp)</td>
-          <td class="wordwrap" >$!log.description</td>
-          <td>#if($log.hasdata == 1)
-                <ul class="buttons">
-                 <li><a href="ViewRecord.htm?harvestlogid=${log.harvestlogid}">View Data</a></li>
-                </ul>
-              #end
-          </td>
-        </tr>
+        #foreach($placeholder in $placeholders)
+          <tr class="placeholder" id="range${placeholder.key}" >
+            <td colspan="3" >$placeholder.value</td>
+          </tr>
+        #end
+        #foreach($log in $logs)
+          <tr #if($log.errorlevel != $log.INFO())class="error"#{end} >
+            <td>$dateformat.userformat($log.timestamp)</td>
+            <td  class="wordwrap">$!log.description</td>
+            <td>#if($log.hasdata == 1)
+                  <ul class="buttons">
+                    <li><a href="ViewRecord.htm?harvestlogid=$log.harvestlogid">View Data</a></li>
+                  </ul>
+                #end
+            </td>
+          </tr>
         #end
       </table>
       <div class="clearfix"></div>

@@ -38,12 +38,10 @@ public class Profile implements java.io.Serializable {
 
 	//these correspond to the type field above
 	public static final int OAI = 0;
-	public static final int WEB_CRAWL = 1;
-	public static final int OTHER = 2;
+	public static final int Z3950 = 1;
 	
 	public int OAI() { return OAI;}
-	public int WEB_CRAWL() { return WEB_CRAWL;}
-	public int OTHER() { return OTHER;}
+	public int Z3950() { return Z3950;}
 	
 	//Used by the processor for identifying profiles
 	public static final int TEST_PROFILE = 0;

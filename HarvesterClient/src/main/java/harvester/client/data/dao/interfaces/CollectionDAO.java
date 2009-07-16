@@ -25,5 +25,6 @@ public interface CollectionDAO {
 	public Collection getCollectionAndContacts(int collectionid);
 	public Collection getCollectionAndProfiles(int collectionid);
 	public void modifyCollection(Collection c);
-	
+
+	public List<Harvest> getRunningHarvests(int collectionid);
 }

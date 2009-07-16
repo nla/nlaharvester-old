@@ -101,11 +101,8 @@
               <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=listrecords" class="external">List Records</a></li>
               <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=listrecordsforoneweek" class="external">List records for this week</a></li>
           <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=listrecordsforonemonth" class="external">List records for this month</a></li>
-            #elseif($contributor.htype==1)
-              <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=starturl"
-                     class="external">Start URL</a></li>
             #else
-            <!-- no buttons for "other" option -->
+            <!-- no buttons for other options -->
             #end
           </ul>
         </dd>

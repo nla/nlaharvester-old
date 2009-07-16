@@ -176,4 +176,19 @@ public class HCollectionDAO implements CollectionDAO {
 		return q.list();
 	}
 	
+	@Transactional(readOnly=true)
+	public List<Harvest> getRunningHarvests(int collectionid) {
+		SQLQuery q = sf.getCurrentSession()
+			.createSQLQuery("SELECT * FROM harvest WHERE contributorid in (select c.contributorid from contributor c where c.collectionid=" + 
+							collectionid + ") AND statuscode=" + Harvest.RUNNING)
+			.addEntity(Harvest.class);
+		
+		List<Harvest> running = q.list();
+		for(Harvest h : running) {
+			Hibernate.initialize(h.getContributor());
+		}
+		
+		return running;
+	}
+	
 }

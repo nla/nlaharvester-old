@@ -31,9 +31,6 @@
     <bean name="/ListHarvestLogs.htm" class="harvester.client.web.ListHarvestLogsController">
         <property name="daofactory" ref="DAOFactoryImpl" />
     </bean>
-    <bean name="/ViewHarvest.htm" class="harvester.client.web.ViewHarvestController">
-        <property name="daofactory" ref="DAOFactoryImpl" />
-    </bean>
     <bean name="/ViewHarvestSchedule.htm" class="harvester.client.web.ViewHarvestScheduleController">
         <property name="daofactory" ref="DAOFactoryImpl" />
         <property name="schedulerclient" ref="schedulerclient" />

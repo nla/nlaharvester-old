@@ -61,7 +61,7 @@
  						<td colspan="4" class="hilite never">Never had a harvest</td>
           #end
 
-          <td>#if($contributor.htype==0)OAI#{elseif}($contributor.htype==1)WebCrawl#{else}Other/unset#{end}</td>
+          <td>#if($contributor.htype==0)OAI#{elseif}($contributor.htype==1)Z3950#{else}Other/unset#{end}</td>
           <td>#if($contributor.isscheduled > 0)<img src="_img/icon-tick.gif" alt="Yes" />#end</td>
           <td>$contributor.totalrecords</td>
           <td>
@@ -71,13 +71,8 @@
                      class="external">Identify</a></li>
               <li><a class="external" href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=listrecords">List Records</a></li>
             </ul>
-            #elseif($contributor.htype==1)
-            <ul class="buttons">
-              <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=starturl"
-                     class="external">Start URL</a></li>
-            </ul>
             #else
-            <!-- no buttons for "other" option -->
+            <!-- no buttons for other options -->
             #end
           </td>
         </tr>

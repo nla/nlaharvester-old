@@ -102,14 +102,18 @@ public class ConnectionSettingsService {
 		
 		cs.setStep(cs.getC().getHarveststage().getStep());
 		
-		//TODO: I'm not sure why this is here. CLARIFY why its needed.
+		List<Integer> initialprops = inputpluginconfigurer.getInitialFieldsForInputStage(cs.getStepClassName());
+		
+		//Adds in exiting values to wizard fields
 		for(KeyValue kv : kvs)
 		{
+			logger.info("key:" + kv.getKey() + " value=" + kv.getValue());
 			//any key that should be in the initial map will be in the map we get from inputpluginconfigurer
 			//this is O(n*m) in the two list sizes, but they are both very small.
 			Integer ikey = Integer.valueOf(kv.getKey());
-			if(inputpluginconfigurer.getInitialFieldsForInputStage(cs.getStepClassName()).contains(ikey))
+			if(initialprops != null && initialprops.contains(ikey))
 				cs.getInitialproperties().put(ikey, kv.getValue());
+			
 			cs.getOtherproperties().put(Integer.valueOf(kv.getKey()), kv.getValue());
 		}
 		

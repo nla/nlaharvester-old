@@ -148,6 +148,11 @@
       <version>0.8-ea</version>
       <scope>compile</scope>
     </dependency>
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20080701</version>
+    </dependency>
   </dependencies>
 
   <build>

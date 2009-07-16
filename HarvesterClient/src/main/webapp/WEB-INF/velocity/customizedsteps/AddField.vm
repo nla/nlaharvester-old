@@ -28,7 +28,7 @@
           #end
   
   
-  <script type="text/javascript" src="_js/jquery.js"></script>
+  <script type="text/javascript" src="_js/jquery-1.2.2.js"></script>
   <script type="text/javascript" src="_js/script.js"></script>
   <script type="text/javascript" src="_js/jquery.validate.js"></script>
   <script type="text/javascript">

@@ -83,8 +83,7 @@
                 <dd>
                   #if($profiletype)
                     #if($profiletype == 0)OAI#end
-                    #if($profiletype == 1)Web Crawl#end
-                    #if($profiletype == 2)Other#end
+                    #if($profiletype == 1)Z39.50#end
                   #end
                 </dd> 
               </dd>
@@ -105,8 +104,7 @@
           <dd>
             <select name="profiletype" id="profiletype">
               <option value="0" #if($profiletype == 0)selected="selected"#{end}>OAI</option>
-              <option value="1" #if($profiletype == 1)selected="selected"#{end}>Web Crawl</option>
-              <option value="2" #if($profiletype == 2)selected="selected"#{end}>Other</option>
+              <option value="1" #if($profiletype == 1)selected="selected"#{end}>Z39.50</option>
             </select>    
           </dd>        
           </dl>

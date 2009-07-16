@@ -5,7 +5,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=us-ascii" />
   <style type="text/css"> @import url("_css/style.css"); </style>
   <!--[if IE 7]> <style type="text/css"> @import url("_css/style-ie7.css"); </style> <![endif]-->
-  <script type="text/javascript" src="_js/jquery.js"></script>
+  <script type="text/javascript" src="_js/jquery-1.2.2.js"></script>
   <script type="text/javascript" src="_js/script.js"></script>
   <script type="text/javascript" src="_js/jquery.validate.js"></script>
   <script type="text/javascript">

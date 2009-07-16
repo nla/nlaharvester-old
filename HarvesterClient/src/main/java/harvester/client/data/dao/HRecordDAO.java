@@ -7,6 +7,7 @@ import harvester.data.*;
 import java.util.*;
 
 import org.apache.commons.logging.*;
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Required;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,29 @@ public class HRecordDAO implements RecordDAO{
 	 				.list();				
 		return logs;
 	}
+	
+	@Transactional(readOnly=true)
+	public List<Object> getVisibleHarvestLogsInRange(int harvestid, int start, int end) {
+		Query q = sf.getCurrentSession().createQuery(
+					"select new HarvestLog(harvestlogid, harvestid, timestamp, errorlevel, description, hasdata) " +
+	 				"from HarvestLog as hl where hl.harvestid = " + harvestid + 
+	 				" and hl.errorlevel <> " + HarvestLog.PROP_INFO + " and hl.errorlevel <> " + HarvestLog.REPORT_INFO + 
+	 				" order by hl.harvestlogid asc");	
+		
+		q.setFirstResult(start);
+		q.setMaxResults(end-start);
+		
+		return q.list();
+	}
 
+
+	@Transactional(readOnly=true)
+	public List<Object> getNewHarvestLogs(int harvestid, Date fromdate) {
+		Query q = sf.getCurrentSession().createQuery("select new HarvestLog(harvestlogid, harvestid, timestamp, errorlevel, description, hasdata) " +
+	 				"from HarvestLog as hl where hl.harvestid = :harvestid AND hl.timestamp > :fromdate order by hl.harvestlogid asc");
+		q.setInteger("harvestid", harvestid);
+		q.setTimestamp("fromdate", fromdate);
+		return q.list();
+	}
 	
 }

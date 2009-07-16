@@ -60,7 +60,7 @@ public class InputPluginConfigurer {
 	 * wizard. 
 	 * @param stepid the step they selected on the first page of the wizard, specifically the harvest type we are using
 	 * @param c a contributor data object.
-	 * @return A step parameter view list of the initial parameters.
+	 * @return A step parameter view list of the initial parameters.Returns null if no first step configuration is needed.
 	 */
 	public List<StepParameterView> getInitialParameters(String stepname, int stepid, Contributor c)
 	{
@@ -77,6 +77,9 @@ public class InputPluginConfigurer {
 			pis = s.getPis();
 		}
 		List<Integer> initials = getInitialFieldsForInputStage(stepname);
+		
+		if(initials == null)
+			return null;
 		
 		for(ParameterInformation pi : pis)
 		{

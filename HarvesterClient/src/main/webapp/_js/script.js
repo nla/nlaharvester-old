@@ -71,7 +71,7 @@ Harvester.toggleGrey = function(broadcaster, n, disable) {
 
 
 Harvester.toggleDisabler = function() {
-	// LIMITED TO 6 BROADCASTERS/LISTENERS: broadcaster1 to broadcaster6
+	// LIMITED TO 8 BROADCASTERS/LISTENERS: broadcaster1 to broadcaster8
 	for (i=8; i>=1; i--) {
 		$('.broadcast'+i).each(function(){
 			if ((!this.checked && this.type=='radio') || (this.checked && this.type=='checkbox')) {

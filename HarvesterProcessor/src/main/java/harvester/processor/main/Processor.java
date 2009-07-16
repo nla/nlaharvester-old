@@ -89,12 +89,12 @@ import org.apache.log4j.Logger;
 			return;
 		}
 		
-//		if(action.equals("list")) {
-//			response.setCharacterEncoding("UTF-8");
-//			response.setContentType("text/xml");
-//			listQueue(response.getWriter());
-//			response.setStatus( HttpServletResponse.SC_OK);
-//		}
+		if(action.equals("list")) {
+			response.setCharacterEncoding("UTF-8");
+			response.setContentType("text/xml");
+			dispatcher.listQueue(response.getWriter());
+			response.setStatus( HttpServletResponse.SC_OK);
+		}
 		
 		if(action.equals("start")) {
 			HashMap<String, Object> params = new HashMap<String, Object>();

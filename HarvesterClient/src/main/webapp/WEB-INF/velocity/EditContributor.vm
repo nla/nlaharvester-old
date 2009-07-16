@@ -110,13 +110,13 @@
             </select></dd>
           #end
           
-          #if(!$new)
-          <dt>Repository:</dt>
-          <dd><ul class="buttons">
-            <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=identify" class="external">Identify</a></li>
-            <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=listrecordsforoneweek" class="external">View records for this week</a></li>
-            <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=listrecordsforonemonth" class="external">View records for this month</a></li></ul>
-          </dd>
+          #if(!$new && $contributor.htype == 0)
+            <dt>Repository:</dt>
+            <dd><ul class="buttons">
+              <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=identify" class="external">Identify</a></li>
+              <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=listrecordsforoneweek" class="external">View records for this week</a></li>
+              <li><a href="Interact.htm?contributorid=${contributor.contributorid}&amp;action=listrecordsforonemonth" class="external">View records for this month</a></li></ul>
+            </dd>
           #end
         </dl>
           

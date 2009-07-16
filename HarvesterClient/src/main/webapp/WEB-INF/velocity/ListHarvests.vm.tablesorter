@@ -32,107 +32,111 @@
       '   <li><a href="Interact.htm?contributorid=' + contributorid + '&action=harvestnownoschedule" >Harvest Now</a></li>' +
       '   <li><a href="ViewHarvestSchedule.htm?contributorid=' + contributorid + '" >Schedule</a></li>' +
       '  </ul>' +
-      '</td>';
-      //'<td>' +
+      '</td>' +
+      '<td>' +
       //'   <ul class="buttons">' + 
       //'    <li><a href="Interact.htm?collectionid=${model.collection.collectionid}&action=removeharvest&contributorid=' + contributorid + 
       //'" class="delete">Remove</a></li>' + 
       //'   </ul>' + 
-      //'</td>';
+      '</td>';
     }
 
     function pollQueue() {
       jQuery.getJSON("GetQueue.json?collectionid=${model.collection.collectionid}",
-        function(data){
-          
+        function(data){      
           $(".queue-row").remove();
-  
-          //sort
-          data.queue.sort(function(a,b) {
-            return a.position - b.position;
-          })
   
           jQuery.each(data.queue, function(i, item){
             //add another queue row
             row='<tr class="queue-row">';
-            row += "<td>" + item.position + "</td>\n";            
             row += "<td><a href=\"ViewContributor.htm?contributorid=" + item.contributorid + "\" >" 
                 + item.contributorname + "</a></td>\n";
+            row += "<td>" + item.position + "</td>\n";
+            row += "<td />";
             row += "<td>" + item.type + "</td>\n";                
             row += "</tr>";
             rowDom = jQuery(row);
             $('#queue-table tbody').append(rowDom);
           });
           
+          $("#queue-table").trigger("update"); 
+          $("#queue-table").trigger("sorton", [getSortList("queue-table")]); 
           setTimeout(pollQueue,2000); 
         });
     }
     
     function pollSchedule() {
       jQuery.getJSON("GetSchedules.json?collectionid=${model.collection.collectionid}",
-        function(data){
-          
-          $(".schedule-row").remove();
-  
-          //sort
-          data.scheduled.sort(function(a,b) {
-            return a.unixtime - b.unixtime;
-          })
-  
+        function(data){        
           jQuery.each(data.scheduled, function(i, item){
+            function addRow() {
+              row='<tr class="schedule-row schedule-mark contributor' + item.contributorid + '">';
+              row += "<td><a href=\"ViewContributor.htm?contributorid=" + item.contributorid + "\" >" 
+                  + item.contributorname + "</a></td>\n";
+              row += "<td>" + item.time + "</td>\n";
+              row += "<td>" + item.type + "</td>\n";  
+              row += viewBlock(item.contributorid, null);              
+              row += prodActionWorkflowBlock(item.contributorid);
+              row += "</tr>";
+              rowDom = jQuery(row);
+              $('#schedule-table tbody').append(rowDom);
+            };
+            
             //add another schedule row
-            row='<tr class="schedule-row">';
-            row += "<td><a href=\"ViewContributor.htm?contributorid=" + item.contributorid + "\" >" 
-                + item.contributorname + "</a></td>\n";
-            row += "<td>" + item.time + "</td>\n";
-            row += "<td>" + item.type + "</td>\n";  
-            row += viewBlock(item.contributorid, null);              
-            row += prodActionWorkflowBlock(item.contributorid);
-            row += "</tr>";
-            rowDom = jQuery(row);
-            $('#schedule-table tbody').append(rowDom);
+            var existing = $(".contributor" + item.contributorid);
+            if(existing == 0) {
+              addRow();
+            } else {
+              if($(".contributor" + item.contributorid + ":contains(" + item.time + ")") == 0) {
+                existing.remove();
+                addRow();                
+              } else {
+                //mark for non-deletion
+                exists.addClass("schedule-mark");
+              }
+            }
+            
+            $(".schedule-row:not(.schedule-mark)").remove();
+            $(".schedule-mark").removeClass("schedule-mark");
+            
           });
           
+          $("#schedule-table").trigger("update"); 
+          $("#schedule-table").trigger("sorton", [getSortList("schedule-table")]); 
           setTimeout(pollSchedule,2000); 
         });
     }
     
-    function pollRunning() {
-      jQuery.getJSON("GetRunning.json?collectionid=${model.collection.collectionid}",
-        function(data){
-          
-          $(".running-row").remove();
-  
-          //sort
-          data.running.sort(function(a,b) {
-            return a.unixtime - b.unixtime;
-          })
-  
-          jQuery.each(data.running, function(i, item){
-            //add another schedule row
-            row='<tr class="running-row">';
-            row += "<td><a href=\"ViewContributor.htm?contributorid=" + item.contributorid + "\" >" 
-                + item.contributorname + "</a></td>\n";
-            row += "<td>" + item.time + "</td>\n";
-            row += "<td class=\"running\">" + item.status + "</td>\n"; 
-            row += '<td class="rejected" style="background-position:-' + item.goodpercentage + '}px bottom">' 
-                + item.recordsrejected + " (" + item.rejectedpercentage + ")</td>\n"; 
-            row += "<td>" + item.recordcount + "</td>\n"; 
-            row += "<td>" + item.type + "</td>\n";  
-            row += viewBlock(item.contributorid, item.harvestid);              
-            row += prodActionWorkflowBlock(item.contributorid);
-            row += "</tr>";
-            rowDom = jQuery(row);
-            $('#running-table tbody').append(rowDom);
-          });
-          
-          setTimeout(pollRunning,2000); 
-        });
+    function getSortList(tablename) {
+      var element = $("#" + tablename + " .headerSortUp,.headerSortDown");
+      var column_num = 1; //default
+      for(i=0; i <= 10; i++) {
+        if(element.hasClass("th" + i))
+          column_num = i;
+      }
+        
+      if(element.hasClass("headerSortUp"))
+        return [[column_num, 1]];
+      else
+        return [[column_num, 0]];
     }
-    
   
     $(document).ready(function(){
-      pollRunning();
+      $("#schedule-table").tablesorter({
+            debug: true,
+            headers: { 0: {sorter: false},
+                       1: {sorter: 'text'},
+                       2: {sorter: 'text'},
+                       3: {sorter: false},
+                       4: {sorter: false},
+                       5: {sorter: false},
+                       6: {sorter: false}}}); 
+      $("#queue-table").tablesorter({
+                             debug: true,
+                             headers: { 0: {sorter: false}, 
+                                        1: {sorter: 'text'},
+                                        2: {sorter: 'text'},
+                                        3: {sorter: false}}});      
       pollQueue();      
       pollSchedule();
     });
@@ -141,7 +145,7 @@
       //change popup's contributor id      
       $("#contributorid").html(cid);
 
-      //CheckTestProfile.htm?contributorid=
+    //CheckTestProfile.htm?contributorid=
       jQuery.post('CheckTestProfile.htm', { contributorid: cid }, acceptCallback);
       //show popup
       //$('#popup').css('display','block');
@@ -263,11 +267,10 @@
       
       <table summary="list of harvests" class="harvests" id="harvest-table">
         <colgroup>
-          <col /><col /><col /><col /><col />
-          <col width="30"/>
+          <col /><col /><col /><col /><col /><col />
           <col width="155px"/>
           <col width="190px"/>
-          <col width="75px"/>
+          <col />
         </colgroup>
         <tr>
           <th colspan="9">
@@ -385,85 +388,44 @@
         #ViewAllMacro("RecentSuccessful" $model.harvests.categories.RecentSuccessful)
         
         </table>
-  
-        <table class="harvests" id="running-table">
-          <colgroup>
-            <col /><col /><col /><col /><col />
-            <col width="30"/>
-            <col width="155px"/>
-            <col width="265px"/>
-          </colgroup>
-          <thead>
-            <tr>
-              <th colspan="8">
-                <h4>Running</h4>
-              </th>
-            </tr>
-            <tr>
-              <th>Contributor</th>
-              <th>Start Time</th>  
-              <th>Status</th>            
-              <th>Records Rejected</th>
-              <th>Record Count</th>
-              <th>Type</th>
-              <th>View</th>
-              <th>Actions</th>              
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-  
-        <!-- Queued -->
-        <table class="harvests" id="queue-table">
-          <colgroup>
-            <col width="50px"/>
-            <col />
-            <col width="50px"/>
-          </colgroup>
-          <thead>
-          <tr>
-            <th colspan="3">
-              <h4>Queued</h4>
-            </th>
-          </tr>
-          <tr id="queue-heading">
-            <th>Position</th>
-            <th>Contributor</th>
-            <th>Type</th>
-          </tr>  
-          </thead>
-          <tbody>
-          </tbody>                  
-      </table>
-      
-      <!-- Scheduled -->
-      
-      <table class="harvests" id="schedule-table">
-        <colgroup>
-          <col /><col />
-          <col width="30"/>
-          <col width="155px"/>
-          <col width="265px"/>
-        </colgroup>
+        <table class="harvests" id="schedule-table">
+        <!-- Scheduled -->
         <thead>        
         <tr>
-          <th colspan="5">
+          <th colspan="9">
             <h4>Scheduled</h4>
           </th>
         </tr>
         <tr id="scheduled-header">
-          <th>Contributor</th>
-          <th>Time</th>
+          <th class="th1">Contributor</a></th>
+          <th class="th2">Time</a></th>
           <th>Type</th>
           <th>View</th>
           <th>Actions</th>
+          <th>Workflow</th>
         </tr>
         </thead>
         <tbody>
         </tbody>
+        </table>
+        
+        <!-- Queue -->
+        <table class="harvests" id="queue-table">
+        <thead>
+        <tr>
+          <th colspan="9">
+            <h4>Queued</h4>
+          </th>
+        </tr>
+        <tr id="queue-heading">
+          <th class="th1">Contributor</th>
+          <th class="th2">Position</th>
+          <th class="th4">Type</th>
+        </tr>  
+        </thead>
+        <tbody>
+        </tbody>                  
       </table>
-      
       <div class="clearfix"></div>
 
     </div>

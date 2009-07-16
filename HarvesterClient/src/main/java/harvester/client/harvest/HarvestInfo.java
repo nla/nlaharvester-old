@@ -28,8 +28,7 @@ public class HarvestInfo {
 	private int sortingby;
 	
 	public static final int OAI = Profile.OAI;
-	public static final int WEB_CRAWL = Profile.WEB_CRAWL;
-	public static final int OTHER = Profile.OTHER;
+	public static final int Z3950 = Profile.Z3950;
 	
 	public static final int SUCCESSFUL = Harvest.SUCCESSFUL;
 	public static final int RUNNING = Harvest.RUNNING;
@@ -102,12 +101,10 @@ public class HarvestInfo {
 	public static int getOAI() {
 		return OAI;
 	}
-	public static int getWEB_CRAWL() {
-		return WEB_CRAWL;
+	public static int getZ3950() {
+		return Z3950;
 	}
-	public static int getOTHER() {
-		return OTHER;
-	}
+
 	public Integer getHarvestid() {
 		return harvestid;
 	}

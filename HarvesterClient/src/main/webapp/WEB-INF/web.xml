@@ -50,6 +50,10 @@
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>HarvesterClient</servlet-name>
+    <url-pattern>*.json</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>HarvesterClient</servlet-name>
     <url-pattern>/ListCollections.htm</url-pattern>
   </servlet-mapping>
   <servlet-mapping>

@@ -55,8 +55,7 @@ public class Contributor implements java.io.Serializable {
 	private Date dateadded;
 
 	public static final int OAI = 0;
-	public static final int WEB_CRAWL = 1;
-	public static final int OTHER = 2;
+	public static final int Z3950 = 1;
 	
 	public static final int THIS_IS_FIRST_HARVEST = 0;
 	public static final int NOT_FIRST_HARVEST = 1;

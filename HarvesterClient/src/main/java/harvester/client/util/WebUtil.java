@@ -17,8 +17,8 @@ public class WebUtil {
 
     protected static final Log logger = LogFactory.getLog(WebUtil.class);
 	
-    private DateFormat formatter;
-    private DateFormat shortformatter;
+    public DateFormat formatter;
+    public DateFormat shortformatter;
     
     //currently only used in EditScheduling, but should be used in more places
 	public static int getIntFieldOrError(String fieldname, HttpServletRequest request) throws Exception

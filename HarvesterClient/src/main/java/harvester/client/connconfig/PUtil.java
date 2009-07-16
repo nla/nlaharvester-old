@@ -127,11 +127,12 @@ public class PUtil {
 		LinkedList<KeyValue> kvs = new LinkedList<KeyValue>();
 		for(Step s : steps)
 		{
-			boolean hasDP = false;
+			logger.info("checking s:" + s.getClassname());
+			boolean hasDP = true;
 			//check that this steps htype is the same as one of the default profile's htypes
-			for(Profile dp : dps)
-				if(ipc.getProcessors().get(s.getClassname()) != null && dp.getType() == ipc.getProcessors().get(s.getClassname()).getHtype())
-					hasDP = true;
+			//for(Profile dp : dps)
+			//	if(ipc.getProcessors().get(s.getClassname()) != null && dp.getType() == ipc.getProcessors().get(s.getClassname()).getHtype())
+			//		hasDP = true;
 				
 			//if there is no possibly input stages, we should probably just default to OAI
 			//TODO: should this reference OAI, or do we want a different behavior?

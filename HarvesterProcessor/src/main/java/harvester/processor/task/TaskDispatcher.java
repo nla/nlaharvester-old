@@ -4,9 +4,13 @@ import harvester.data.Collection;
 import harvester.processor.data.dao.DAOFactory;
 import harvester.processor.util.HibernateUtil;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletContext;
 
@@ -125,31 +129,30 @@ public class TaskDispatcher {
 		return running;
 	}
 	
-//	private void listQueue(Writer out) throws IOException {
-//		logger.info("printing queue list");
-//		
-//		// its helpful for debugging to have this information
-//		logger.info("running harvest's contributors:");
-//		for(Integer contributorid : runningContributors)
-//			logger.info("harvesting for contributor: " + contributorid);
-//		logger.info("\n");
-//		
-//		int i = 0;
-//
-//		out.append("<?xml version='1.0'?>\n");
-//		out.append("<queue>\n");
-//		for(Iterator itor = threadPool.getQueue().iterator(); itor.hasNext(); i++) {
-//			//logger.info("position " + i + " : contributor id = " + ((TaskProcessor)itor.next()).getContributorid());
-//			TaskProcessor task = (TaskProcessor)itor.next();
-//			out.append("<harvest position='" + i + 
-//					"' profileid='" + task.getProfileid() + 
-//					"' type='" + task.getType() + 
-//					"' from='" + task.getFrom() == null ? "" : task.getFrom() + 
-//					"' until='" + task.getUntil() == null ? "" : task.getUntil() + 
-//					"' contributorid='" + task.getContributorid() + "' />\n");
-//		}
-//		out.append("</queue>");
-//		out.close();
-//	}
+	public void listQueue(Writer out) throws IOException {
+		logger.info("printing queue list");
+
+		out.append("<?xml version='1.0'?>\n");
+		out.append("<queue>\n");
+		
+		for(Entry<Integer, TaskPool> entry : pools.entrySet()) {
+			List<TaskProcessor> queued = entry.getValue().getQueuedTasks();
+			int i = 0;
+			
+			for(TaskProcessor task : queued) {
+				i++;
+				out.append("<harvest position=\"" + i + 
+						"\" profileid=\"" + task.getProfileid() + 
+						"\" type=\"" + task.getType() + 
+						"\" from=\"" + (task.getFrom() == null ? "" : task.getFrom()) + 
+						"\" until=\"" + (task.getUntil() == null ? "" : task.getUntil()) + 
+						"\" contributorid=\"" + task.getContributorid() + 
+						"\" collectionid=\"" + entry.getKey() + "\" />\n");
+			}
+			
+		}
+		out.append("</queue>");
+		out.close();
+	}
 	
 }

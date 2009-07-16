@@ -9,6 +9,7 @@ import harvester.client.connconfig.StepParameterView;
 import harvester.client.service.ConnectionSettingsService;
 import harvester.client.service.ContributorService;
 import harvester.client.util.ControllerUtil;
+import harvester.client.util.EscapeHTML;
 import harvester.client.util.KeyValue;
 import harvester.data.Contributor;
 
@@ -90,7 +91,7 @@ public class ConnectionSettingsController {
     }
     
     @RequestMapping("/EditConnectionSettingsStep2.htm")
-    public String editConnectionSettingsStep2(@RequestParam("contributorid") int contributorid, Map model) {
+    public String editConnectionSettingsStep2(@RequestParam("contributorid") int contributorid, WebRequest request, Map model) {
     	
     	ConnectionSettings cs = connectionSettingsService.getConnectionSettingsFromSession(contributorid);
     	
@@ -101,16 +102,22 @@ public class ConnectionSettingsController {
 		
 		List<StepParameterView> parameters = connectionSettingsService.getInitialParameters(cs);
 
-		//if any parameters have been selected already we fill that in from the session's settings
-		for(StepParameterView sp : parameters) {
-			String value = cs.getInitialproperties().get(sp.getId());
-			if( value != null)
-				sp.setValue(value);
+		if(parameters == null) {
+			//return persistConnectionSettingsStep2(contributorid, request);
+			return "redirect:EditConnectionSettingsStep3.htm?new=true&contributorid=" + contributorid;
+		} else {
+			
+			//if any parameters have been selected already we fill that in from the session's settings
+			for(StepParameterView sp : parameters) {
+				String value = cs.getInitialproperties().get(sp.getId());
+				if( value != null)
+					sp.setValue(value);
+			}
+			
+			model.put("parameters", parameters);
+			
+	    	return "EditConnectionSettingsStep2"; 
 		}
-		
-		model.put("parameters", parameters);
-		
-    	return "EditConnectionSettingsStep2"; 
     }
     
     @RequestMapping("/PersistConnectionSettingsStep2.htm")
@@ -137,8 +144,12 @@ public class ConnectionSettingsController {
 		
 		List<StepParameterView> parameters = connectionSettingsService.getAllParameters(cs);
     	
+		logger.info("other parameters num: " + cs.getOtherproperties().size());
+
 		for(StepParameterView sp : parameters) {
+			logger.info("Step3: param: sp.id=" + sp.getId() + " name=" + sp.getName());
 			String value = cs.getOtherproperties().get(sp.getId());
+			logger.info("value: " + value);
 			if( value != null)
 				sp.setValue(value);
 		}
@@ -151,6 +162,11 @@ public class ConnectionSettingsController {
 		//a new contributor's settings wizard. So we need to handle it here
 		if(cs.isNewContributor()) 
 			parameters.add(connectionSettingsService.buildViewOfProfileAsParameter(contributorid));
+		
+		//do escaping
+		for(StepParameterView sp : parameters) {
+			sp.setValue(EscapeHTML.forHTML(sp.getValue()));
+		}
 		
 		model.put("parameters", parameters);
 		
