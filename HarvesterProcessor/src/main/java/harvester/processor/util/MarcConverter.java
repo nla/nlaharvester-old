@@ -3,6 +3,7 @@ package harvester.processor.util;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -44,6 +45,12 @@ public class MarcConverter {
             if (tag1XX == null) {
                 valid = false;
                 continue;
+            }
+            
+            // determine if the record contains a subfield t and thus out of scope
+            if (tag1XX.getSubfield('t') != null) {
+            	valid = false;
+            	continue;
             }
 
             // determine the type of record
@@ -171,6 +178,9 @@ public class MarcConverter {
 
         String id = getFirstControlField("001").getData().replaceFirst("^0*", "");
         w.writeAttribute("syskey", id);
+        if ("AuCNLKIN".equals(authorized)) {
+        	w.writeCharacters("http://nla.gov.au/anbd.aut-an");
+        }
         w.writeCharacters(id);
 
         w.writeEndElement();
@@ -257,7 +267,7 @@ public class MarcConverter {
         if (tag003 != null) {
             w.writeAttribute("ownercode", tag003.getData());
         } else {
-            w.writeAttribute("ownercode", "AuCNLKin");
+            w.writeAttribute("ownercode", "AuCNLKIN");
         }
 
         String id = getFirstControlField("001").getData().replaceFirst("^0*", "");
@@ -290,7 +300,7 @@ public class MarcConverter {
         }
 
         // other system control numbers
-for (DataField tag035 : getDataField("035")) {
+        for (DataField tag035 : getDataField("035")) {
             Subfield subfield = tag035.getSubfield('a');
             if (subfield != null) {
                 id = subfield.getData();
@@ -352,11 +362,11 @@ for (DataField tag035 : getDataField("035")) {
     }
 
     public void writeGrp(XMLStreamWriter w, String type, List<List<DataField>> allnames) throws Exception {
-for (List<DataField> names : allnames) {
+    		for (List<DataField> names : allnames) {
             if (names.size() > 1) {
                 w.writeStartElement(type + "grp");
                 w.writeCharacters("\n");
-for (DataField name : names) {
+                for (DataField name : names) {
                     writeName(w, type + "head", name);
                 }
                 w.writeEndElement();
@@ -368,9 +378,12 @@ for (DataField name : names) {
     }
 
     public void writeName(XMLStreamWriter w, String type, DataField name) throws Exception {
+    		boolean primary = name.getTag().equals("100");
+    	
         w.writeStartElement(type);
-        if (name.getTag().equals("100")) {
+        if (primary) {
             w.writeAttribute("authorized", authorized);
+            primary = true;
         }
         w.writeCharacters("\n");
 
@@ -387,7 +400,7 @@ for (DataField name : names) {
             writePart(w, ind1 == '1' ? "surname" : parttype, namevals[0]);
 
             for (int i = 1; i < namevals.length; i++) {
-for (String nameval : namevals[i].trim().split(" ")) {
+            	for (String nameval : namevals[i].trim().split(" ")) {
                     writePart(w, parttype, nameval);
                 }
             }
@@ -398,7 +411,7 @@ for (String nameval : namevals[i].trim().split(" ")) {
             writeNameAdd(w, "extension", subfield.getData());
         }
 
-for (Object obj : name.getSubfields('c')) {
+        for (Object obj : name.getSubfields('c')) {
             writeNameAdd(w, "title", ((Subfield) obj).getData());
         }
 
@@ -408,6 +421,11 @@ for (Object obj : name.getSubfields('c')) {
             if (existDate == null && name.getTag().equals("100")) {
                 existDate = subfield.getData();
             }
+        }
+        
+        if (primary) {
+        	writeSourceRef(w);
+        	writeDescNote(w);
         }
 
         w.writeEndElement();
@@ -440,28 +458,30 @@ for (Object obj : name.getSubfields('c')) {
 
         // normalize the date
         date = date.trim();
-        String[] parts = date.split("[- ]");
-        for (int i = 0; i < parts.length; i++) {
-            String part = parts[i].replaceAll("[^0-9]", "").trim();
-            parts[i] = part.length() > 4 ? part.substring(0, 4) : part;
+        List<String> parts = new ArrayList<String>(Arrays.asList(date.split("[- ]")));
+        for (int i = 0; i < parts.size(); i++) {
+            String part = parts.get(i).replaceAll("[^0-9]", "").trim();
+            parts.set(i, part.length() > 4 ? part.substring(0, 4) : part);
         }
+        parts.remove("");
+        
         String normal;
-        if (parts.length == 2) {
+        if (parts.size() == 2) {
             w.writeAttribute("form", "closedspan");
             w.writeAttribute("scope", "begin-end");
-            normal = parts[0] + "/" + parts[1];
+            normal = parts.get(0) + "/" + parts.get(1);
         } else if (date.endsWith("-")) {
             w.writeAttribute("form", "openspan");
             w.writeAttribute("scope", "begin");
-            normal = parts[0];
+            normal = parts.get(0);
         } else if (date.startsWith("-")) {
             w.writeAttribute("form", "openspan");
             w.writeAttribute("scope", "end");
-            normal = parts[0];
+            normal = parts.get(0);
         } else {
             w.writeAttribute("form", "openspan");
             w.writeAttribute("scope", "unknown");
-            normal = parts[0];
+            normal = parts.get(0);
         }
         if (normal.length() >= 4) {
             w.writeAttribute("normal", normal);
@@ -473,11 +493,11 @@ for (Object obj : name.getSubfields('c')) {
     }
 
     public void writeCorpGrp(XMLStreamWriter w, List<List<DataField>> allnames) throws Exception {
-for (List<DataField> names : allnames) {
+    	for (List<DataField> names : allnames) {
             if (names.size() > 1) {
                 w.writeStartElement("corpgrp");
                 w.writeCharacters("\n");
-for (DataField name : names) {
+                for (DataField name : names) {
                     writeCorpHead(w, name);
                 }
                 w.writeEndElement();
@@ -488,9 +508,12 @@ for (DataField name : names) {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void writeCorpHead(XMLStreamWriter w, DataField name) throws Exception {
+    		boolean primary = name.getTag().equals("110");
+    		
         w.writeStartElement("corphead");
-        if (name.getTag().equals("110")) {
+        if (primary) {
             w.writeAttribute("authorized", authorized);
         }
         w.writeCharacters("\n");
@@ -510,11 +533,16 @@ for (DataField name : names) {
                 writePart(w, type, subfield.getData());
             }
         }
+        
+        if (primary) {
+        	writeSourceRef(w);
+        }
 
         w.writeEndElement();
         w.writeCharacters("\n");
     }
 
+    @SuppressWarnings("unchecked")
     public void writeSourceRef(XMLStreamWriter w) throws Exception {
         List<DataField> tag670s = getDataField("670");
         if (tag670s.size() > 1) {
@@ -522,9 +550,22 @@ for (DataField name : names) {
             w.writeCharacters("\n");
         }
 
-for (DataField tag670 : tag670s) {
+        for (DataField tag670 : tag670s) {
             w.writeStartElement("sourceref");
-            w.writeCharacters(getSubfieldContents(tag670, "abu"));
+            w.writeCharacters(getSubfieldContents(tag670, "ab"));
+            
+            List<Subfield> tag670u = tag670.getSubfields('u');
+            if (tag670u.size() > 0) {
+            	w.writeStartElement("sourceinfo");
+            	for (Subfield subU : tag670u) {
+            		w.writeStartElement("extref");
+            		w.writeAttribute("href", subU.getData());
+            		w.writeCharacters(subU.getData());
+            		w.writeEndElement();
+            	}
+            	w.writeEndElement();
+            }
+            
             w.writeEndElement();
             w.writeCharacters("\n");
         }
@@ -534,12 +575,32 @@ for (DataField tag670 : tag670s) {
             w.writeCharacters("\n");
         }
     }
+    
+    public void writeDescNote(XMLStreamWriter w) throws Exception {
+      List<DataField> tag675s = getDataField("675");
+      if (tag675s.size() > 1) {
+          w.writeStartElement("descnotess");
+          w.writeCharacters("\n");
+      }
+
+      for (DataField tag670 : tag675s) {
+          w.writeStartElement("descnote");
+          w.writeCharacters(getSubfieldContents(tag670, "a"));
+          w.writeEndElement();
+          w.writeCharacters("\n");
+      }
+
+      if (tag675s.size() > 1) {
+          w.writeEndElement();
+          w.writeCharacters("\n");
+      }
+  }
 
     public void writeDesc(XMLStreamWriter w) throws Exception {
-        List<DataField> tag678s = getDataField("678");
-        List<DataField> tag680s = getDataField("680");
+        List<DataField> tag678s = getDataField("(665)|(678)");
+        List<DataField> tag680s = getDataField("(666)|(680)");
 
-        if (tag678s.size() > 0 || tag680s.size() > 0) {
+        if (existDate != null || tag678s.size() > 0 || tag680s.size() > 0) {
             w.writeStartElement("desc");
 
             switch (type) {
@@ -564,11 +625,13 @@ for (DataField tag670 : tag670s) {
         }
     }
 
-    public void writeBiogHist(XMLStreamWriter w, List<DataField> tag678s) throws Exception {
-for (DataField tag678 : tag678s) {
+    @SuppressWarnings("unchecked")
+    public void writeBiogHist(XMLStreamWriter w, List<DataField> tags) throws Exception {
+    	for (DataField tag : tags) {
             w.writeStartElement("bioghist");
+            w.writeAttribute("ea", tag.getTag());
 
-            Iterator it = tag678.getSubfields().iterator();
+            Iterator it = tag.getSubfields().iterator();
             while (it.hasNext()) {
                 Subfield sub = (Subfield) it.next();
                 switch(sub.getCode()) {
@@ -592,8 +655,8 @@ for (DataField tag678 : tag678s) {
         }
     }
 
-    public void writeTypeDesc(XMLStreamWriter w, String type, String date, List<DataField> tag680s)
-    throws Exception {
+    public void writeTypeDesc(XMLStreamWriter w, String type, String date, List<DataField> tags) throws Exception {
+    	if (date != null || tags.size() > 0) {
         w.writeStartElement(type + "desc");
 
         if (date != null) {
@@ -603,21 +666,23 @@ for (DataField tag678 : tag678s) {
             w.writeCharacters("\n");
         }
 
-        if (tag680s != null && tag680s.size() > 0) {
-            writeDescentry(w, tag680s);
+        if (tags != null && tags.size() > 0) {
+            writeDescentry(w, tags);
         }
 
         w.writeEndElement();
         w.writeCharacters("\n");
+    	}
     }
 
-    public void writeDescentry(XMLStreamWriter w, List<DataField> tag680s) throws Exception {
-for(DataField tag680 : tag680s) {
+    @SuppressWarnings("unchecked")
+    public void writeDescentry(XMLStreamWriter w, List<DataField> tags) throws Exception {
+    	for (DataField tag : tags) {
             w.writeStartElement("descentry");
-            w.writeAttribute("ea", "680");
+            w.writeAttribute("ea", tag.getTag());
 
             StringBuffer buf = new StringBuffer();
-            Iterator it = tag680.getSubfields().iterator();
+            Iterator it = tag.getSubfields().iterator();
             while (it.hasNext()) {
                 Subfield subfield = (Subfield) it.next();
                 if (subfield.getCode() == 'i' || subfield.getCode() == 'a') {
@@ -640,7 +705,7 @@ for(DataField tag680 : tag680s) {
             w.writeStartElement("eacrels");
             w.writeCharacters("\n");
 
-for (DataField name : names) {
+            for (DataField name : names) {
                 writeEacRel(w, name);
             }
 
@@ -727,7 +792,7 @@ for (DataField name : names) {
     @SuppressWarnings(value = "unchecked")
     public List<List<DataField>> getDataFieldCJK(String pattern) {
         List<List<DataField>> list = new ArrayList<List<DataField>>(2);
-for (Object obj : record.getDataFields()) {
+        for (Object obj : record.getDataFields()) {
             DataField field = (DataField) obj;
             if (field.getTag().matches(pattern)) {
                 List<DataField> cjklist = new ArrayList<DataField>(2);
@@ -739,7 +804,7 @@ for (Object obj : record.getDataFields()) {
                 if (sub6 != null) {
                     String[] related = sub6.getData().split("-/");
                     String expectedTagNo = field.getTag() + "-" + related[1];
-for (DataField cjkfield : getDataField(related[0])) {
+                    for (DataField cjkfield : getDataField(related[0])) {
                         Subfield cjksub6 = cjkfield.getSubfield('6');
                         if (cjksub6 != null && cjksub6.getData().startsWith(expectedTagNo)) {
                             // found so clone the field
@@ -767,7 +832,7 @@ for (DataField cjkfield : getDataField(related[0])) {
      */
     public List<DataField> getDataField(String pattern) {
         List<DataField> list = new ArrayList<DataField>(2);
-for (Object obj : record.getDataFields()) {
+        for (Object obj : record.getDataFields()) {
             DataField field = (DataField) obj;
             if (field.getTag().matches(pattern)) {
                 list.add(field);
@@ -800,7 +865,7 @@ for (Object obj : record.getDataFields()) {
      */
     public List<ControlField> getControlField(String pattern) {
         List<ControlField> list = new ArrayList<ControlField>(2);
-for (Object obj : record.getControlFields()) {
+        for (Object obj : record.getControlFields()) {
             ControlField field = (ControlField) obj;
             if (field.getTag().matches(pattern)) {
                 list.add(field);
@@ -810,6 +875,7 @@ for (Object obj : record.getControlFields()) {
         return list;
     }
 
+    @SuppressWarnings("unchecked")
     public String getSubfieldContents(DataField field, String codes) {
         StringBuffer buf = new StringBuffer();
 

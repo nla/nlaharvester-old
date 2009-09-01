@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<tests>
+	<test>
+		<marc>
+			<record xmlns="http://www.loc.gov/MARC21/slim">
+				<leader>00485cz  a2200157n  4500</leader>
+				<controlfield tag="001">000035003518</controlfield>
+				<controlfield tag="003">AuCNLKIN</controlfield>
+				<controlfield tag="005">20090105150405.0</controlfield>
+				<controlfield tag="008">810308nn acnnnaabn           n aaa     d</controlfield>
+				<datafield tag="035" ind1=" " ind2=" ">
+					<subfield code="a">abv00008608</subfield>
+				</datafield>
+				<datafield tag="040" ind1=" " ind2=" ">
+					<subfield code="a">ANL</subfield>
+					<subfield code="b">eng</subfield>
+					<subfield code="d">AUC</subfield>
+				</datafield>
+				<datafield tag="042" ind1=" " ind2=" ">
+					<subfield code="a">kin</subfield>
+					<subfield code="a">anuc</subfield>
+				</datafield>
+				<datafield tag="099" ind1="1" ind2=" ">
+					<subfield code="a">000000003564</subfield>
+				</datafield>
+				<datafield tag="100" ind1="1" ind2=" ">
+					<subfield code="a">Surname, Givenname</subfield>
+					<subfield code="q">(tag 100 subfield q),</subfield>
+					<subfield code="d">1889-1981.</subfield>
+				</datafield>
+				<datafield tag="400" ind1="1" ind2=" ">
+					<subfield code="a">Surname, Givenname I.,</subfield>
+					<subfield code="d">1889-</subfield>
+				</datafield>
+				<datafield tag="400" ind1="1" ind2=" ">
+					<subfield code="a">Surname, G. I.,</subfield>
+					<subfield code="q">(tag 400 subfield q),</subfield>
+					<subfield code="d">-1981</subfield>
+				</datafield>
+				<datafield tag="665" ind1=" " ind2=" ">
+					<subfield code="a">tag 665 subfield a</subfield>
+					<subfield code="a">tag 665 subfield a2</subfield>
+				</datafield>
+				<datafield tag="666" ind1=" " ind2=" ">
+					<subfield code="a">tag 666 subfield a</subfield>
+				</datafield>
+				<datafield tag="670" ind1=" " ind2=" ">
+					<subfield code="a">tag 670 subfield a</subfield>
+					<subfield code="b">tag 670 subfield b</subfield>
+					<subfield code="u">tag 670 subfield u</subfield>
+				</datafield>
+				<datafield tag="675" ind1=" " ind2=" ">
+					<subfield code="a">tag 675 subfield a</subfield>
+				</datafield>
+				<datafield tag="678" ind1=" " ind2=" ">
+					<subfield code="a">tag 678 subfield a</subfield>
+					<subfield code="b">tag 678 subfield b</subfield>
+					<subfield code="u">tag 678 subfield u</subfield>
+				</datafield>
+				<datafield tag="680" ind1=" " ind2=" ">
+					<subfield code="i">tag 680 subfield i</subfield>
+					<subfield code="a">tag 680 subfield a</subfield>
+				</datafield>
+			</record>
+		</marc>
+		<expected>
+			<eac xmlns="http://jefferson.village.virginia.edu/eac" type="persname">
+				<eacheader status="edited" detaillevel="full">
+					<eacid ownercode="AuCNLKIN" syskey="35003518">http://nla.gov.au/anbd.aut-an35003518</eacid>
+					<mainhist>
+						<mainevent maintype="create">
+							<maindate calendar="gregorian" normal="19810308">810308</maindate>
+						</mainevent>
+						<mainevent maintype="update">
+							<maindate calendar="gregorian" normal="20090105T150405.0">20090105150405.0</maindate>
+						</mainevent>
+					</mainhist>
+					<languagedecl>
+						<language scriptcode="latin" languagecode="eng"/>
+					</languagedecl>
+					<ruledecl>
+						<rule id="aacr2">Anglo-American Cataloging Rules, Second Edition.</rule>
+					</ruledecl>
+					<sourcedecl>
+						<source ownercode="AuCNLKIN" syskey="35003518">http://nla.gov.au/anbd.aut-an35003518</source>
+						<source ownercode="AuCNLKIN" syskey="abv00008608">abv00008608</source>
+					</sourcedecl>
+				</eacheader>
+				<condesc>
+					<identity>
+						<pershead authorized="AuCNLKIN">
+							<part type="surname">Surname</part>
+							<part type="forename">Givenname</part>
+							<nameadd type="extension">tag 100 subfield q</nameadd>
+							<existdate calendar="gregorian" form="closedspan" scope="begin-end" normal="1889/1981">1889-1981.</existdate>
+							<sourceref>
+								tag 670 subfield a tag 670 subfield b
+								<sourceinfo>
+									<extref href="tag 670 subfield u">tag 670 subfield u</extref>
+								</sourceinfo>
+							</sourceref>
+							<descnote>tag 675 subfield a</descnote>
+						</pershead>
+						<pershead>
+							<part type="surname">Surname</part>
+							<part type="forename">Givenname</part>
+							<part type="forename">I</part>
+							<existdate calendar="gregorian" form="openspan" scope="begin" normal="1889">1889-</existdate>
+						</pershead>
+						<pershead>
+							<part type="surname">Surname</part>
+							<part type="forename">G</part>
+							<part type="forename">I</part>
+							<nameadd type="extension">tag 400 subfield q</nameadd>
+							<existdate calendar="gregorian" form="openspan" scope="end" normal="1981">-1981</existdate>
+						</pershead>
+					</identity>
+					<desc>
+						<persdesc>
+							<existdesc>
+								<existdate calendar="gregorian" form="closedspan" scope="begin-end" normal="1889/1981">1889-1981.</existdate>
+							</existdesc>
+							<descentry ea="666">
+								<value>tag 666 subfield a</value>
+							</descentry>
+							<descentry ea="680">
+								<value>tag 680 subfield i tag 680 subfield a</value>
+							</descentry>
+						</persdesc>
+						<bioghist ea="665">
+							<p>tag 665 subfield a</p>
+							<p>tag 665 subfield a2</p>
+						</bioghist>
+						<bioghist ea="678">
+							<p>tag 678 subfield a</p>
+							<p>tag 678 subfield b</p>
+							<didentifier href="tag 678 subfield u">tag 678 subfield u</didentifier>
+						</bioghist>
+					</desc>
+				</condesc>
+			</eac>
+		</expected>
+	</test>
+	<test>
+		<marc>
+			<record xmlns="http://www.loc.gov/MARC21/slim">
+				<leader>01491cz  a2200193n  4500</leader>
+				<controlfield tag="001">000036326955</controlfield>
+				<controlfield tag="003">AuCNLKIN</controlfield>
+				<controlfield tag="005">20070214095256.0</controlfield>
+				<controlfield tag="008">811109nn acnnnaabn          sa ana      </controlfield>
+				<datafield tag="035" ind1=" " ind2=" ">
+					<subfield code="a">abv02669243</subfield>
+				</datafield>
+				<datafield tag="040" ind1=" " ind2=" ">
+					<subfield code="a">ANL</subfield>
+					<subfield code="b">eng</subfield>
+					<subfield code="d">ANL</subfield>
+				</datafield>
+				<datafield tag="042" ind1=" " ind2=" ">
+					<subfield code="a">kin</subfield>
+					<subfield code="a">anuc</subfield>
+				</datafield>
+				<datafield tag="099" ind1="1" ind2=" ">
+					<subfield code="a">000001334087</subfield>
+				</datafield>
+				<datafield tag="110" ind1="2" ind2=" ">
+					<subfield code="a">Royal Canberra Hospital</subfield>
+				</datafield>
+				<datafield tag="510" ind1="2" ind2=" ">
+					<subfield code="w">annn</subfield>
+					<subfield code="a">Canberra Hospital (Acton, A.C.T.)</subfield>
+				</datafield>
+				<datafield tag="510" ind1="2" ind2=" ">
+					<subfield code="a">Canberra Hospital (Woden, A.C.T.)</subfield>
+				</datafield>
+				<datafield tag="665" ind1=" " ind2=" ">
+					<subfield code="a">The Hospital in Acton opened as Canberra Hospital in 1914. In
+						1930, the name changed to Canberra Government Hospital, and then in 1935 to
+						Canberra Community Hospital. Between 1968 and 1979, it was again called
+						Canberra Hospital. In 1979, it became the Royal Canberra Hospital. From
+						November 1990 to August 1991, it was called Royal Canberra Hospital (North)
+						before reverting to Royal Canberra Hospital. The hospital was amalgamated
+						with Woden Valley Hospital in 1991 and the Acton campus closed later that
+						year. Woden Valley Hospital was renamed Canberra Hospital in 1996. Works by
+						this body are entered under the name used at the time of publication. For
+						works about this body, assign the heading for the name used during the
+						latest period covered by the work.</subfield>
+				</datafield>
+				<datafield tag="670" ind1=" " ind2=" ">
+					<subfield code="a">Royal Canberra Hospital, 1994)</subfield>
+					<subfield code="b">Appendix A (1979-1990, Royal Canberra Hospital)</subfield>
+				</datafield>
+				<datafield tag="680" ind1=" " ind2=" ">
+					<subfield code="a">This heading is for works relating to the Royal Canberra
+						Hospital at Acton, A.C.T. For works relating to the Woden campus of the
+						Hospital, see under Canberra Hospital (Woden, A.C.T.).</subfield>
+				</datafield>
+			</record>
+		</marc>
+		<expected>
+			<eac xmlns="http://jefferson.village.virginia.edu/eac" type="corpname">
+				<eacheader status="edited" detaillevel="full">
+					<eacid ownercode="AuCNLKIN" syskey="36326955">http://nla.gov.au/anbd.aut-an36326955</eacid>
+					<mainhist>
+						<mainevent maintype="create">
+							<maindate calendar="gregorian" normal="19811109">811109</maindate>
+						</mainevent>
+						<mainevent maintype="update">
+							<maindate calendar="gregorian" normal="20070214T095256.0">20070214095256.0</maindate>
+						</mainevent>
+					</mainhist>
+					<languagedecl>
+						<language scriptcode="latin" languagecode="eng"/>
+					</languagedecl>
+					<ruledecl>
+						<rule id="aacr2">Anglo-American Cataloging Rules, Second Edition.</rule>
+					</ruledecl>
+					<sourcedecl>
+						<source ownercode="AuCNLKIN" syskey="36326955">http://nla.gov.au/anbd.aut-an36326955</source>
+						<source ownercode="AuCNLKIN" syskey="abv02669243">abv02669243</source>
+					</sourcedecl>
+				</eacheader>
+				<condesc>
+					<identity>
+						<corphead authorized="AuCNLKIN">
+							<part>Royal Canberra Hospital</part>
+							<sourceref>Royal Canberra Hospital, 1994) Appendix A (1979-1990, Royal Canberra Hospital)</sourceref>
+						</corphead>
+					</identity>
+					<desc>
+						<corpdesc>
+							<descentry ea="680">
+								<value>This heading is for works relating to the Royal Canberra
+									Hospital at Acton, A.C.T. For works relating to the Woden campus
+									of the Hospital, see under Canberra Hospital (Woden, A.C.T.).</value>
+							</descentry>
+						</corpdesc>
+						<bioghist ea="665">
+							<p>The Hospital in Acton opened as Canberra Hospital in 1914. In 1930,
+								the name changed to Canberra Government Hospital, and then in 1935
+								to Canberra Community Hospital. Between 1968 and 1979, it was again
+								called Canberra Hospital. In 1979, it became the Royal Canberra
+								Hospital. From November 1990 to August 1991, it was called Royal
+								Canberra Hospital (North) before reverting to Royal Canberra
+								Hospital. The hospital was amalgamated with Woden Valley Hospital in
+								1991 and the Acton campus closed later that year. Woden Valley
+								Hospital was renamed Canberra Hospital in 1996. Works by this body
+								are entered under the name used at the time of publication. For
+								works about this body, assign the heading for the name used during
+								the latest period covered by the work.</p>
+						</bioghist>
+					</desc>
+					<eacrels>
+						<eacrel reltype="earlier">
+							<corpname>Canberra Hospital (Acton, A.C.T.)</corpname>
+						</eacrel>
+						<eacrel reltype="associative">
+							<corpname>Canberra Hospital (Woden, A.C.T.)</corpname>
+						</eacrel>
+					</eacrels>
+				</condesc>
+			</eac>
+		</expected>
+	</test>
+	<test>
+		<marc>
+			<record xmlns="http://www.loc.gov/MARC21/slim">
+				<leader>00900cz  a2200169o  4500</leader>
+				<controlfield tag="001">000036588916</controlfield>
+				<controlfield tag="003">AuCNLKIN</controlfield>
+				<controlfield tag="005">20071016122055.0</controlfield>
+				<controlfield tag="008">031017nn acnnnaabn           a aaa     d</controlfield>
+				<datafield tag="040" ind1=" " ind2=" ">
+					<subfield code="a">VSL</subfield>
+					<subfield code="b">eng</subfield>
+					<subfield code="c">VSL</subfield>
+					<subfield code="d">TSL</subfield>
+				</datafield>
+				<datafield tag="042" ind1=" " ind2=" ">
+					<subfield code="a">kin</subfield>
+					<subfield code="a">anuc</subfield>
+				</datafield>
+				<datafield tag="099" ind1="1" ind2=" ">
+					<subfield code="a">000001598740</subfield>
+				</datafield>
+				<datafield tag="110" ind1="2" ind2=" ">
+					<subfield code="a">BHP Billiton Limited</subfield>
+				</datafield>
+				<datafield tag="510" ind1="2" ind2=" ">
+					<subfield code="w">nnn</subfield>
+					<subfield code="a">BHP Billiton</subfield>
+				</datafield>
+				<datafield tag="510" ind1="2" ind2=" ">
+					<subfield code="w">ann</subfield>
+					<subfield code="a">Broken Hill Proprietary Company</subfield>
+				</datafield>
+				<datafield tag="510" ind1="2" ind2=" ">
+					<subfield code="w">ann</subfield>
+					<subfield code="a">BHP Limited</subfield>
+				</datafield>
+				<datafield tag="665" ind1=" " ind2=" ">
+					<subfield code="a">Broken Hill Proprietary Company changed its name to BHP
+						Limited in 2000. BHP Billiton Limited was created through the Dual Listed
+						Companies (DLC) merger of BHP Limited (now BHP Billiton Limited) and
+						Billiton Plc (now BHP Billiton Plc) which was concluded on 20 June 2001. BHP
+						Billiton Limited and BHP Billiton Plc continue to exist as separate
+						companies but operate on a combined basis as BHP Billiton. Works by these
+						bodies are found under the name used at the time of publication.</subfield>
+				</datafield>
+			</record>
+		</marc>
+		<expected>
+			<eac xmlns="http://jefferson.village.virginia.edu/eac" type="corpname">
+				<eacheader status="draft" detaillevel="full">
+					<eacid ownercode="AuCNLKIN" syskey="36588916">http://nla.gov.au/anbd.aut-an36588916</eacid>
+					<mainhist>
+						<mainevent maintype="create">
+							<maindate calendar="gregorian" normal="20031017">031017</maindate>
+						</mainevent>
+						<mainevent maintype="update">
+							<maindate calendar="gregorian" normal="20071016T122055.0">20071016122055.0</maindate>
+						</mainevent>
+					</mainhist>
+					<languagedecl>
+						<language scriptcode="latin" languagecode="eng"/>
+					</languagedecl>
+					<ruledecl>
+						<rule id="aacr2">Anglo-American Cataloging Rules, Second Edition.</rule>
+					</ruledecl>
+					<sourcedecl>
+						<source ownercode="AuCNLKIN" syskey="36588916">http://nla.gov.au/anbd.aut-an36588916</source>
+					</sourcedecl>
+				</eacheader>
+				<condesc>
+					<identity>
+						<corphead authorized="AuCNLKIN">
+							<part>BHP Billiton Limited</part>
+						</corphead>
+					</identity>
+					<desc>
+						<bioghist ea="665">
+							<p>Broken Hill Proprietary Company changed its name to BHP Limited in
+								2000. BHP Billiton Limited was created through the Dual Listed
+								Companies (DLC) merger of BHP Limited (now BHP Billiton Limited) and
+								Billiton Plc (now BHP Billiton Plc) which was concluded on 20 June
+								2001. BHP Billiton Limited and BHP Billiton Plc continue to exist as
+								separate companies but operate on a combined basis as BHP Billiton.
+								Works by these bodies are found under the name used at the time of
+								publication.</p>
+						</bioghist>
+					</desc>
+					<eacrels>
+						<eacrel reltype="associative">
+							<corpname>BHP Billiton</corpname>
+						</eacrel>
+						<eacrel reltype="earlier">
+							<corpname>Broken Hill Proprietary Company</corpname>
+						</eacrel>
+						<eacrel reltype="earlier">
+							<corpname>BHP Limited</corpname>
+						</eacrel>
+					</eacrels>
+				</condesc>
+			</eac>
+		</expected>
+	</test>
+	<test>
+		<marc>
+			<record xmlns="http://www.loc.gov/MARC21/slim">
+				<leader>00377cz  a2200145n  4500</leader>
+				<controlfield tag="001">000035002930</controlfield>
+				<controlfield tag="003">AuCNLKIN</controlfield>
+				<controlfield tag="005">20090421165526.0</controlfield>
+				<controlfield tag="008">900124nn acnnnaabn           a aaa     d</controlfield>
+				<datafield tag="035" ind1=" " ind2=" ">
+					<subfield code="a">abv00007148</subfield>
+				</datafield>
+				<datafield tag="040" ind1=" " ind2=" ">
+					<subfield code="a">ANL</subfield>
+					<subfield code="b">eng</subfield>
+				</datafield>
+				<datafield tag="042" ind1=" " ind2=" ">
+					<subfield code="a">kin</subfield>
+					<subfield code="a">anuc</subfield>
+				</datafield>
+				<datafield tag="099" ind1="1" ind2=" ">
+					<subfield code="a">000000002965</subfield>
+				</datafield>
+				<datafield tag="100" ind1="1" ind2=" ">
+					<subfield code="a">Alexander, Charles P.</subfield>
+					<subfield code="q">(Charles Paul),</subfield>
+					<subfield code="d">1889-1981.</subfield>
+				</datafield>
+				<datafield tag="400" ind1="1" ind2=" ">
+					<subfield code="a">Alexander, Charles Paul,</subfield>
+					<subfield code="d">1889-</subfield>
+				</datafield>
+			</record>
+		</marc>
+		<expected>
+			<eac xmlns="http://jefferson.village.virginia.edu/eac" type="persname">
+				<eacheader status="edited" detaillevel="full">
+					<eacid ownercode="AuCNLKIN" syskey="35002930">http://nla.gov.au/anbd.aut-an35002930</eacid>
+					<mainhist>
+						<mainevent maintype="create">
+							<maindate calendar="gregorian" normal="19900124">900124</maindate>
+						</mainevent>
+						<mainevent maintype="update">
+							<maindate calendar="gregorian" normal="20090421T165526.0">20090421165526.0</maindate>
+						</mainevent>
+					</mainhist>
+					<languagedecl>
+						<language scriptcode="latin" languagecode="eng"/>
+					</languagedecl>
+					<ruledecl>
+						<rule id="aacr2">Anglo-American Cataloging Rules, Second Edition.</rule>
+					</ruledecl>
+					<sourcedecl>
+						<source ownercode="AuCNLKIN" syskey="35002930">http://nla.gov.au/anbd.aut-an35002930</source>
+						<source ownercode="AuCNLKIN" syskey="abv00007148">abv00007148</source>
+					</sourcedecl>
+				</eacheader>
+				<condesc>
+					<identity>
+						<pershead authorized="AuCNLKIN">
+							<part type="surname">Alexander</part>
+							<part type="forename">Charles</part>
+							<part type="forename">P</part>
+							<nameadd type="extension">Charles Paul</nameadd>
+							<existdate calendar="gregorian" form="closedspan" scope="begin-end" normal="1889/1981">1889-1981.</existdate>
+						</pershead>
+						<pershead>
+							<part type="surname">Alexander</part>
+							<part type="forename">Charles</part>
+							<part type="forename">Paul</part>
+							<existdate calendar="gregorian" form="openspan" scope="begin" normal="1889">1889-</existdate>
+						</pershead>
+					</identity>
+					<desc>
+						<persdesc>
+							<existdesc>
+								<existdate calendar="gregorian" form="closedspan" scope="begin-end" normal="1889/1981">1889-1981.</existdate>
+							</existdesc>
+						</persdesc>
+					</desc>
+				</condesc>
+			</eac>
+		</expected>
+	</test>
+	<test>
+		<marc>
+			<record xmlns="http://www.loc.gov/MARC21/slim">
+				<leader>00371cz  a2200133n  4500</leader>
+				<controlfield tag="001">000035003368</controlfield>
+				<controlfield tag="003">AuCNLKIN</controlfield>
+				<controlfield tag="005">19980528000000.0</controlfield>
+				<controlfield tag="008">980525nn acnnnaabn          un ana     d</controlfield>
+				<datafield tag="035" ind1=" " ind2=" ">
+					<subfield code="a">abv00008243</subfield>
+				</datafield>
+				<datafield tag="040" ind1=" " ind2=" ">
+					<subfield code="a">ANL</subfield>
+					<subfield code="b">eng</subfield>
+				</datafield>
+				<datafield tag="042" ind1=" " ind2=" ">
+					<subfield code="a">kin</subfield>
+					<subfield code="a">anuc</subfield>
+				</datafield>
+				<datafield tag="099" ind1="1" ind2=" ">
+					<subfield code="a">000000003405</subfield>
+				</datafield>
+				<datafield tag="110" ind1="2" ind2=" ">
+					<subfield code="a">Society for Promoting Christian Knowledge and for Propagating the Gospel.</subfield>
+					<subfield code="b">Launceston Branch</subfield>
+				</datafield>
+			</record>
+		</marc>
+		<expected>
+			<eac xmlns="http://jefferson.village.virginia.edu/eac" type="corpname">
+				<eacheader status="edited" detaillevel="full">
+					<eacid ownercode="AuCNLKIN" syskey="35003368">http://nla.gov.au/anbd.aut-an35003368</eacid>
+					<mainhist>
+						<mainevent maintype="create">
+							<maindate calendar="gregorian" normal="19980525">980525</maindate>
+						</mainevent>
+						<mainevent maintype="update">
+							<maindate calendar="gregorian" normal="19980528T000000.0">19980528000000.0</maindate>
+						</mainevent>
+					</mainhist>
+					<languagedecl>
+						<language scriptcode="latin" languagecode="eng"/>
+					</languagedecl>
+					<ruledecl>
+						<rule id="aacr2">Anglo-American Cataloging Rules, Second Edition.</rule>
+					</ruledecl>
+					<sourcedecl>
+						<source ownercode="AuCNLKIN" syskey="35003368">http://nla.gov.au/anbd.aut-an35003368</source>
+						<source ownercode="AuCNLKIN" syskey="abv00008243">abv00008243</source>
+					</sourcedecl>
+				</eacheader>
+				<condesc>
+					<identity>
+						<corphead authorized="AuCNLKIN">
+							<part>Society for Promoting Christian Knowledge and for Propagating the Gospel</part>
+							<part type="subordinate">Launceston Branch</part>
+						</corphead>
+					</identity>
+				</condesc>
+			</eac>
+		</expected>
+	</test>
+	<test>
+		<marc>
+			<record xmlns="http://www.loc.gov/MARC21/slim">
+				<leader>00485cz  a2200157n  4500</leader>
+				<controlfield tag="001">000035003518</controlfield>
+				<controlfield tag="003">AuCNLKIN</controlfield>
+				<controlfield tag="005">20090105150405.0</controlfield>
+				<controlfield tag="008">810308nn acnnnaabn           n aaa     d</controlfield>
+				<datafield tag="035" ind1=" " ind2=" ">
+					<subfield code="a">abv00008608</subfield>
+				</datafield>
+				<datafield tag="040" ind1=" " ind2=" ">
+					<subfield code="a">ANL</subfield>
+					<subfield code="b">eng</subfield>
+					<subfield code="d">AUC</subfield>
+				</datafield>
+				<datafield tag="042" ind1=" " ind2=" ">
+					<subfield code="a">kin</subfield>
+					<subfield code="a">anuc</subfield>
+				</datafield>
+				<datafield tag="099" ind1="1" ind2=" ">
+					<subfield code="a">000000003564</subfield>
+				</datafield>
+				<datafield tag="100" ind1="1" ind2=" ">
+					<subfield code="a">Allen, Margaret</subfield>
+				</datafield>
+				<datafield tag="670" ind1=" " ind2=" ">
+					<subfield code="a">Abd buk, 1984:</subfield>
+					<subfield code="b">t.p.("N" by Jean Tiati ; others by Margaret Allan)</subfield>
+				</datafield>
+				<datafield tag="670" ind1=" " ind2=" ">
+					<subfield code="a">Sandei moning taim, 1985?:</subfield>
+					<subfield code="b">t.p.(Judy Galmur en Margaret Allen bin raidim dijan stori)</subfield>
+				</datafield>
+			</record>
+		</marc>
+		<expected>
+			<eac xmlns="http://jefferson.village.virginia.edu/eac" type="persname">
+				<eacheader status="edited" detaillevel="full">
+					<eacid ownercode="AuCNLKIN" syskey="35003518">http://nla.gov.au/anbd.aut-an35003518</eacid>
+					<mainhist>
+						<mainevent maintype="create">
+							<maindate calendar="gregorian" normal="19810308">810308</maindate>
+						</mainevent>
+						<mainevent maintype="update">
+							<maindate calendar="gregorian" normal="20090105T150405.0">20090105150405.0</maindate>
+						</mainevent>
+					</mainhist>
+					<languagedecl>
+						<language scriptcode="latin" languagecode="eng"/>
+					</languagedecl>
+					<ruledecl>
+						<rule id="aacr2">Anglo-American Cataloging Rules, Second Edition.</rule>
+					</ruledecl>
+					<sourcedecl>
+						<source ownercode="AuCNLKIN" syskey="35003518">http://nla.gov.au/anbd.aut-an35003518</source>
+						<source ownercode="AuCNLKIN" syskey="abv00008608">abv00008608</source>
+					</sourcedecl>
+				</eacheader>
+				<condesc>
+					<identity>
+						<pershead authorized="AuCNLKIN">
+							<part type="surname">Allen</part>
+							<part type="forename">Margaret</part>
+							<sourcerefs>
+								<sourceref>Abd buk, 1984: t.p.("N" by Jean Tiati ; others by Margaret Allan)</sourceref>
+								<sourceref>Sandei moning taim, 1985?: t.p.(Judy Galmur en Margaret Allen bin raidim dijan stori)</sourceref>
+							</sourcerefs>
+						</pershead>
+					</identity>
+				</condesc>
+			</eac>
+		</expected>
+	</test>
+</tests>
