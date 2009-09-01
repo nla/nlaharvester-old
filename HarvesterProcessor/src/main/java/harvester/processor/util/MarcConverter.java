@@ -159,7 +159,12 @@ public class MarcConverter {
         if (detaillevel != null) {
             w.writeAttribute("detaillevel", detaillevel);
         }
-
+        
+        DataField tag042 = getFirstDataField("042");
+        if (tag042 != null && getSubfieldContents(tag042, "a").contains("anuc")) {
+        	w.writeAttribute("typeauth", "aci");
+        	w.writeAttribute("typekey", "au");
+        }
         w.writeCharacters("\n");
 
         writeEacId(w);
@@ -178,6 +183,7 @@ public class MarcConverter {
 
         String id = getFirstControlField("001").getData().replaceFirst("^0*", "");
         w.writeAttribute("syskey", id);
+        
         if ("AuCNLKIN".equals(authorized)) {
         	w.writeCharacters("http://nla.gov.au/anbd.aut-an");
         }

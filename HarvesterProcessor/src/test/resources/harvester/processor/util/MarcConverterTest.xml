@@ -65,7 +65,7 @@
 		</marc>
 		<expected>
 			<eac xmlns="http://jefferson.village.virginia.edu/eac" type="persname">
-				<eacheader status="edited" detaillevel="full">
+				<eacheader status="edited" detaillevel="full" typeauth="aci" typekey="au">
 					<eacid ownercode="AuCNLKIN" syskey="35003518">http://nla.gov.au/anbd.aut-an35003518</eacid>
 					<mainhist>
 						<mainevent maintype="create">
@@ -200,7 +200,7 @@
 		</marc>
 		<expected>
 			<eac xmlns="http://jefferson.village.virginia.edu/eac" type="corpname">
-				<eacheader status="edited" detaillevel="full">
+				<eacheader status="edited" detaillevel="full" typeauth="aci" typekey="au">
 					<eacid ownercode="AuCNLKIN" syskey="36326955">http://nla.gov.au/anbd.aut-an36326955</eacid>
 					<mainhist>
 						<mainevent maintype="create">
@@ -312,7 +312,7 @@
 		</marc>
 		<expected>
 			<eac xmlns="http://jefferson.village.virginia.edu/eac" type="corpname">
-				<eacheader status="draft" detaillevel="full">
+				<eacheader status="draft" detaillevel="full" typeauth="aci" typekey="au">
 					<eacid ownercode="AuCNLKIN" syskey="36588916">http://nla.gov.au/anbd.aut-an36588916</eacid>
 					<mainhist>
 						<mainevent maintype="create">
@@ -400,7 +400,7 @@
 		</marc>
 		<expected>
 			<eac xmlns="http://jefferson.village.virginia.edu/eac" type="persname">
-				<eacheader status="edited" detaillevel="full">
+				<eacheader status="edited" detaillevel="full" typeauth="aci" typekey="au">
 					<eacid ownercode="AuCNLKIN" syskey="35002930">http://nla.gov.au/anbd.aut-an35002930</eacid>
 					<mainhist>
 						<mainevent maintype="create">
@@ -465,7 +465,6 @@
 				</datafield>
 				<datafield tag="042" ind1=" " ind2=" ">
 					<subfield code="a">kin</subfield>
-					<subfield code="a">anuc</subfield>
 				</datafield>
 				<datafield tag="099" ind1="1" ind2=" ">
 					<subfield code="a">000000003405</subfield>
@@ -548,7 +547,7 @@
 		</marc>
 		<expected>
 			<eac xmlns="http://jefferson.village.virginia.edu/eac" type="persname">
-				<eacheader status="edited" detaillevel="full">
+				<eacheader status="edited" detaillevel="full" typeauth="aci" typekey="au">
 					<eacid ownercode="AuCNLKIN" syskey="35003518">http://nla.gov.au/anbd.aut-an35003518</eacid>
 					<mainhist>
 						<mainevent maintype="create">
