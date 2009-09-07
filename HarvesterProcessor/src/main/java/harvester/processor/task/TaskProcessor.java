@@ -354,11 +354,20 @@ public class TaskProcessor implements Runnable {
 				Integer stop = stopFlags.get(String.valueOf(h.getHarvestid()));
 				Integer shutdown = stopFlags.get("ALL");
 				if(STOP_EXECUTION.equals(stop) || SERVER_SHUTTING_DOWN.equals(shutdown) ) {
+					
+					//We need to call dispose on everything
+					harveststage.Dispose();
+					
+					for(StagePluginInterface spi : steps) {
+						spi.Dispose();
+					}	
+					
 					if(SERVER_SHUTTING_DOWN.equals(shutdown)) {											
 						slog.info("Harvest stopped since server is shutting down. [Local Time: " + userdateformater.format(new Date()) + "]");
 					}
 					else
 						slog.info("Harvest stopped by user. [Local Time: " + userdateformater.format(new Date()) + "]");
+					
 					h.setStatuscode(Harvest.SUCCESSFUL);
 					h.setStatus("Stopped");
 					h.setEndtime(new Date());

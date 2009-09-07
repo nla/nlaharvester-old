@@ -99,10 +99,18 @@
       </fieldset>
       <ul class="buttons">
         #if($new)
-          <li><a href="EditConnectionSettingsStep2.htm?contributorid=$!{contributor.contributorid}&amp;new=true" class="back">Change Connection Details</a></li>
+          #if($nostep2)
+            <li><a href="EditConnectionSettingsStep1.htm?contributorid=$!{contributor.contributorid}&amp;new=true" class="back">Change Harvest Type</a></li>
+          #else
+            <li><a href="EditConnectionSettingsStep2.htm?contributorid=$!{contributor.contributorid}&amp;new=true" class="back">Change Connection Details</a></li>
+          #end
           <li><a href="ListContributors.htm?collectionid=$!{contributor.collection.collectionid}" class="cancel">Cancel</a></li>
         #else
-          <li><a href="EditConnectionSettingsStep2.htm?contributorid=$!{contributor.contributorid}" class="back">Change Connection Details</a></li>
+          #if($nostep2)
+            <li><a href="EditConnectionSettingsStep1.htm?contributorid=$!{contributor.contributorid}" class="back">Change Harvest Type</a></li>
+          #else
+            <li><a href="EditConnectionSettingsStep2.htm?contributorid=$!{contributor.contributorid}" class="back">Change Connection Details</a></li>
+          #end
           <li><a href="ViewConnectionSettings.htm?contributorid=$!{contributor.contributorid}" class="cancel">Cancel</a></li>          
         #end
         <li><input type="submit" id="mainsubmit" class="save" value="Save" /></li> 

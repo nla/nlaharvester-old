@@ -12,7 +12,7 @@ public class MockStepLogger implements StepLogger {
 	public int error_count = 0;
 	
 	public void error(String description, Throwable excp) {
-		System.out.println(description);
+		System.err.println(description);
 		excp.printStackTrace();
 	}
 
@@ -33,7 +33,7 @@ public class MockStepLogger implements StepLogger {
 	}
 
 	public void locallog(String msg, String classname) {
-		System.out.println("Local Log: classname=" + classname + " msg=" + msg);
+		System.err.println("Local Log: classname=" + classname + " msg=" + msg);
 	}
 
 	public void log(String description) {

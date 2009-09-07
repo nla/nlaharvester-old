@@ -104,7 +104,7 @@ public class ConnectionSettingsController {
 
 		if(parameters == null) {
 			//return persistConnectionSettingsStep2(contributorid, request);
-			return "redirect:EditConnectionSettingsStep3.htm?new=true&contributorid=" + contributorid;
+			return "redirect:EditConnectionSettingsStep3.htm?new=true&nostep2=true&contributorid=" + contributorid;
 		} else {
 			
 			//if any parameters have been selected already we fill that in from the session's settings
@@ -133,11 +133,15 @@ public class ConnectionSettingsController {
     }
     
     @RequestMapping("/EditConnectionSettingsStep3.htm")
-    public String editConnectionSettingsStep3(@RequestParam("contributorid") int contributorid, Map model) {
+    public String editConnectionSettingsStep3(@RequestParam("contributorid") int contributorid,
+    										  @RequestParam(value="nostep2", required = false) Boolean nostep2,
+    										  Map model) {
     	
     	//just retrieve the settings from the session and create the model for that.
     	ConnectionSettings cs = connectionSettingsService.getConnectionSettingsFromSession(contributorid);
 
+    	model.put("nostep2", nostep2);
+    	
 		model.put("contributor", cs.getC());		
 		model.put("harvesttype", cs.getStepName());
 		model.put("new", cs.isNewContributor());

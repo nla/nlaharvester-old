@@ -150,10 +150,6 @@ public class ListHarvestsController implements Controller{
 					    - nextharvest < 7.days.from.now	
 		 */
 		
-		//the scheduler client requires a list of strings, each a contributorid
-		LinkedList<String> cids = new LinkedList<String>();
-		HashMap<String, Contributor> cons = new HashMap<String, Contributor>();
-		
 		for(Contributor con : contributors)
 		{		
 			logger.info("considering contributor, cid=" + con.getContributorid() + " name=" + con.getName());
@@ -179,43 +175,6 @@ public class ListHarvestsController implements Controller{
 			else if(con.getLastharvest() != null && con.getLastharvest().getStarttime().after(ThreeDaysAgo))
 				harvests.getCategories().get("RecentSuccessful").getHarvests().add(toHarvestInfo(con));
 			
-			//schedule stuff only needs to be fetched for scheduled production contributors
-			if(con.getType() != 0 && con.getIsscheduled() != 0)
-			{
-				cids.add(String.valueOf(con.getContributorid()));
-				cons.put(String.valueOf(con.getContributorid()), con);
-			}
-		}
-		
-		if(cids.size() != 0) {
-			try {
-				//getting all the schedules in one request is important for performance
-				List<Schedule> schedules = schedulerclient.getSchedule(cids);
-				if(schedules != null)
-					for(Schedule s : schedules) {
-						HarvestInfo hi = new HarvestInfo();
-						Contributor con = cons.get(s.getId());
-						logger.info("considering schedule sid=" + s.getId() + " next=" + s.getNext() + "name=" + con.getName());
-						hi.setContributorid(con.getContributorid());
-						hi.setContributorname(con.getName());
-						hi.setType(con.getHtype());
-						hi.setTimedate(df.parse(s.getNext()));				
-						hi.setTime(s.getNext());
-						
-						if("true".equals(s.getEnabled()))
-							hi.setStatuscode(HarvestInfo.SCHEDULED_ENABLED);
-						else
-							hi.setStatuscode(HarvestInfo.SCHEDULED_DISABLED);
-						
-						
-						harvests.getCategories().get("Scheduled").getHarvests().add(hi);
-					}
-			} catch (Exception e) {
-				logger.info("Problem loading schedules: " + e.getMessage());
-				model.put("scheduleerror", true);
-				 for(StackTraceElement el : e.getStackTrace())
-					 logger.error(el.toString());
-			}
 		}
 		
 		//now we need to trim any sets that are oversized

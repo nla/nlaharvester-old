@@ -17,7 +17,7 @@
   <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>
-       classpath:HarvesterClient-servlet.xml, classpath:Security-Context.xml, classpath:HarvesterClient-data.xml, classpath:HarvesterClient-controllers.xml
+       classpath:HarvesterClient-environment.xml, classpath:HarvesterClient-servlet.xml, classpath:Security-Context.xml, classpath:HarvesterClient-data.xml, classpath:HarvesterClient-controllers.xml
     </param-value>
   </context-param>
 
@@ -37,7 +37,7 @@
 	<init-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>
-		  classpath:HarvesterClient-servlet.xml, classpath:Security-Context.xml, classpath:HarvesterClient-data.xml, classpath:HarvesterClient-controllers.xml
+		  classpath:HarvesterClient-environment.xml, classpath:HarvesterClient-servlet.xml, classpath:Security-Context.xml, classpath:HarvesterClient-data.xml, classpath:HarvesterClient-controllers.xml
 		</param-value>
 	</init-param>
     <load-on-startup>1</load-on-startup>

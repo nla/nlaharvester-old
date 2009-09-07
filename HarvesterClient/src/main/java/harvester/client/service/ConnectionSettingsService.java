@@ -68,7 +68,7 @@ public class ConnectionSettingsService {
 	 * These correspond to parameters that should be shown on step 2 of the wizard,
 	 * since they specify information needed to build page 3 of the wizard.
 	 * @param cs 
-	 * @return list of parameters in a view friendly form
+	 * @return list of parameters in a view friendly form. Null if no step 2 properties
 	 */
 	public List<StepParameterView> getInitialParameters(ConnectionSettings cs) {
 		
@@ -77,6 +77,7 @@ public class ConnectionSettingsService {
 
 		return inputpluginconfigurer.getInitialParameters(stepname, stepid, cs.getC());
 	}
+
 	/**
 	 * Get all parameters for the given harvest type from the database.
 	 * @param cs
