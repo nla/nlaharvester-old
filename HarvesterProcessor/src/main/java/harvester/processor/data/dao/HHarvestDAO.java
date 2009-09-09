@@ -33,7 +33,7 @@ public class HHarvestDAO implements HarvestDAO{
 			{
 				if(session != null)
 					session.getTransaction().rollback();
-				throw new Exception("hibernate exception");
+				throw new Exception("hibernate exception", e);
 			}
 		
 	}
@@ -92,7 +92,7 @@ public class HHarvestDAO implements HarvestDAO{
 	} catch (HibernateException e) {
 		if(session != null)
 			session.getTransaction().rollback();
-		throw new Exception("hibernate exception");
+		throw new Exception("hibernate exception", e);
 	}
 		
 	}
