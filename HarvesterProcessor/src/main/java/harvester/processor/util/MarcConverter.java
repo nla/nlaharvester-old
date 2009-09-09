@@ -459,9 +459,6 @@ public class MarcConverter {
     }
 
     public void writeExistDate(XMLStreamWriter w, String date) throws Exception {
-        w.writeStartElement("existdate");
-        w.writeAttribute("calendar", "gregorian");
-
         // normalize the date
         date = date.trim();
         List<String> parts = new ArrayList<String>(Arrays.asList(date.split("[- ]")));
@@ -471,31 +468,36 @@ public class MarcConverter {
         }
         parts.remove("");
         
-        String normal;
-        if (parts.size() == 2) {
-            w.writeAttribute("form", "closedspan");
-            w.writeAttribute("scope", "begin-end");
-            normal = parts.get(0) + "/" + parts.get(1);
-        } else if (date.endsWith("-")) {
-            w.writeAttribute("form", "openspan");
-            w.writeAttribute("scope", "begin");
-            normal = parts.get(0);
-        } else if (date.startsWith("-")) {
-            w.writeAttribute("form", "openspan");
-            w.writeAttribute("scope", "end");
-            normal = parts.get(0);
-        } else {
-            w.writeAttribute("form", "openspan");
-            w.writeAttribute("scope", "unknown");
-            normal = parts.get(0);
+        if (parts.size() > 0) {
+	        w.writeStartElement("existdate");
+	        w.writeAttribute("calendar", "gregorian");
+	        
+	        String normal;
+	        if (parts.size() == 2) {
+	            w.writeAttribute("form", "closedspan");
+	            w.writeAttribute("scope", "begin-end");
+	            normal = parts.get(0) + "/" + parts.get(1);
+	        } else if (date.endsWith("-")) {
+	            w.writeAttribute("form", "openspan");
+	            w.writeAttribute("scope", "begin");
+	            normal = parts.get(0);
+	        } else if (date.startsWith("-")) {
+	            w.writeAttribute("form", "openspan");
+	            w.writeAttribute("scope", "end");
+	            normal = parts.get(0);
+	        } else {
+	            w.writeAttribute("form", "openspan");
+	            w.writeAttribute("scope", "unknown");
+	            normal = parts.get(0);
+	        }
+	        if (normal.length() >= 4) {
+	            w.writeAttribute("normal", normal);
+	        }
+	
+	        w.writeCharacters(date);
+	        w.writeEndElement();
+	        w.writeCharacters("\n");
         }
-        if (normal.length() >= 4) {
-            w.writeAttribute("normal", normal);
-        }
-
-        w.writeCharacters(date);
-        w.writeEndElement();
-        w.writeCharacters("\n");
     }
 
     public void writeCorpGrp(XMLStreamWriter w, List<List<DataField>> allnames) throws Exception {
