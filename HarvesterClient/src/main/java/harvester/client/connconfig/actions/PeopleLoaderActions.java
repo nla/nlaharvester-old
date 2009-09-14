@@ -1,12 +1,16 @@
 package harvester.client.connconfig.actions;
 
+import java.util.List;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.*;
 
+import harvester.client.util.KeyValue;
 import harvester.client.util.WebUtil;
+import harvester.data.ProfileStep;
 
 import org.dom4j.*;
 
@@ -90,6 +94,10 @@ public class PeopleLoaderActions implements LoadStepActions {
 			}
 		}
 		
+	}
+
+	public List<KeyValue> getSettings(ProfileStep load_step) {
+		return null;
 	}
 	
 	

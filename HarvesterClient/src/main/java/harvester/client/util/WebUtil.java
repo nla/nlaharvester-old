@@ -109,6 +109,15 @@ public class WebUtil {
 		}
 	}
 	
-
+	public static String formatPercentage(int n, int m) {
+		return String.format("%.2f", (100.0 * n) / m);
+	}
 	
+	public static String formatTrunc(float n) {
+		return String.format("%.0f", n);
+	}
+	
+	public static String formatPercentage(float n) {
+		return String.format("%.2f", n);
+	}
 }

@@ -96,39 +96,6 @@
         <property name="daofactory" ref="DAOFactoryImpl" /> <!-- it might need database access -->
     </bean>
     
-    
-    <!-- ouput stage stuff -->
-    
-    <!--<bean id="ArrowLoaderActions" class="harvester.client.connconfig.actions.ArrowLoaderActions">
-        <property name="solrurl" value="${solrurl}" />
-        <property name="arrowurl" value="${arrowurl}" />        
-    </bean>
-    
-    <bean id="PeopleLoaderActions" class="harvester.client.connconfig.actions.PeopleLoaderActions">   
-		<property name="identityurl" value="${identityurl}" />
-    </bean>
-    
-    -->
-    
-    <bean id="ExampleLoaderActions" class="harvester.client.connconfig.actions.ExampleLoaderActions">   
-      <!-- Put any properties needed here -->
-    </bean>
-    
-    <!-- service layer stuff -->
-    <bean id="collectionService" class="harvester.client.service.CollectionService">
-        <property name="daofactory" ref="DAOFactoryImpl" />        
-        <property name="stepactions">
-            <map>
-                <!-- This ties the code in a loader action class to a loader step defined in the database.
-                     the key is the stepid of the step in the database -->
-                 <entry key="63" value-ref="ExampleLoaderActions" />
-                 <!-- <entry key="57" value-ref="ArrowLoaderActions" />
-                      <entry key="61" value-ref="PeopleLoaderActions" /> 
-                 -->
-            </map>
-        </property> 
-    </bean>
-    
     <!-- profile configuration stuff -->
     
     <bean id="ConvertValueCustomized" class="harvester.client.profileconfig.customized.ConvertValue">

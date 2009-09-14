@@ -17,8 +17,8 @@ public class HarvestInfo {
 	private String time;
 	private String status;
 	private Integer recordsrejected;
-	private Integer rejectedpercentage;
-	private Integer goodpercentage;
+	private Float rejectedpercentage;
+	private Float goodpercentage;
 	private Integer recordcount;
 	/** OAI, WEB_CRAWL or OTHER */
 	private int type;
@@ -80,10 +80,10 @@ public class HarvestInfo {
 	public void setRecordsrejected(Integer recordsrejected) {
 		this.recordsrejected = recordsrejected;
 	}
-	public Integer getRejectedpercentage() {
+	public Float getRejectedpercentage() {
 		return rejectedpercentage;
 	}
-	public void setRejectedpercentage(Integer rejectedpercentage) {
+	public void setRejectedpercentage(Float rejectedpercentage) {
 		this.rejectedpercentage = rejectedpercentage;
 	}
 	public Integer getRecordcount() {
@@ -132,10 +132,10 @@ public class HarvestInfo {
 	public void setSortingby(int sortingby) {
 		this.sortingby = sortingby;
 	}
-	public Integer getGoodpercentage() {
+	public Float getGoodpercentage() {
 		return goodpercentage;
 	}
-	public void setGoodpercentage(Integer goodpercentage) {
+	public void setGoodpercentage(Float goodpercentage) {
 		this.goodpercentage = goodpercentage;
 	}
 }

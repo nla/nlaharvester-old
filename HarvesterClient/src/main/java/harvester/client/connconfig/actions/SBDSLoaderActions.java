@@ -1,5 +1,10 @@
 package harvester.client.connconfig.actions;
 
+import harvester.client.util.KeyValue;
+import harvester.data.ProfileStep;
+
+import java.util.List;
+
 
 /**
  * Loader actions for the Single Business Discovery Service.
@@ -24,6 +29,10 @@ public class SBDSLoaderActions implements LoadStepActions {
 	public Integer getCollectionSize() {
 		// currently not a support action
 		return new Integer(0);
+	}
+
+	public List<KeyValue> getSettings(ProfileStep load_step) {
+		return null;
 	}
 
 }

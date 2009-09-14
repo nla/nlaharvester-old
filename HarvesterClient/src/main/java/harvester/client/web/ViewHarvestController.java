@@ -4,29 +4,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.web.servlet.view.RedirectView;
-import org.springframework.web.servlet.ModelAndView;
 
-
-import org.springframework.beans.factory.annotation.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.context.request.WebRequest;
 
 import harvester.client.data.dao.DAOFactory;
-import harvester.client.data.dao.interfaces.CollectionDAO;
 import harvester.client.harvest.HarvestError;
 import harvester.client.util.KeyValue;
 import harvester.client.util.WebUtil;
 import harvester.data.*;
 
-import javax.rmi.CORBA.Util;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
@@ -257,6 +246,7 @@ public class ViewHarvestController {
 		model.put("hasClusters", hasClusters);
 		model.put("HarvestLogInfoConst", HarvestLog.INFO);
 		model.put("duration", buildDurationString(harvest));
+		model.put("number", new WebUtil());
 
 		logger.info("viewHarvest model built");
 		return "ViewHarvest";

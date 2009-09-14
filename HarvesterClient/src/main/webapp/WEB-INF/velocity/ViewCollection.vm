@@ -58,9 +58,16 @@
         <dt>User Guide:</dt>
         <dd id="userguide">#if($collection.userguide)<a href="$collection.userguide" target=Ó_blankÓ>Collection User Guide</a>#{end}</dd>
         <dt>Size:</dt>
-        <dd id="size">#if(!$collection.size)No collection store associated#{else}$!collection.size#{end}</dd>
+        <dd id="size">#if(!$collection.size)Size could not be retrieved#{else}$!collection.size#{end}</dd>
         <dt>Data Store:</dt>
         <dd id="datastore">#if(!$outputstage)No Data Store selected#{else}$outputstage.description#{end}</dd>
+        #if($outstage_settings)
+          <dt />
+          #foreach($setting in $outstage_settings)
+            <dt>$!setting.key</dt>
+            <dd>$!setting.value</dd>
+          #{end}
+        #{end}
       </dl>
       <h3>Contacts</h3>
 

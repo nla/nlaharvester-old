@@ -11,7 +11,6 @@ import harvester.client.util.ControllerUtil;
 import harvester.data.Collection;
 import harvester.data.CollectionContact;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 

@@ -7,9 +7,11 @@ import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 
 import harvester.client.util.*;
+import harvester.data.ProfileStep;
 
 import java.io.*;
 import java.net.*;
+import java.util.List;
 
 /**
  * This class performs the deletion of production records from a arrow datastore
@@ -118,6 +120,10 @@ public class ArrowLoaderActions implements LoadStepActions {
 			return Integer.parseInt(element.attribute("numFound").getValue());
 		}
 		return 0;
+	}
+	
+	public List<KeyValue> getSettings(ProfileStep load_step) {
+		return null;
 	}		
 	
 }

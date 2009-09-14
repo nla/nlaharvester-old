@@ -109,14 +109,14 @@
           })
   
           jQuery.each(data.running, function(i, item){
-            //add another schedule row
+            //add another running row
             row='<tr class="running-row">';
             row += "<td><a href=\"ViewContributor.htm?contributorid=" + item.contributorid + "\" >" 
                 + item.contributorname + "</a></td>\n";
             row += "<td>" + item.time + "</td>\n";
             row += "<td class=\"running\">" + item.status + "</td>\n"; 
             row += '<td class="rejected" style="background-position:-' + item.goodpercentage + '}px bottom">' 
-                + item.recordsrejected + " (" + item.rejectedpercentage + ")</td>\n"; 
+                + item.recordsrejected + " (" + item.rejectedpercentage.toFixed(2) + ")</td>\n"; 
             row += "<td>" + item.recordcount + "</td>\n"; 
             row += "<td>" + item.type + "</td>\n";  
             row += viewBlock(item.contributorid, item.harvestid);              
@@ -226,8 +226,9 @@
           #if($h.harvestid)
             <td>$h.time</td>
             <td #if($h.statuscode == $h.FAILED)class="failed"#{end} #if($h.statuscode == $h.RUNNING)class="running"#{end}>$h.status</td>
-            #set($goodpercentage = 100-$h.rejectedpercentage)
-            <td class="rejected" style="background-position:-${h.goodpercentage}px bottom">$h.recordsrejected (${h.rejectedpercentage}%)</td>
+            #set( $goodpercentage = $model.number.formatTrunc( $h.goodpercentage ) )
+            #set( $rejectedpercentage = $model.number.formatPercentage( $h.rejectedpercentage ) )
+            <td class="rejected" style="background-position:-${goodpercentage}px bottom">$h.recordsrejected (${rejectedpercentage}%)</td>
             <td>$h.recordcount</td>
             #if($h.type == $h.OAI)<td>OAI</td>#end
             #if($h.type == $h.Z3950)<td>Z39.50</td>#end

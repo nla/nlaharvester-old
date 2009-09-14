@@ -202,6 +202,7 @@ public class ListHarvestsController implements Controller{
 		model.put("SORT_BY_DATE", HarvestCategory.SORT_BY_DATE);
 		model.put("SORT_BY_REVERSE_DATE", HarvestCategory.SORT_BY_REVERSE_DATE);
 		model.put("SORT_BY_STATUS", HarvestCategory.SORT_BY_STATUS);
+		model.put("number", new WebUtil());
 		
 		model.put("collection", col);
 		
@@ -236,9 +237,9 @@ public class ListHarvestsController implements Controller{
 			if(hi.getRecordsrejected() != 0 && hi.getRecordcount() != 0)
 				rejectedpercentage = ((float)hi.getRecordsrejected() / hi.getRecordcount())*100;
 			
-			hi.setRejectedpercentage((int)rejectedpercentage);
+			hi.setRejectedpercentage(rejectedpercentage);
 			hi.setGoodpercentage(100 - hi.getRejectedpercentage());
-			logger.info("rejected float=" + rejectedpercentage + " int=" + hi.getRejectedpercentage());
+			logger.info("rejected float=" + rejectedpercentage + " goodpercentage=" + hi.getGoodpercentage());
 		} else hi.setTimedate(null);	//just set it to now if it hasn't harvested yet
 		
 		return hi;

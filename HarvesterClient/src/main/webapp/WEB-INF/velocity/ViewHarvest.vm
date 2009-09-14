@@ -154,9 +154,9 @@
 
         #set ( $rejected = ${harvest.totalrecords} - ${harvest.recordscompleted})
         #if($harvest.totalrecords && $harvest.totalrecords > 0)
-          #set ( $percentage = (${rejected} * 100) / ${harvest.totalrecords})
+          #set ( $percentage = $number.formatPercentage(${rejected}, ${harvest.totalrecords}) )
         #else
-          #set ( $percentage = 0)
+          #set ( $percentage = $number.formatPercentage(0.0) )
         #end
         
     <div id="content">

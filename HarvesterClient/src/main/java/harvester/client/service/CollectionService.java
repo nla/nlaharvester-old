@@ -92,6 +92,16 @@ public class CollectionService {
 	        model.put("outputstage", outputstage);
         }
         
+		if(c.getLoadstage() != null) {
+			Integer stepid = c.getLoadstage().getStep().getStepid();
+			LoadStepActions loadaction = stepactions.get(stepid);
+			
+			if( loadaction != null) {
+				model.put("outstage_settings", loadaction.getSettings(c.getLoadstage()));
+			}
+		}
+        
+        
         return model;
     }
 
