@@ -116,7 +116,7 @@
             row += "<td>" + item.time + "</td>\n";
             row += "<td class=\"running\">" + item.status + "</td>\n"; 
             row += '<td class="rejected" style="background-position:-' + item.goodpercentage + '}px bottom">' 
-                + item.recordsrejected + " (" + item.rejectedpercentage.toFixed(2) + ")</td>\n"; 
+                + item.recordsrejected + " (" + item.rejectedpercentage.toFixed(2) + "%)</td>\n"; 
             row += "<td>" + item.recordcount + "</td>\n"; 
             row += "<td>" + item.type + "</td>\n";  
             row += viewBlock(item.contributorid, item.harvestid);              
