@@ -53,7 +53,8 @@ public class MarcConverterTest extends XMLTestCase {
 			assertTrue(marcConverter.isValid());
 			
 			String actual = marcConverter.convert();
-			// assertEquals(expected, actual);
+			// if (i + 1 == testRecords.size())
+			//	assertEquals(expected, actual);
 			
 			DetailedDiff diff = new DetailedDiff(new Diff(expected, actual));
 			assertTrue("Test record " + i + ":" + diff.toString(), diff.identical());

@@ -398,16 +398,16 @@ public class MarcConverter {
         String data = subfield.getData();
 
         if (ind1 == '3') {
-            writePart(w, "familyname", data);
+            writePart(w, "familyname", data, true);
         } else {
             String parttype = "forename";
             String splitChar = data.contains(",") ? "," : " ";
             String[] namevals = data.split(splitChar);
-            writePart(w, ind1 == '1' ? "surname" : parttype, namevals[0]);
+            writePart(w, ind1 == '1' ? "surname" : parttype, namevals[0], true);
 
             for (int i = 1; i < namevals.length; i++) {
             	for (String nameval : namevals[i].trim().split(" ")) {
-                    writePart(w, parttype, nameval);
+                    writePart(w, parttype, nameval, true);
                 }
             }
         }
@@ -438,12 +438,12 @@ public class MarcConverter {
         w.writeCharacters("\n");
     }
 
-    public void writePart(XMLStreamWriter w, String type, String value) throws Exception {
+    public void writePart(XMLStreamWriter w, String type, String value, boolean normalise) throws Exception {
         w.writeStartElement("part");
         if (type != null && !type.equals("")) {
             w.writeAttribute("type", type);
         }
-        w.writeCharacters(value.replaceAll("[(),.]", ""));
+        w.writeCharacters(normalise ? value.replaceAll("[(),.]", "") : value.replaceFirst("[,.]$", ""));
         w.writeEndElement();
         w.writeCharacters("\n");
     }
@@ -538,7 +538,7 @@ public class MarcConverter {
                 } else if (code == 'b' && ind1 == '2') {
                     type = "subordinate";
                 }
-                writePart(w, type, subfield.getData());
+                writePart(w, type, subfield.getData(), false);
             }
         }
         

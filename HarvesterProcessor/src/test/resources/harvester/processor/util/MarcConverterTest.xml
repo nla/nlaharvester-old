@@ -583,4 +583,172 @@
 			</eac>
 		</expected>
 	</test>
+	<test>
+		<marc>
+			<record xmlns="http://www.loc.gov/MARC21/slim">
+				<leader>00315nz  a2200133n  4500</leader>
+				<controlfield tag="001">000035036057</controlfield>
+				<controlfield tag="003">AuCNLKIN</controlfield>
+				<controlfield tag="005">19870611000000.0</controlfield>
+				<controlfield tag="008">870611nn acnnnaabn          un ana     d</controlfield>
+				<datafield tag="035" ind1=" " ind2=" ">
+					<subfield code="a">abv06634788</subfield>
+				</datafield>
+				<datafield tag="040" ind1=" " ind2=" ">
+					<subfield code="a">ANL</subfield>
+					<subfield code="b">eng</subfield>
+				</datafield>
+				<datafield tag="042" ind1=" " ind2=" ">
+					<subfield code="a">kin</subfield>
+					<subfield code="a">anuc</subfield>
+				</datafield>
+				<datafield tag="099" ind1="1" ind2=" ">
+					<subfield code="a">000000036241</subfield>
+				</datafield>
+				<datafield tag="110" ind1="2" ind2=" ">
+					<subfield code="a">Australian Electoral Office (N.S.W.)</subfield>
+				</datafield>
+			</record>
+		</marc>
+		<expected>
+			<eac xmlns="http://jefferson.village.virginia.edu/eac" type="corpname">
+				<eacheader detaillevel="full" status="draft" typeauth="aci" typekey="au">
+					<eacid ownercode="AuCNLKIN" syskey="35036057">http://nla.gov.au/anbd.aut-an35036057</eacid>
+					<mainhist>
+						<mainevent maintype="create">
+							<maindate calendar="gregorian" normal="19870611">870611</maindate>
+						</mainevent>
+						<mainevent maintype="update">
+							<maindate calendar="gregorian" normal="19870611T000000.0">19870611000000.0</maindate>
+						</mainevent>
+					</mainhist>
+					<languagedecl>
+						<language languagecode="eng" scriptcode="latin"/>
+					</languagedecl>
+					<ruledecl>
+						<rule id="aacr2">Anglo-American Cataloging Rules, Second Edition.</rule>
+					</ruledecl>
+					<sourcedecl>
+						<source ownercode="AuCNLKIN" syskey="35036057">http://nla.gov.au/anbd.aut-an35036057</source>
+						<source ownercode="AuCNLKIN" syskey="abv06634788">abv06634788</source>
+					</sourcedecl>
+				</eacheader>
+				<condesc>
+					<identity>
+						<corphead authorized="AuCNLKIN">
+							<part>Australian Electoral Office (N.S.W.)</part>
+						</corphead>
+					</identity>
+				</condesc>
+			</eac>
+		</expected>
+	</test>
+	<test>
+		<marc>
+			<record xmlns="http://www.loc.gov/MARC21/slim">
+				<leader>00741cz  a2200205n  4500</leader>
+				<controlfield tag="001">000035675356</controlfield>
+				<controlfield tag="003">AuCNLKIN</controlfield>
+				<controlfield tag="005">19960226000000.0</controlfield>
+				<controlfield tag="008">820323nn acnnnaabn          ua ana     d</controlfield>
+				<datafield tag="035" ind1=" " ind2=" ">
+					<subfield code="a">abv00983311</subfield>
+				</datafield>
+				<datafield tag="040" ind1=" " ind2=" ">
+					<subfield code="a">ANL</subfield>
+					<subfield code="b">eng</subfield>
+				</datafield>
+				<datafield tag="042" ind1=" " ind2=" ">
+					<subfield code="a">kin</subfield>
+					<subfield code="a">anuc</subfield>
+				</datafield>
+				<datafield tag="099" ind1="1" ind2=" ">
+					<subfield code="a">000000679382</subfield>
+				</datafield>
+				<datafield tag="110" ind1="2" ind2=" ">
+					<subfield code="a">Australia and New Zealand Banking Group</subfield>
+				</datafield>
+				<datafield tag="410" ind1="2" ind2=" ">
+					<subfield code="a">ANZ</subfield>
+				</datafield>
+				<datafield tag="410" ind1="2" ind2=" ">
+					<subfield code="a">A.N.Z. Group</subfield>
+				</datafield>
+				<datafield tag="410" ind1="2" ind2=" ">
+					<subfield code="a">A.N.Z. Bank</subfield>
+				</datafield>
+				<datafield tag="510" ind1="2" ind2=" ">
+					<subfield code="w">annn</subfield>
+					<subfield code="a">English Scottish and Australian Savings Bank</subfield>
+				</datafield>
+				<datafield tag="510" ind1="2" ind2=" ">
+					<subfield code="w">annn</subfield>
+					<subfield code="a">English, Scottish and Australian Bank</subfield>
+				</datafield>
+				<datafield tag="665" ind1=" " ind2=" ">
+					<subfield code="a">Set up for the merger of three Banks, in Jan. 1969, the Group
+						then, in Oct. 1970, transferred to itself the business of ANZ Bank, the
+						English Scottish and Australian Bank, and the E.S.&#38; A. Savings
+					Bank.</subfield>
+				</datafield>
+			</record>
+		</marc>
+		<expected>
+			<eac xmlns="http://jefferson.village.virginia.edu/eac" type="corpname">
+				<eacheader status="edited" detaillevel="full" typeauth="aci" typekey="au">
+					<eacid ownercode="AuCNLKIN" syskey="35675356">http://nla.gov.au/anbd.aut-an35675356</eacid>
+					<mainhist>
+						<mainevent maintype="create">
+							<maindate calendar="gregorian" normal="19820323">820323</maindate>
+						</mainevent>
+						<mainevent maintype="update">
+							<maindate calendar="gregorian" normal="19960226T000000.0">19960226000000.0</maindate>
+						</mainevent>
+					</mainhist>
+					<languagedecl>
+						<language scriptcode="latin" languagecode="eng"/>
+					</languagedecl>
+					<ruledecl>
+						<rule id="aacr2">Anglo-American Cataloging Rules, Second Edition.</rule>
+					</ruledecl>
+					<sourcedecl>
+						<source ownercode="AuCNLKIN" syskey="35675356">http://nla.gov.au/anbd.aut-an35675356</source>
+						<source ownercode="AuCNLKIN" syskey="abv00983311">abv00983311</source>
+					</sourcedecl>
+				</eacheader>
+				<condesc>
+					<identity>
+						<corphead authorized="AuCNLKIN">
+							<part>Australia and New Zealand Banking Group</part>
+						</corphead>
+						<corphead>
+							<part>ANZ</part>
+						</corphead>
+						<corphead>
+							<part>A.N.Z. Group</part>
+						</corphead>
+						<corphead>
+							<part>A.N.Z. Bank</part>
+						</corphead>
+					</identity>
+					<desc>
+						<bioghist ea="665">
+							<p>Set up for the merger of three Banks, in Jan. 1969, the Group then,
+								in Oct. 1970, transferred to itself the business of ANZ Bank, the
+								English Scottish and Australian Bank, and the E.S.&amp; A.
+								Savings Bank.</p>
+						</bioghist>
+					</desc>
+					<eacrels>
+						<eacrel reltype="earlier">
+							<corpname>English Scottish and Australian Savings Bank</corpname>
+						</eacrel>
+						<eacrel reltype="earlier">
+							<corpname>English, Scottish and Australian Bank</corpname>
+						</eacrel>
+					</eacrels>
+				</condesc>
+			</eac>
+		</expected>
+	</test>
 </tests>
