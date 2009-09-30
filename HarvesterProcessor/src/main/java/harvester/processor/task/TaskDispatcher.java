@@ -22,7 +22,7 @@ import org.apache.log4j.Logger;
  * the default is specified in the properties file as "defaultThreadcount", and any 
  * single pool can have the default override by placing collectionname.threadcount in
  * the properties file, where collectionname is of course the collection corresponding
- * to the pool's name.
+ * to the pool's name. collectionid is also supported.
  * We use a pool with poolid 0 as a 'left over' pool for ids that have yet to be configured
  * in the properties file.
  * 
@@ -99,6 +99,9 @@ public class TaskDispatcher {
 				if(props.containsKey(collectionname + ".threadcount")) {
 					//create a new pool	
 					Integer numThreads = Integer.valueOf((String)props.get(collectionname + ".threadcount"));
+					if(numThreads == null)
+						numThreads = Integer.valueOf((String)props.get(collectionid + ".threadcount"));
+					
 					TaskPool pool = new TaskPool(numThreads,ctx, props);
 					pools.put(collectionid, pool);
 					return pool.startTask(params);

@@ -69,7 +69,8 @@
     
     <!-- OAI Stage -->
     <bean id="OAIOptionProcessor" class="harvester.client.connconfig.actions.OAIOptionProcessor" >
-        <property name="setspecid" value="56" />
+        <property name="setDescId" value="80" /> <!-- piid of the parameterinfo object of the set description field -->
+        <property name="setId" value="7" /> <!-- piid of the parameterinfo object of the set field -->
     </bean>
     <bean id="Z3950OptionProcessor" class="harvester.client.connconfig.actions.Z3950OptionProcessor" />
     

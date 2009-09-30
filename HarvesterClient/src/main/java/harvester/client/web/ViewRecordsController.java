@@ -12,6 +12,7 @@ import org.springframework.core.io.Resource;
 import harvester.client.data.dao.DAOFactory;
 import harvester.client.util.HarvestDataView;
 import harvester.data.*;
+import harvester.data.Collection;
 
 import javax.servlet.http.*;
 import javax.xml.transform.*;
@@ -84,9 +85,11 @@ public class ViewRecordsController implements Controller{
 		}
 		
 		Harvest h = daofactory.getHarvestDAO().getHarvestAndContributor(harvestid);
+		Contributor c = h.getContributor();
+		Collection col = daofactory.getCollectionDAO().getCollectionAndProfiles(c.getCollection().getCollectionid());
 		
 		//add the contributor and the harvest to the model
-		model.put("contributor", h.getContributor());
+		model.put("contributor", c);
 		model.put("harvest", h);
 		
 		int page = Integer.valueOf(request.getParameter("page"));
@@ -97,11 +100,20 @@ public class ViewRecordsController implements Controller{
 		TransformerFactory xformFactory = TransformerFactory.newInstance();
 		//Resource xslfile = new ClassPathResource(stylepath);
 		
-		Resource styleRes;
+		Resource styleRes = null;
 		String style = request.getParameter("style");
-		if(style == null || "casual".equals(style))
-			styleRes = casualLayoutStylePath;
-		else {
+		if(style == null || "casual".equals(style)) {
+			//check if there is a stylesheet specifically for this type of load step
+			try {
+				if(col.getLoadstage() != null) {
+					Integer stepid = col.getLoadstage().getStep().getStepid();
+					styleRes = new ClassPathResource("load_step_style_" + stepid + ".xsl");
+				}
+			} catch (Exception e) {
+			}
+			if(styleRes == null || !styleRes.exists())
+				styleRes = casualLayoutStylePath;
+		} else {
 			styleRes = xmlLayoutStylePath;
 			model.put("style", "xml");
 		}

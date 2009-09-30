@@ -34,7 +34,7 @@ public class Profiler {
 		
 		LinkedList<StagePluginInterface> l = new LinkedList<StagePluginInterface>();
 
-		StepLogger slog = new StepLoggerImpl(tp.getH().getHarvestid(), tp.getClienturl());
+		StepLoggerImpl slog = new StepLoggerImpl(tp.getH().getHarvestid(), tp.getClienturl());
 		
 		//first get the harvest step since it is stored seperately with the contributor object
 		ProfileStep hstage = tp.getC().getHarveststage();
@@ -79,7 +79,7 @@ public class Profiler {
 	 * @return the newly created stage plugin.
 	 * @throws Exception
 	 */
-	private static StagePluginInterface getInitialisedPlugin(ProfileStep ps, StepLogger slog, TaskProcessor tp) throws Exception
+	private static StagePluginInterface getInitialisedPlugin(ProfileStep ps, StepLoggerImpl slog, TaskProcessor tp) throws Exception
 	{
 		Step s = ps.getStep();
 		logger.info("Processing step: " + s.getName() + " position: " + ps.getPosition());
@@ -94,6 +94,12 @@ public class Profiler {
 
 		//Initialise the step and add return it
 		spi.Initialise(props,slog, tp.getServletCtx());
+		
+		//UGLY special case for OAI harvests.
+		if(props.containsKey("Base URL") && props.containsKey("Metadata Prefix")) {
+			slog.setBase_url((String)props.get("Base URL"));
+			slog.setMetadata_prefix((String)props.get("Metadata Prefix"));
+		}
 		
 		logger.info("got step");
 		return spi;
@@ -146,6 +152,7 @@ public class Profiler {
 					
 					props.put("stage", String.valueOf(ps.getPosition()));
 					props.put("stepid", ps.getStep().getStepid());
+					props.put("controller", tp);	//Somewhat defeats the purpose
 					
 					//best way to do this might be to loop through things twice		
 					//we first create any linked lists of hashtables that are needed 

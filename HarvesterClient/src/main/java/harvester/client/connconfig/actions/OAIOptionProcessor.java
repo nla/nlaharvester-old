@@ -31,17 +31,24 @@ import org.xml.sax.InputSource;
  */
 public class OAIOptionProcessor implements StepOptionProcessor{
 
-    protected final Log logger = LogFactory.getLog(getClass());
+	protected final Log logger = LogFactory.getLog(getClass());
 	
     public static final int DEFAULT_GRANULARITY = 0;
     public static final int LONG_GRANULARITY = 1;
     
-    private int setspecid;
+    private static Map<Integer, List<KeyValue>> setDescriptions = Collections.synchronizedMap(new HashMap<Integer, List<KeyValue>>());
     
-    public void setSetspecid(int setspecid) {
-		this.setspecid = setspecid;
+    private int setId;
+    private int setDescId;
+    
+	public void setSetDescId(int setDescId) {
+		this.setDescId = setDescId;
 	}
 
+	public void setSetId(int setId) {
+		this.setId = setId;
+	}
+	
 	public boolean process(List<StepParameterView> spv, DAOFactory daofactory, Contributor c)
     {
 
@@ -52,6 +59,8 @@ public class OAIOptionProcessor implements StepOptionProcessor{
     	//we then need to do a few requests to gather the data we need
     	//to fill out the options for the drop down boxes
 
+    	clearDesc(c.getContributorid());
+    	
     	//just fetch references to the parameterview objects we need first
     	StepParameterView baseurl = null;
     	StepParameterView mdp = null;			//metadata prefix
@@ -150,6 +159,8 @@ public class OAIOptionProcessor implements StepOptionProcessor{
 		    			kv.setValue(spec + " - " + name);
 		    		kv.setKey(spec);
 		    		set.getOptions().add(kv);
+		    		
+		    		addDesc(c.getContributorid(), spec, name);
 		    	}
 		    	if(set.getOptions().size() == 1)
 		    	{
@@ -262,8 +273,28 @@ public class OAIOptionProcessor implements StepOptionProcessor{
 		return 0;	//this is the OAI type
 	}
 
+	private void addDesc(Integer contributorid, String spec, String name ) {
+		List<KeyValue> sets = setDescriptions.get(contributorid);
+		sets.add(new KeyValue(spec, name));
+	}
+	
+	private void clearDesc(Integer contributorid) {
+		setDescriptions.put(contributorid, new LinkedList<KeyValue>());
+	}
+	
 	public void postProcess(Map<Integer, String> parameters, DAOFactory daofactory, Contributor c) {
-		// TODO Auto-generated method stub
+
+		String setSpec = parameters.get(setId);
 		
+		List<KeyValue> sets = setDescriptions.get(c.getContributorid());
+		
+		String description = null;
+		
+		for(KeyValue set : sets) {
+			if(set.getKey().equals(setSpec))
+				description = set.getValue();
+		}
+		
+		parameters.put(setDescId, description);
 	}
 }

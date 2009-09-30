@@ -1,6 +1,7 @@
 package harvester.processor.util;
 
 import harvester.processor.exceptions.*;
+import harvester.processor.main.Controller;
 
 import java.util.regex.*;
 import java.net.*;
@@ -15,6 +16,8 @@ public class OaiClient {
 	StepLogger logger;
 	protected HashMap<Integer, String> statuscodes = new HashMap<Integer, String>();
 	private HarvestConnection con;
+	
+	private Controller tc;
 	
 	String forced_encoding;
 	
@@ -48,7 +51,8 @@ public class OaiClient {
 	}
 
 	/* create an OaiClient for GetRecord verb */
-	public OaiClient(String url, String oai_id, String metadata_prefix, StepLogger logger, String forced_encoding, Integer stepid) {
+	public OaiClient(Controller tpc, String url, String oai_id, String metadata_prefix, 
+					 StepLogger logger, String forced_encoding, Integer stepid) {
 		OaiClientInit();
 		this.forced_encoding = forced_encoding;
 		this.logger = logger;
@@ -56,10 +60,12 @@ public class OaiClient {
 		this.oai_id = oai_id;
 		this.metadata_prefix = metadata_prefix;
 		this.stepid = stepid;
+		this.tc = tc;
 	}
 
 	/* create an OaiClient suitable for ListRecords verb */
-	public OaiClient(String url, String set, String metadata_prefix, String from, String until, StepLogger logger, String forced_encoding, Integer stepid) {
+	public OaiClient(Controller tc, String url, String set, String metadata_prefix, 
+					 String from, String until, StepLogger logger, String forced_encoding, Integer stepid) {
 		OaiClientInit();
 		this.forced_encoding = forced_encoding;
 		this.logger = logger;
@@ -69,6 +75,7 @@ public class OaiClient {
 		this.from = from;
 		this.until = until;
 		this.stepid = stepid;
+		this.tc = tc;
 		oai_id = null;
 	}
 	public String getName() {
@@ -127,7 +134,10 @@ public class OaiClient {
 		//tell the user what we are doing
 		logger.info("Fetching: <a href=\"" + request + "\">" + OaiClient.AddWordBrakesToUrl(request) + "</a>");
 		
-		while(numLocalRetries < MAX_RETRIES) {			
+		while(numLocalRetries < MAX_RETRIES) {	
+			
+			tc.yield();	// This is a good spot for harvests to stop at.
+			
 			try {
 				responseCode = con.connect(request);
 				logger.locallog("Response Code: " + responseCode + " : " + getStatusStringFromCode(responseCode), getName());

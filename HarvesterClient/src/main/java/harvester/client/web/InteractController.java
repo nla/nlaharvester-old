@@ -149,6 +149,12 @@ public class InteractController implements Controller {
 				
 				//url= "ListHarvestLogs.htm?contributorid=" + contributorid;
 				url = "ViewHarvest.htm?harvestid=" + harvestid;
+				
+			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+			} else if(action.equals("CancelTestHarvest")) 
+			{
+					schedulerclient.deleteProductionSchedules(String.valueOf(contributorid) + "TEST");
+					url="ListHarvests.htm?collectionid=" + request.getParameter("collectionid");
 			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			} else if(action.equals("getrecord"))
 			{
@@ -235,7 +241,7 @@ public class InteractController implements Controller {
 			{
 				daofactory.getContributorDAO().deletecontributor(contributorid);
 				//delete the schedules for this contributor
-				schedulerclient.deleteProductionSchedules(contributorid);
+				schedulerclient.deleteProductionSchedules(String.valueOf(contributorid));
 				url="ListContributors.htm?collectionid=" + request.getParameter("collectionid");
 			//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 			}else if(action.equals("deletecollection")) 

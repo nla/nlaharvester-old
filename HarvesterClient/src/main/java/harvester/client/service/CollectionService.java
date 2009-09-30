@@ -3,13 +3,14 @@ package harvester.client.service;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import harvester.client.connconfig.actions.LoadStepActions;
 import harvester.client.data.dao.DAOFactory;
+import harvester.client.schedule.Schedule;
+import harvester.client.schedule.SchedulerClient;
 import harvester.client.util.EscapeHTML;
 import harvester.data.*;
 
@@ -26,6 +27,13 @@ public class CollectionService {
     private DAOFactory daofactory;
 	private Map<Integer, LoadStepActions> stepactions;
     
+    private SchedulerClient schedulerclient;
+
+    @Autowired
+	public void setSchedulerclient(SchedulerClient schedulerclient) {
+		this.schedulerclient = schedulerclient;
+	}
+	
     @Required
 	public void setDaofactory(DAOFactory daofactory) {
 		this.daofactory = daofactory;
@@ -208,17 +216,35 @@ public class CollectionService {
 	public void deleteProductionRecordsForContributor(int collectionid, int contributorid) {
 		
 		Collection col = daofactory.getCollectionDAO().getCollection(collectionid);
+		Contributor con = daofactory.getContributorDAO().getContributor(contributorid);
+		
 		if(col.getLoadstage() != null) {
 			logger.info("deleting production records from global store");
 			Integer stepid = col.getLoadstage().getStep().getStepid();
 			LoadStepActions loadaction = stepactions.get(stepid);
 			if( loadaction != null) {
-				Contributor con = daofactory.getContributorDAO().getContributor(contributorid);
 				loadaction.deleteProductionRecords(contributorid, con.getName());
 			} else {
 				logger.info("no class configured to perform the deletion on the client");
 			}
 		}
+		
+		//reset schedule so the next run is "from earliest" instead of from last harvest
+		if(con.getIsscheduled() == 1) {
+			logger.info("changing from field to FIRST");
+			try {
+				Schedule schedule = schedulerclient.getSchedule(String.valueOf(contributorid));
+				
+				schedule.setFrom("FIRST");
+				
+				schedulerclient.sendPutSchedule(schedule, con, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} else {
+			logger.info("not scheduled, so not changing from field.");
+		}
+		
 		//even if we have no load step, make sure totalrecords is 0
 		daofactory.getContributorDAO().setRecordCount(contributorid, 0);
 	}
@@ -253,6 +279,9 @@ public class CollectionService {
 			if(con.getType() != 0 && con.getIsscheduled() != 0) {
 				cons.put(String.valueOf(con.getContributorid()), con);
 			}
+			
+			//we want test harvests as well
+			cons.put(String.valueOf(con.getContributorid()) + "TEST", con);
 		}
 		
 		return cons;

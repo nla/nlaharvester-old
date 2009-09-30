@@ -69,30 +69,37 @@
           <dd>$harvesttype</dd>
           
           #foreach($param in $parameters)
-            <dt>${param.name}:#if($param.editibility == 1)<span class="requiredfield">*</span>#{end}</dt>
-            <dd>
-            #if($param.type == $param.READ_ONLY)
-              $!param.value
-              <input type="text" style="display:none"  name="$param.id" value="$!param.value" />
-            #end
-            #if($param.type == $param.READ_ONLY_HIDDEN)
-              $!param.value
-              <input type="text" style="display:none"  name="$param.id" value="$!param.hiddenvalue" />
-            #end            
-            #if($param.type == $param.TEXT)
-              <input name="$param.id" #if($param.editibility == 1)class="required"#{end} type="text" value="$!param.value" />
-            #end
-            #if($param.type == $param.DROP_DOWN)
-              <select #if($param.editibility == 1)class="required"#{end} name="$param.id">
-                #foreach($option in $param.options)
-                  <option  value="$!option.key" #if($param.value && $option.key == $param.value)selected="selected"#{end}>$option.value</option>
+            #if(!$param.description && $param.type == $param.READ_ONLY_HIDDEN)
+               <input type="text" style="display:none"  name="$param.id" value="$!param.hiddenvalue" />
+            #else
+              <dt>
+                  ${param.name}:#if($param.editibility == 1)<span class="requiredfield">*</span>#{end}
+              </dt>
+              <dd>
+                #if($param.type == $param.READ_ONLY)
+                  $!param.value
+                  <input type="text" style="display:none"  name="$param.id" value="$!param.value" />
                 #end
-              </select>
+                #if($param.type == $param.READ_ONLY_HIDDEN)
+                  $!param.value
+                  <input type="text" style="display:none"  name="$param.id" value="$!param.hiddenvalue" />
+                #end            
+                #if($param.type == $param.TEXT)
+                  <input name="$param.id" #if($param.editibility == 1)class="required"#{end} type="text" value="$!param.value" />
+                #end
+                #if($param.type == $param.DROP_DOWN)
+                  <select #if($param.editibility == 1)class="required"#{end} name="$param.id">
+                    #foreach($option in $param.options)
+                      <option  value="$!option.key" #if($param.value && $option.key == $param.value)selected="selected"#{end}>$option.value</option>
+                    #end
+                  </select>
+                #end
+                #if($param.type == $param.CHECK_BOX)
+                  <input type="checkbox" #if($param.editibility == 1)class="required"#{end} name="$param.id" value="$!param.value" />
+                #end
+                #if($param.description)<span>$param.description</span>#{end}
+              </dd>
             #end
-            #if($param.type == $param.CHECK_BOX)
-              <input type="checkbox" #if($param.editibility == 1)class="required"#{end} name="$param.id" value="$!param.value" />
-            #end
-            #if($param.description)<span>$param.description</span>#{end}</dd>
           #end
           
         </dl>

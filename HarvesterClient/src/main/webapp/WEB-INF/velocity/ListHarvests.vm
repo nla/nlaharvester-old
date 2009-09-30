@@ -33,12 +33,15 @@
       '   <li><a href="ViewHarvestSchedule.htm?contributorid=' + contributorid + '" >Schedule</a></li>' +
       '  </ul>' +
       '</td>';
-      //'<td>' +
-      //'   <ul class="buttons">' + 
-      //'    <li><a href="Interact.htm?collectionid=${model.collection.collectionid}&action=removeharvest&contributorid=' + contributorid + 
-      //'" class="delete">Remove</a></li>' + 
-      //'   </ul>' + 
-      //'</td>';
+    }
+    
+    function testActionCancelHarvest(contributorid) {
+      return '<td>' + 
+      '  <ul class="buttons">' +
+      '   <li><a class="delete" href="Interact.htm?contributorid=' + contributorid + 
+          '&action=CancelTestHarvest&collectionid=${model.collection.collectionid}" >Cancel</a></li>' +
+      '  </ul>' +
+      '</td>';
     }
 
     function pollQueue() {
@@ -85,9 +88,22 @@
             row += "<td><a href=\"ViewContributor.htm?contributorid=" + item.contributorid + "\" >" 
                 + item.contributorname + "</a></td>\n";
             row += "<td>" + item.time + "</td>\n";
+            
+            row += "<td>";
+            if(item.test) {
+              row += "Test";
+            } else {
+              row += "Production";
+            }
+            row += "</td>\n";
+            
             row += "<td>" + item.type + "</td>\n";  
-            row += viewBlock(item.contributorid, null);              
-            row += prodActionWorkflowBlock(item.contributorid);
+            row += viewBlock(item.contributorid, null);   
+            if(item.test) {           
+              row += testActionCancelHarvest(item.contributorid);
+            } else {
+              row += prodActionWorkflowBlock(item.contributorid);
+            }
             row += "</tr>";
             rowDom = jQuery(row);
             $('#schedule-table tbody').append(rowDom);
@@ -442,20 +458,21 @@
       
       <table class="harvests" id="schedule-table">
         <colgroup>
-          <col /><col />
+          <col /><col /><col />
           <col width="30"/>
           <col width="155px"/>
           <col width="265px"/>
         </colgroup>
         <thead>        
         <tr>
-          <th colspan="5">
+          <th colspan="6">
             <h4>Scheduled</h4>
           </th>
         </tr>
         <tr id="scheduled-header">
           <th>Contributor</th>
           <th>Time</th>
+          <th>Harvest Type</th>
           <th>Type</th>
           <th>View</th>
           <th>Actions</th>

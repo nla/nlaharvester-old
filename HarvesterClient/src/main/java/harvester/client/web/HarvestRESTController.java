@@ -152,6 +152,10 @@ public class HarvestRESTController {
 					for(Schedule s : schedules) {
 						JSONObject jschedule = new JSONObject();
 						
+						if(s.getId().endsWith("TEST")) {
+							jschedule.put("test", "true");
+						} 
+								
 						Contributor con = cons.get(s.getId());
 						logger.info("considering schedule sid=" + s.getId() + " next=" + s.getNext() + "name=" + con.getName());
 						

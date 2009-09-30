@@ -17,8 +17,6 @@ import org.springframework.beans.factory.annotation.Required;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
-
-
 public class EditScheduleController implements Controller {
 
     protected final Log logger = LogFactory.getLog(getClass());
@@ -45,27 +43,27 @@ public class EditScheduleController implements Controller {
 		
 		logger.info("processing editSchedule request");
 
-			 int contributorid = WebUtil.getIntFieldOrError("contributorid", request);
+		int contributorid = WebUtil.getIntFieldOrError("contributorid", request);
 
-			//get the contributor related stuff from the db
-			Contributor c =  daofactory.getContributorDAO().getContributorLastHarvestsAndCollection(contributorid);
-			Map<String, Object> model = new HashMap<String, Object>();
-			model.put("contributor", c);
-			
-			//get the schedule related stuff
-			ScheduleView sv = schedulerclient.getScheduleView(c);
-			
-			model.put("schedule", sv);
-			
-			if(c.getLastsuccessfulprod() != null)
-				model.put("lastsuccessfulharvest", c.getLastsuccessfulprod().getStarttime());
-			
-			model.put("shortnow", SchedulerClient.getNowShort());
-			model.put("now", SchedulerClient.getNow());
-			logger.info("now= " + SchedulerClient.getNowShort());
+		//get the contributor related stuff from the db
+		Contributor c =  daofactory.getContributorDAO().getContributorLastHarvestsAndCollection(contributorid);
+		Map<String, Object> model = new HashMap<String, Object>();
+		model.put("contributor", c);
 		
-			logger.info("editschedule model built");
-		    return new ModelAndView("EditSchedule", "model", model);
+		//get the schedule related stuff
+		ScheduleView sv = schedulerclient.getScheduleView(c);
+		
+		model.put("schedule", sv);
+		
+		if(c.getLastsuccessfulprod() != null)
+			model.put("lastsuccessfulharvest", c.getLastsuccessfulprod().getStarttime());
+		
+		model.put("shortnow", SchedulerClient.getNowShort());
+		model.put("now", SchedulerClient.getNow());
+		logger.info("now= " + SchedulerClient.getNowShort());
+	
+		logger.info("editschedule model built");
+	    return new ModelAndView("EditSchedule", "model", model);
 		    
 	}
 	

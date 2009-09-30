@@ -27,6 +27,22 @@ public class StepLoggerImpl implements StepLogger {
 	private int failedRecordsLoggedThisHarvest = 0;
 	
 	private String clienturl;
+	private String base_url;
+	private String metadata_prefix;
+	
+	/**
+	 * for OAI id harvests
+	 * @param harvestid
+	 * @param clienturl
+	 * @param base_url
+	 * @param metadata_prefix
+	 */
+	public StepLoggerImpl(int harvestid, String clienturl, String base_url, String metadata_prefix) {
+		this.harvestid = harvestid;
+		this.clienturl = clienturl;
+		this.base_url = base_url;
+		this.metadata_prefix = metadata_prefix;
+	}
 	
 	public StepLoggerImpl(int harvestid, String clienturl) {
 		this.harvestid = harvestid;
@@ -39,13 +55,14 @@ public class StepLoggerImpl implements StepLogger {
 	 * This is also used in MockStepLogger
 	 */
 	public String getOAIIdentifier(Document data) {
-		List<Node> cnodes = data.selectNodes("comment()");
-		
-		for(Node n : cnodes) {
-			if(n.getText().startsWith("identifier"))
-				return n.getText().substring("identifier=".length());			
+		if(base_url != null) {
+			List<Node> cnodes = data.selectNodes("comment()");
+			
+			for(Node n : cnodes) {
+				if(n.getText().startsWith("identifier"))
+					return n.getText().substring("identifier=".length());			
+			}
 		}
-		
 		return null;
 	}
 	
@@ -63,10 +80,16 @@ public class StepLoggerImpl implements StepLogger {
 			msg = "Record " + (recordnumber+1) + " rejected<br/>" + 
 				  "Processing Step: " + position + " . " + name + "<br/>" + 
 				  "Reason: " + msg;
-			if(identifier != null)
-				  msg = msg + "<br/>OAI ID: <a href='" + clienturl 
-				  + "Interact.htm?action=getrecord&amp;harvestid=" + harvestid + "&amp;oaiid=" 
-				  + URLEncoder.encode(identifier, "UTF-8") + "' >" + identifier + "</a>";
+			if(identifier != null) {
+				msg = msg + "<br/>OAI ID: <a href=\"" 
+					+ base_url + "?verb=GetRecord&metadataPrefix=" 
+					+ URLEncoder.encode(metadata_prefix, "UTF-8") + "&identifier=" 
+					+ URLEncoder.encode(identifier, "UTF-8")
+					+ "\" >" + identifier + "</a>";
+//				  msg = msg + "<br/>OAI ID: <a href='" + clienturl 
+//				  + "Interact.htm?action=getrecord&amp;harvestid=" + harvestid + "&amp;oaiid=" 
+//				  + URLEncoder.encode(identifier, "UTF-8") + "' >" + identifier + "</a>";
+			}
 				
 			if(failedRecordsLoggedThisHarvest < MAX_FAILED_RECORDS)
 				log(errorlevel, msg, description, stepid, data.asXML());
@@ -187,6 +210,14 @@ public class StepLoggerImpl implements StepLogger {
 
 	public void logreport(String name, String value, Integer stepid) {
 		log(REPORT_INFO, name + "=" + value, null, stepid, null);
+	}
+	
+	public void setBase_url(String base_url) {
+		this.base_url = base_url;
+	}
+
+	public void setMetadata_prefix(String metadata_prefix) {
+		this.metadata_prefix = metadata_prefix;
 	}
 	
 }

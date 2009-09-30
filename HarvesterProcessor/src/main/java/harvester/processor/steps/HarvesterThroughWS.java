@@ -3,6 +3,7 @@ package harvester.processor.steps;
 import org.dom4j.*;
 
 import harvester.processor.main.*;
+import harvester.processor.task.TaskProcessor;
 import harvester.processor.util.*;
 import harvester.processor.exceptions.*;
 
@@ -18,7 +19,7 @@ public class HarvesterThroughWS extends GenericStep {
     private String forced_encoding;
     private Integer stepid;
     private int total_normal_records_so_far = 0;
-
+    
     public String getName() {
         return "OaiStep";
     }
@@ -54,11 +55,12 @@ public class HarvesterThroughWS extends GenericStep {
         if(get_50 == true) logger.logprop("Stop at 50 records", "True", stepid);
         if(record_oai_id != null) logger.logprop("identifier", record_oai_id, stepid);
 
+        Controller tc = (TaskProcessor)props.get("controller");
 
         if (record_oai_id != null) {	//is single record harvest?
-            client = new OaiClient(base_url, record_oai_id, metadata_prefix, logger, forced_encoding, stepid);
+            client = new OaiClient(tc, base_url, record_oai_id, metadata_prefix, logger, forced_encoding, stepid);
         } else {
-            client = new OaiClient(base_url, set, metadata_prefix, from, until, logger, forced_encoding, stepid);
+            client = new OaiClient(tc, base_url, set, metadata_prefix, from, until, logger, forced_encoding, stepid);
         }
     }
 
@@ -218,6 +220,8 @@ public class HarvesterThroughWS extends GenericStep {
         } catch (FileNotFoundException e) {
             logger.error("FileNotFoundException Raised by client.getNext()", e);
             throw new HarvestException();
+        } catch ( InterruptedException e) {
+        	throw e;
         } catch (Exception e) {
             logger.error("Exception Raised by client.getNext()", e);
             throw new HarvestException();

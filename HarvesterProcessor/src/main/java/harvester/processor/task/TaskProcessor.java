@@ -6,6 +6,7 @@ import harvester.processor.data.dao.interfaces.HarvestDAO;
 import harvester.processor.email.*;
 import harvester.processor.exceptions.*;
 import harvester.processor.main.Records;
+import harvester.processor.main.Controller;
 import harvester.processor.steps.StagePluginInterface;
 import harvester.processor.util.*;
 
@@ -25,7 +26,7 @@ import org.apache.log4j.Logger;
  * The main class that controllers the flow of data through the pipeline and the creation and manipulation
  * of the harvest entry in the database.
  */
-public class TaskProcessor implements Runnable {
+public class TaskProcessor implements Runnable, Controller {
 
 	private static Logger logger = Logger.getLogger(TaskProcessor.class);
 	
@@ -354,24 +355,7 @@ public class TaskProcessor implements Runnable {
 				Integer stop = stopFlags.get(String.valueOf(h.getHarvestid()));
 				Integer shutdown = stopFlags.get("ALL");
 				if(STOP_EXECUTION.equals(stop) || SERVER_SHUTTING_DOWN.equals(shutdown) ) {
-					
-					//We need to call dispose on everything
-					harveststage.Dispose();
-					
-					for(StagePluginInterface spi : steps) {
-						spi.Dispose();
-					}	
-					
-					if(SERVER_SHUTTING_DOWN.equals(shutdown)) {											
-						slog.info("Harvest stopped since server is shutting down. [Local Time: " + userdateformater.format(new Date()) + "]");
-					}
-					else
-						slog.info("Harvest stopped by user. [Local Time: " + userdateformater.format(new Date()) + "]");
-					
-					h.setStatuscode(Harvest.SUCCESSFUL);
-					h.setStatus("Stopped");
-					h.setEndtime(new Date());
-					harvestdao.ApplyChanges(h);
+					stopHarvest(slog, steps, harveststage);
 					return;
 				}
 					
@@ -394,9 +378,10 @@ public class TaskProcessor implements Runnable {
 				
 				return;
 				
-			} catch (InterruptedException  e) {
-				logger.info("Thread was interrupted, probably shutting down", e);
-				continue;				
+			} catch (InterruptedException e) {
+				logger.info("Interrupted, probably shutting down or stopping", e);
+				stopHarvest(slog, steps, harveststage);
+				return;
 			} catch (Exception e) {
 				logger.error("Error harvesting with: " + harveststage.getName(), e);
 				//otherwise the gui reports failed records when none have failed!
@@ -420,7 +405,7 @@ public class TaskProcessor implements Runnable {
 				for( StagePluginInterface spi : steps) {
 					try {
 						records = spi.Process(records);
-					} catch (InterruptedException  e) {
+					} catch (InterruptedException e) {
 						logger.info("Thread was interrupted, probably shutting down", e);
 						throw e;
 					} catch (Exception e) {
@@ -441,8 +426,9 @@ public class TaskProcessor implements Runnable {
 					
 				}
 			} catch (InterruptedException  e) {
-				logger.info("Thread was interrupted, probably shutting down", e);
-				break;
+				logger.info("Interrupted, probably shutting down or stopping", e);
+				stopHarvest(slog, steps, harveststage);
+				return;
 			} finally {
 				h.setTotalrecords(h.getTotalrecords() + records.getTotalRecords());
 				h.setRecordscompleted(h.getRecordscompleted() + records.getCurrentrecords());
@@ -525,6 +511,42 @@ public class TaskProcessor implements Runnable {
 				 
 			}
 		} else logger.info("emailing turned off");
+	}
+	
+	/**
+	 * Set status and other details correctly for a stopped harvest
+	 */
+	private void stopHarvest(StepLogger slog, LinkedList<StagePluginInterface> steps, StagePluginInterface harveststage) throws Exception {
+		
+		//We need to call dispose on everything
+		harveststage.Dispose();
+		
+		for(StagePluginInterface spi : steps) {
+			spi.Dispose();
+		}	
+
+		Integer shutdown = stopFlags.get("ALL");
+				
+		if(SERVER_SHUTTING_DOWN.equals(shutdown)) {											
+			slog.info("Harvest stopped since server is shutting down. [Local Time: " + userdateformater.format(new Date()) + "]");
+		}
+		else {
+			slog.info("Harvest stopped by user. [Local Time: " + userdateformater.format(new Date()) + "]");
+		}
+		
+		h.setStatuscode(Harvest.SUCCESSFUL);
+		h.setStatus("Stopped");
+		h.setEndtime(new Date());
+		harvestdao.ApplyChanges(h);
+	}
+	
+	public void yield() throws InterruptedException {
+		Integer stop = stopFlags.get(String.valueOf(h.getHarvestid()));
+		Integer shutdown = stopFlags.get("ALL");
+		
+		if(STOP_EXECUTION.equals(stop) || SERVER_SHUTTING_DOWN.equals(shutdown) ) {
+			throw new InterruptedException("String stopped at yield point");
+		}
 	}
 	
 	/**

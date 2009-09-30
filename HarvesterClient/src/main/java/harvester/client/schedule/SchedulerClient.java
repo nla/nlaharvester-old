@@ -379,7 +379,14 @@ public class SchedulerClient {
 		sendPutSchedule(s, c, null);
 	}
 	
-	private void sendPutSchedule(Schedule s, Contributor c, Boolean type) throws Exception {
+	/**
+	 * 
+	 * @param s
+	 * @param c
+	 * @param type Should be null for production schedules
+	 * @throws Exception
+	 */
+	public void sendPutSchedule(Schedule s, Contributor c, Boolean type) throws Exception {
 		//we can now build up the request url with all the info from the schedule object
 		StringBuilder doc = new StringBuilder();
 
@@ -870,12 +877,12 @@ public class SchedulerClient {
 		conn.disconnect();
 	}
 
-	public void deleteProductionSchedules(int contributorid) throws Exception
+	public void deleteProductionSchedules(String scheduleid) throws Exception
 	{
 		
 		logger.info("delete production schedules method called");
 		
-		String url = wsurl + contributorid;
+		String url = wsurl + scheduleid;
 		logger.info("url :" + url);
 		
 		logger.info("connecting to scheduler ws");

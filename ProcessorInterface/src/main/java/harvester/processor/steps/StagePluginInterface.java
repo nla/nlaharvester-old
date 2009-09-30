@@ -20,6 +20,12 @@ import javax.servlet.ServletContext;
  *  <li>The passed in servlet context object can be used for accessing the local directory structure. This can be
  *  used for accessing folders that contain stylesheets or schemas. an example of this is <br /> 
  *  this.transformer = factory.newTransformer(new StreamSource(servletContext.getRealPath(folder + ss))); </li> 
+ *  <li> If a step performs long running tasks it might want to signal to the processor when it can be interrupted.
+ *  Interruptions happen when the harvest is stopped by the user, or when the server is shutting down. To do this, 
+ *  Grab the Controller object from the properties map: <br />
+ *  Controller tc = (TaskProcessor)props.get("controller"); <br />
+ *  Then to signal that it can be interrupted at that point, call tc.yield(). Most steps call this each time they 
+ *  retry a failed connection.</li>
  *  <li> The passed properties object contains both properties specified for this step in the local configuration
  *  and the properties that were entered in the GUI. the way to access them is as follows. Note that there are 
  *  two types of properties, singular properties and nested properties. nested properties are the ones that 
