@@ -51,7 +51,7 @@ public class OaiClient {
 	}
 
 	/* create an OaiClient for GetRecord verb */
-	public OaiClient(Controller tpc, String url, String oai_id, String metadata_prefix, 
+	public OaiClient(Controller tc, String url, String oai_id, String metadata_prefix, 
 					 StepLogger logger, String forced_encoding, Integer stepid) {
 		OaiClientInit();
 		this.forced_encoding = forced_encoding;

@@ -244,8 +244,9 @@ public class StepTest {
 	@Test
 	public void OAIClientListRecordsTest() throws Exception {
 		MockHarvestConnection hc = new MockHarvestConnection();
+		MockController mc = new MockController();
 		hc.addRecord(response.getBytes());
-		OaiClient client = new OaiClient("www.example.com", "physics:hep" , "oai_rfc1807", "1998-01-15", null, new MockStepLogger(), null, 0);
+		OaiClient client = new OaiClient(mc,"www.example.com", "physics:hep" , "oai_rfc1807", "1998-01-15", null, new MockStepLogger(), null, 0);
 		client.setHarvestConnection(hc);
 		String returned_response = client.getNext();
 		//we expect no next after the first
@@ -256,8 +257,9 @@ public class StepTest {
 	@Test
 	public void resumptionTokenTest() throws Exception {
 		MockHarvestConnection hc = new MockHarvestConnection();
+		MockController mc = new MockController();
 		hc.addRecord(shortdoc.getBytes());
-		OaiClient client = new OaiClient("www.example.com", "physics:hep" , "oai_rfc1807", "1998-01-15", null, new MockStepLogger(), null, 0);
+		OaiClient client = new OaiClient(mc,"www.example.com", "physics:hep" , "oai_rfc1807", "1998-01-15", null, new MockStepLogger(), null, 0);
 		client.setHarvestConnection(hc);
 		client.getNext();
 
@@ -275,7 +277,8 @@ public class StepTest {
 		
 		props.put("Base URL", "www.example.com");
 		props.put("Metadata Prefix", "oai_dc");
-		props.put("stepid", 42);	//for logging		
+		props.put("stepid", 42);	//for logging	
+		props.put("controller", new MockController());
 		
 		HarvesterThroughWS step = new HarvesterThroughWS();
 		step.Initialise(props, logger, new MockServletContext());

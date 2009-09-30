@@ -55,7 +55,7 @@ public class HarvesterThroughWS extends GenericStep {
         if(get_50 == true) logger.logprop("Stop at 50 records", "True", stepid);
         if(record_oai_id != null) logger.logprop("identifier", record_oai_id, stepid);
 
-        Controller tc = (TaskProcessor)props.get("controller");
+        Controller tc = (Controller)props.get("controller");
 
         if (record_oai_id != null) {	//is single record harvest?
             client = new OaiClient(tc, base_url, record_oai_id, metadata_prefix, logger, forced_encoding, stepid);
