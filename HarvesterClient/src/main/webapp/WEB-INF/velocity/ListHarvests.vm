@@ -413,6 +413,7 @@
           <thead>
             <tr>
               <th colspan="8">
+                <h3>Queues</h3>
                 <h4>Running</h4>
               </th>
             </tr>
