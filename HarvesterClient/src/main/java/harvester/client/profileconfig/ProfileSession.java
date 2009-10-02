@@ -189,6 +189,7 @@ public class ProfileSession {
 		model.put("addFromCollectionPage1Url",  EscapeHTML.forHTML("AddFromCollectionPage1.htm" + urlpostfix));
 	    model.put("copyStepFromCollectionUrl", EscapeHTML.forHTML("CopyStepFromCollection.htm" + urlpostfix));
 	    model.put("copyProfileFromCollectionUrl", EscapeHTML.forHTML("CopyProfileFromCollection.htm" + urlpostfix));	    
+	    model.put("plainTextProfileViewUrl", EscapeHTML.forHTML("PlainTextProfileView.htm" + urlpostfix));	    
 		
 		//the restriction types for profilesteps
 		model.put("None", ProfileStep.NORMAL);

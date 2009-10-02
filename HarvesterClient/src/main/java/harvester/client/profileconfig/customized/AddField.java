@@ -2,6 +2,7 @@ package harvester.client.profileconfig.customized;
 
 import harvester.client.connconfig.*;
 import harvester.client.profileconfig.ICustomizedStep;
+import harvester.data.ProfileStep;
 
 import java.util.*;
 
@@ -73,6 +74,10 @@ public class AddField implements ICustomizedStep {
 			}
 		}
 		
+	}
+
+	public String renderPlainTextView(ProfileStep ps) {
+		return null;
 	}
 
 }

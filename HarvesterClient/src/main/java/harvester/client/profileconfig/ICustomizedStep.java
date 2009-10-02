@@ -1,5 +1,7 @@
 package harvester.client.profileconfig;
 
+import harvester.data.ProfileStep;
+
 import java.util.Map;
 
 /** Objects implementing this interface are used to do any required customized behavior
@@ -36,4 +38,5 @@ public interface ICustomizedStep {
 	 */
 	public Map PostProcess(Map inmap);
 	
+	public String renderPlainTextView(ProfileStep ps);
 }

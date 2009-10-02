@@ -2,6 +2,7 @@ package harvester.client.web;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,7 @@ import harvester.client.profileconfig.ICustomizedStep;
 import harvester.client.profileconfig.ProfileConfigUtil;
 import harvester.client.profileconfig.ProfileSession;
 import harvester.client.profileconfig.Stage;
+import harvester.client.profileconfig.customized.DefaultView;
 import harvester.client.service.ConnectionSettingsService;
 import harvester.client.service.ContributorService;
 import harvester.client.service.ProcessingStepsService;
@@ -189,7 +191,7 @@ public class ProcessingStepsController {
 		profilesession.initProfileSession(request);
 		Map<String, Object> model = profilesession.getModel();
 		
-		//this should only be called form a contributor level
+		//this should only be called from a contributor level
 		
 		model.put("profiles", processingStepsService.buildViewOfProfileAsParameter(profilesession));
 		profilesession.setTmpProfile(
@@ -307,6 +309,18 @@ public class ProcessingStepsController {
     @RequestMapping("/PreserveProfileEdit.htm")
     public String preserveProfileEdit(HttpServletRequest request) throws Exception {
     	return "redirect:" + processingStepsService.preserveEditToSession(request, profilesession);
+    }
+    
+    @RequestMapping("/PlainTextProfileView.htm")
+    public ModelAndView plainTextProfileView(WebRequest request) throws Exception {
+    	profilesession.initProfileSession(request);
+    	Map<String, Object> model = profilesession.getModel();
+    	
+    	List<String> renderedSteps = processingStepsService.renderSteps(profilesession.getProfile().getProfilesteps());
+    	
+    	model.put("renderedSteps", renderedSteps);
+    	
+    	return new ModelAndView("customizedsteps/PlainTextProfileView", model);
     }
     
 }

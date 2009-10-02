@@ -280,3 +280,19 @@ pre {
 	width: 1200px;
 }
 
+.stepname {
+	background:#EEE url("../_img/h4.gif") 0 top repeat-x;
+ 	font-size:1.2em; 
+	margin:2em -20px 0 -20px; 
+	padding:.5em 0 .5em 20px;
+}
+
+.description {
+	font-size:1em; 
+	font-style: italic; 
+	padding-bottom: 1.5em;
+}
+
+.dt-sep {
+	padding-bottom: 1em;
+}

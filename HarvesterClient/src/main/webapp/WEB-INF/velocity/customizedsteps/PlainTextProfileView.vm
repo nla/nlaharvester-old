@@ -45,37 +45,16 @@
 
     <div id="content">
       <h3>#if($colview)$!collectionname#{else}$!contributorname#end</h3>
-      <p class="step">Step 1 of 2</p>
-      <form method="post" id="selectProfileForm" action="AddFromCollectionPage2.htm" >
-	      <fieldset>   
-          <legend>Copy from collection processing profile</legend>
-	        <input type="text" style="display:none"  name="new" value="true" />
-	        $sessionStateHTML ##ouputs a bunch of hidden input statements to maintain the session information with	
+ 
+      #foreach($step in $renderedSteps)
+        $step
+        <br/>
+      #end
+ 
+      <ul class="buttons">
+        <li><a href="$editProfileUrl">Back</a></li>
+      </ul>
 
-        #if($profiles.options.size > 0)
-          <dl class="reallybig">
-            <dt>Select a processing profile<span class="requiredfield">*</span>: </dt>
-            <dd>
-  	          <select class="required" name="collectionprofile">
-      	      #foreach($option in $profiles.options)
-      		      <option value="$option.key" >$option.value</option>
-      	      #end
-      	    </select>
-      	    </dd>
-      	  </dl>
-        #else
-          <em> No Collection Level Processing Profiles Configured </em> 
-        #end
-      	</fieldset> 
-      	<ul class="buttons">
-      	  <li><a href="$editProfileUrl" class="cancel">Cancel</a></li>
-      	  #if($profiles.options.size == 0)
-      	    <li><a href="javascript:document.getElementById('selectProfileForm').submit()" class="next"><strong>Step 2</strong> : Select Steps</a></li>
-      	  #end
-      	</ul>
-  
-        <p><span class="required">*</span> Compulsory Field</p>
-      </form>
       <div class="clearfix"></div>
     </div>
   </div>

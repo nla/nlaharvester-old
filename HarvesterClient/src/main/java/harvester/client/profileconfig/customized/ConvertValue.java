@@ -5,10 +5,13 @@ import harvester.client.connconfig.StepParameterView;
 import harvester.client.connconfig.actions.LoadStepActions;
 import harvester.client.data.dao.DAOFactory;
 import harvester.client.profileconfig.ICustomizedStep;
+import harvester.client.profileconfig.ParameterComparator;
 import harvester.client.profileconfig.ProfileSession;
 import harvester.client.util.ControllerUtil;
 import harvester.client.util.KeyValue;
 import harvester.client.util.WebUtil;
+import harvester.data.ProfileStep;
+import harvester.data.ProfileStepParameter;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -279,6 +282,38 @@ public class ConvertValue implements ICustomizedStep {
 
 	public void setMappingfileid(int mappingfileid) {
 		this.mappingfileid = mappingfileid;
+	}
+
+	public String renderPlainTextView(ProfileStep ps) {
+		StringBuilder sb = new StringBuilder();
+		
+		sb.append("<dl>\n");
+		
+		ProfileStepParameter[] parameters = ps.getParameters().toArray(new ProfileStepParameter[0]);
+		ParameterComparator comp = new ParameterComparator();
+		
+		
+		Arrays.sort(parameters, comp);
+		
+		for(int i = 0 ; i < parameters.length; i++) {
+			String psp_name = parameters[i].getPis().getParametername();
+			String psp_value = parameters[i].getValue();
+			
+			if(psp_name.equals("mappingfile")){
+				sb.append("<dt>Mapping File</dt>\n");
+				if(psp_value != null)
+					sb.append("<dd>" + psp_value + "</dd>\n");
+				else
+					sb.append("<dd>No File in Use</dd>\n");
+			} else {
+				sb.append("<dt>" + psp_name + "</dt>\n");
+				sb.append("<dd>" + psp_value + "</dd>\n");
+			}
+		}
+		
+		sb.append("</dl>\n");
+		
+		return sb.toString();
 	}
 
 }

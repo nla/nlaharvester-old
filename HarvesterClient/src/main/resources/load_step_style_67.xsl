@@ -14,7 +14,9 @@
 	</xsl:template>
 	
 	<xsl:template match="marc:leader">
-	    <xsl:text>000&#160;&#160;&#160;&#160;</xsl:text>
+	    <span class="element">
+	        <xsl:text>000&#160;&#160;&#160;&#160;</xsl:text>
+        </span>
 	    <xsl:value-of select="."/>
 	    
 	    <br />
@@ -23,16 +25,22 @@
 	</xsl:template>
 	
 	<xsl:template match="marc:controlfield">
-	    <xsl:value-of select="@tag"/>
+	    <span class="element">
+	        <xsl:value-of select="@tag"/>
+	    </span>
 	    <xsl:text>&#160;&#160;&#160;&#160;</xsl:text>
 	    <xsl:value-of select="."/><br />
 	</xsl:template>
 	
 	<xsl:template match="marc:datafield">
-	    <xsl:value-of select="@tag"/>
+	    <span class="element">
+	        <xsl:value-of select="@tag"/>
+	    </span>
 	    <xsl:text>&#160;</xsl:text>
 
-        <xsl:apply-templates select="@ind1|@ind2"/>
+        <span class="attribute_value">
+            <xsl:apply-templates select="@ind1|@ind2"/>
+	    </span>
 	    
 	    <xsl:text>&#160;</xsl:text>
 	    
@@ -45,10 +53,10 @@
 	</xsl:template>
 	
 	<xsl:template match="marc:subfield">
-	    <strong>
+	    <span class="attribute_value">
 	        <xsl:text>$</xsl:text>
 	        <xsl:value-of select="@code"/>
-        </strong>
+        </span>
 	    <xsl:value-of select="."/>
 	</xsl:template>
 	

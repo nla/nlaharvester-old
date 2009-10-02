@@ -26,6 +26,7 @@ import harvester.client.connconfig.StepParameterView;
 import harvester.client.data.dao.DAOFactory;
 import harvester.client.profileconfig.ICustomizedStep;
 import harvester.client.util.ControllerUtil;
+import harvester.data.ProfileStep;
 import harvester.data.Step;
 import harvester.data.StepFile;
 
@@ -276,6 +277,23 @@ public class XSLTTranslator implements ICustomizedStep {
 		////this is the one currently chosen	
 		model.put("fileid", fileid);
 		
+	}
+
+	public String renderPlainTextView(ProfileStep ps) {
+		if(ps.getParameters().size() != 0) {
+			String fileid_str = ps.getParameters().iterator().next().getValue();
+			
+			int fileid = Integer.valueOf(fileid_str);
+			
+	    	StepFile file = daofactory.getStepFileDAO().getFile(fileid);
+	    	
+			return "<dl>\n<dt>File Name:</dt>\n<dd>" + file.getFilename() 
+				 + "</dd>\n<dt>Description</dt>\n<dd>" 
+				 + (file.getDescription() == null ? "None" : file.getDescription()) 
+				 + "</dd></dl>";
+		} else {
+			return "No File selected\n";
+		}
 	}
 
 }

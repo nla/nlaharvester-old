@@ -51,6 +51,7 @@ public class HProfileDAO implements ProfileDAO {
 			{
 				Hibernate.initialize(p);
 				Hibernate.initialize(p.getPis());
+				Hibernate.initialize(p.getPis().getNested());
 			}
 		}
 		

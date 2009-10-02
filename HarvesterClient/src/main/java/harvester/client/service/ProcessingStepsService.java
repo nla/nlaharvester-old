@@ -20,6 +20,7 @@ import harvester.client.profileconfig.ProfileConfigUtil;
 import harvester.client.profileconfig.ProfileSession;
 import harvester.client.profileconfig.Stage;
 import harvester.client.profileconfig.StepPluginConfigurer;
+import harvester.client.profileconfig.customized.DefaultView;
 import harvester.client.util.KeyValue;
 import harvester.client.util.WebUtil;
 import harvester.data.Contributor;
@@ -388,5 +389,40 @@ public class ProcessingStepsService {
 		}
 		
 		return copyable;
+	}
+	
+	public List<String> renderSteps(Set<ProfileStep> stages) {
+    	List<String> renderedSteps = new LinkedList<String>();
+    	
+    	DefaultView dview = new DefaultView();
+    	
+    	for(ProfileStep ps : stages) {
+    		StringBuilder sb = new StringBuilder();
+    		
+    		String step_name = ps.getStep().getName();
+    		String step_descrption = ps.getDescription();
+    		
+    		logger.info("rendering " + step_name);
+    		
+    		sb.append("<div class=\"step_box\">\n");
+    		
+    		sb.append("<h4 class=\"stepname\">" + step_name + "</h4>\n");
+    		if(step_descrption != null)
+    			sb.append("<span class=\"description\">" + step_descrption + "</span>\n");
+    		
+			ICustomizedStep customized = steppluginconfigurer.getCustomizedSteps().get(ps.getStep().getClassname());
+			if(customized != null) {
+				sb.append(customized.renderPlainTextView(ps));
+			} else {
+				logger.info("no plain text processor, using default");
+				sb.append(dview.renderPlainTextView(ps));
+			}
+
+    		sb.append("</div>\n");
+    		
+    		renderedSteps.add(sb.toString());
+    	}
+    	
+    	return renderedSteps;
 	}
 }
