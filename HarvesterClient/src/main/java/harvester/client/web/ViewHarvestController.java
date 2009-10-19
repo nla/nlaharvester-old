@@ -46,7 +46,7 @@ public class ViewHarvestController {
 			long duration = (endtime - harvest.getStarttime().getTime()) / 1000;	   
 			long seconds = duration % 60;
 			long minutes = (duration/60) % 60;
-			long hours = (duration/60/60) % 12;
+			long hours = (duration/60/60);
 			return String.format("%d hours %d minutes %d seconds", hours, minutes, seconds);
 		} else {
 			return "Did not finish";
