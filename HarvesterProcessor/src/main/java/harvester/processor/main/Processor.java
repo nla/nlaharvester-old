@@ -1,5 +1,6 @@
 package harvester.processor.main;
 
+import harvester.processor.data.dao.DAOFactory;
 import harvester.processor.task.TaskDispatcher;
 import harvester.processor.task.TaskProcessor;
 import harvester.processor.util.HibernateUtil;
@@ -71,6 +72,13 @@ import org.apache.log4j.Logger;
  			 logger.error("path: " + ctx.getRealPath("WEB-INF/classes/HarvesterProcessor.properties"));
  		 }
  		 
+ 		 
+ 		//Clear any running harvests during startup
+ 		try {
+			DAOFactory.getDAOFactory().getHarvestDAO().stopAllRunning();
+		} catch (Exception e) {
+			logger.error("clearing running error", e);
+		}
  		
    	}
    

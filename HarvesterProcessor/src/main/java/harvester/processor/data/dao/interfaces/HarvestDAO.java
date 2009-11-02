@@ -10,4 +10,6 @@ public interface HarvestDAO {
 	
 	public void makeLastSuccHarvest(int hid, int cid, int type) throws Exception;
 	
+	public void stopAllRunning() throws Exception;
+	
 }

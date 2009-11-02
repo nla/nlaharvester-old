@@ -90,8 +90,12 @@ public class HHarvestDataDAO implements HarvestdataDAO
 			 }
 		 }
 
+		 session.flush();
+		 session.clear();
+		 
 		 logger.info("attempting commit, count = " + count + "...");
 		 session.getTransaction().commit();
+		 
 		 logger.debug("Completed commit");
 		} catch (HibernateException e) {
 			if(session != null)

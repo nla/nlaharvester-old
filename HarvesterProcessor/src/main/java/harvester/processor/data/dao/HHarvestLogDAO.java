@@ -29,7 +29,9 @@ public class HHarvestLogDAO implements HarvestlogDAO{
 		else
 		{
 			session.beginTransaction();
+			
 			session.save(hl);
+			
 			session.getTransaction().commit();
 		}
 	} catch (HibernateException e) {

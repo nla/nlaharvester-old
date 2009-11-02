@@ -31,9 +31,10 @@ public class HHarvestDAO implements HarvestDAO{
 			}
 			catch(Exception e)
 			{
+				logger.error("exception", e);
 				if(session != null)
 					session.getTransaction().rollback();
-				throw new Exception("hibernate exception", e);
+				throw new Exception("hibernate exception");
 			}
 		
 	}
@@ -80,21 +81,45 @@ public class HHarvestDAO implements HarvestDAO{
 
 	public void AddToDatabase(Harvest h) throws Exception{
 		Session session  = null;
-        try {
-	    fixlongstatus(h);
-	    
-		session = HibernateUtil.getSessionFactory().getCurrentSession();
-		 session.beginTransaction();
-		 
-		 session.save(h);
-		 session.getTransaction().commit();
-		 logger.debug("New harvest added to database.   id=" + h.getHarvestid());
-	} catch (HibernateException e) {
-		if(session != null)
-			session.getTransaction().rollback();
-		throw new Exception("hibernate exception", e);
+		try {
+			fixlongstatus(h);
+
+			session = HibernateUtil.getSessionFactory().getCurrentSession();
+			session.beginTransaction();
+
+			session.save(h);
+			session.getTransaction().commit();
+			logger.debug("New harvest added to database.   id=" + h.getHarvestid());
+		} catch (HibernateException e) {
+			logger.error("exception", e);
+			if(session != null)
+				session.getTransaction().rollback();
+			throw new Exception("hibernate exception");
+		}
+
 	}
-		
+
+	public void stopAllRunning() throws Exception {
+		Session session  = null;
+        try {
+	    
+        	session = HibernateUtil.getSessionFactory().getCurrentSession();
+        	session.beginTransaction();
+		 
+        	String stop_query = "update harvest set statuscode=0, status='Shutdown', endtime=sysdate where statuscode = 1";
+        	int num_running = session.createSQLQuery(stop_query).executeUpdate();
+        	
+        	session.getTransaction().commit();
+        	
+        	if(num_running > 0)
+        		logger.debug(num_running + " running harvests stopped!!");
+        	
+		} catch (HibernateException e) {
+			logger.error("exception", e);
+			if(session != null)
+				session.getTransaction().rollback();
+			throw new Exception("hibernate exception");
+		}
 	}
 
 }
