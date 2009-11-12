@@ -307,7 +307,7 @@ public class ConvertValue implements ICustomizedStep {
 					sb.append("<dd>No File in Use</dd>\n");
 			} else {
 				sb.append("<dt>" + psp_name + "</dt>\n");
-				sb.append("<dd>" + psp_value + "</dd>\n");
+				sb.append("<dd>" + psp_value.replace("\n", "<br/>") + "</dd>\n");
 			}
 		}
 		
