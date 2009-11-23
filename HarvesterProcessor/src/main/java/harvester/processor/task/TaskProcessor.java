@@ -136,8 +136,9 @@ public class TaskProcessor implements Runnable, Controller {
 		 boolean init_error = false;	//set to true if a failure to initialize occurs
 		 StepLogger slog = new StepLoggerImpl(h.getHarvestid(), clienturl);
 		 
+		 Session session = null;
 		 try {
-			 Session session = HibernateUtil.getSessionFactory().getCurrentSession();
+			 session = HibernateUtil.getSessionFactory().getCurrentSession();
 			 session.beginTransaction();
 			 
 			 if(profileid != -1)
@@ -234,13 +235,16 @@ public class TaskProcessor implements Runnable, Controller {
 			 //no more need to fiddle with the profile object's collections
 			 //so close the db connection and reopen when harvest needs to be changed
 			 session.getTransaction().commit();
-			
+			 session = null;
 			 
 		 } catch (Exception e) {			 
 			 init_error = true;
 			 slog.log(StepLogger.INIT_ERROR, "Could not start harvest. Java Error:" + e.toString(), "Could not start harvest", null, null);
 			 for(StackTraceElement el : e.getStackTrace())
-				 logger.error(el.toString());				
+				 logger.error(el.toString());		
+			 
+			if(session != null)
+				session.getTransaction().rollback();
 		 }
 		 
 		 if(runningContributors.contains(new Integer(c.getContributorid()))) {
@@ -315,8 +319,9 @@ public class TaskProcessor implements Runnable, Controller {
 
 		 }
 		 
-		 if(HibernateUtil.getSessionFactory().getCurrentSession() != null)
-			 HibernateUtil.getSessionFactory().getCurrentSession().close();
+		 //no session running now
+//		 if(HibernateUtil.getSessionFactory().getCurrentSession() != null)
+//			 HibernateUtil.getSessionFactory().getCurrentSession().close();
 		 
 		 stopFlags.remove(String.valueOf(h.getHarvestid()));
 		 runningContributors.remove(new Integer(c.getContributorid()));
@@ -348,6 +353,7 @@ public class TaskProcessor implements Runnable, Controller {
 		
 		//the harvest step will change the continue flag if there is no more work to be done
 		while( records.isContinue_harvesting() ) {
+				System.gc();
 				Statistics stats = HibernateUtil.getSessionFactory().getStatistics();
 				stats.setStatisticsEnabled(true);
 

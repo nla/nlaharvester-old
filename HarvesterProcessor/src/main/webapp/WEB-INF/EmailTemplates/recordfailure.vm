@@ -32,11 +32,7 @@
     <dl class="smallFont">
         #foreach($log in $recordErrors)
             <dt class="date">$formatter.formatDateTime($log.timestamp)</dt>
-            #if($internal)
-                <dd>$log.description</dd>
-            #else
-                <dd>$formatter.stripHtml($log.description)</dd>
-            #end
+            <dd>$log.description</dd>
         #end
     </dl>
     
