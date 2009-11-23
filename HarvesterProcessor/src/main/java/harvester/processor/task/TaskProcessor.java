@@ -5,8 +5,7 @@ import harvester.processor.data.dao.DAOFactory;
 import harvester.processor.data.dao.interfaces.HarvestDAO;
 import harvester.processor.email.*;
 import harvester.processor.exceptions.*;
-import harvester.processor.main.Records;
-import harvester.processor.main.Controller;
+import harvester.processor.main.*;
 import harvester.processor.steps.StagePluginInterface;
 import harvester.processor.util.*;
 
@@ -15,13 +14,9 @@ import java.text.SimpleDateFormat;
 import java.util.* ;
 
 import org.hibernate.Session;
-import org.hibernate.stat.Statistics;
 
 import java.util.Date;
-
 import javax.servlet.ServletContext;
-
-
 import org.apache.log4j.Logger;
 
 /**
@@ -41,34 +36,31 @@ public class TaskProcessor implements Runnable, Controller {
 	private int contributorid;
 	private Profile dp;
 	private Contributor c;
-	private Harvest h;
-	private int  task;
 	private int type;
 	private String from;
 	private String until;
    	private int retry;
-   	private String delete;
-   	private String until50;
-   	private String singlerecord;	
+   	private int harvestid;
 	///////////////
 	private DAOFactory daofactory;
 	private HarvestDAO harvestdao;   	
 	private Hashtable<String, Integer> stopFlags;
 	private Set<Integer> runningContributors;
    	private Properties props;
-   	private ServletContext ServletCtx;
+   	private ServletContext ctx;
    	private SchedulerClient sc;
 	private DateFormat userdateformater;
 	private String clienturl;
+	private TaskUtilities taskUtil;
+	private HashMap<String, Object> params;
 
 	@SuppressWarnings("unchecked")
 	public TaskProcessor(HashMap<String, Object> params) {
+		this.params = params;
 		
 		userdateformater = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
 		userdateformater.setTimeZone(TimeZone.getDefault());
-		
-		sc = new SchedulerClient();
-		
+			
 		dp = null;
 		//do all the DAO factory stuff
 		daofactory = DAOFactory.getDAOFactory();
@@ -89,28 +81,27 @@ public class TaskProcessor implements Runnable, Controller {
 		
 		runningContributors = (Set<Integer>)params.get("runningContributors");
 		
-		this.setProfileid(dpid);
-		this.setContributorid(Integer.parseInt((String) params.get("contributorid")));
-		this.setTask(Integer.parseInt((String) params.get("task")));
-		this.setStopFlags((Hashtable<String, Integer>) params.get("stopFlags"));	
-		this.setType(Integer.parseInt((String) params.get("type")));
-		this.setRetry(Integer.parseInt((String) retry));
-		this.setFrom((String) params.get("from"));
-		this.setUntil((String) params.get("until"));
-		this.setProps((Properties) params.get("props"));
-		this.setServletCtx((ServletContext) params.get("ctx"));
-		this.setDelete((String)params.get("delete"));
-		this.setUntil50((String)params.get("until50"));
-		this.setSinglerecord((String)params.get("singlerecord"));
+		this.profileid = dpid;
+		this.contributorid = Integer.parseInt((String) params.get("contributorid"));
+		this.stopFlags = (Hashtable<String, Integer>) params.get("stopFlags");	
+		this.type = Integer.parseInt((String) params.get("type"));
+		this.retry = Integer.parseInt((String) retry);
+		this.from = (String) params.get("from");
+		this.until = (String) params.get("until");
+		this.props = (Properties) params.get("props");
+		this.ctx = (ServletContext) params.get("ctx");
+		String task = (String) params.get("task");
 		
 		clienturl = (String)props.get("log.clienturl");
+		
+		sc = new SchedulerClient(props, this.retry, task);
 	}
 
 	/** creates, then starts the pipeline */
 	public void run() {
 			
 		//Create a new row in the harvester table in the database
-		 h = new Harvest();
+		 Harvest h = new Harvest();
 		 if(profileid != -1)
 			 h.setProfileid(profileid);
 		 h.setStatus("Running");
@@ -119,11 +110,12 @@ public class TaskProcessor implements Runnable, Controller {
 		 h.setType(type);
 		 try {
 			 harvestdao.AddToDatabase(h);
+			 harvestid = h.getHarvestid();
 		 } catch(Exception e) {
 			 logger.error("Unable to create harvest row in table. Erromsg:" + e.toString());
 			 return;
 		 }
-		 
+		
 		 logger.info("  harvestid = " + h.getHarvestid());
 		 
 		 //let the stopflags thingy know that we are running
@@ -140,6 +132,7 @@ public class TaskProcessor implements Runnable, Controller {
 		 try {
 			 session = HibernateUtil.getSessionFactory().getCurrentSession();
 			 session.beginTransaction();
+			 session.update(h);
 			 
 			 if(profileid != -1)
 				 dp = daofactory.getprofileDAO().getProfile(profileid);
@@ -147,62 +140,44 @@ public class TaskProcessor implements Runnable, Controller {
 			 
 			 h.setContributor(c);
 			 
-			logger.info("******************************************************");
-			logger.info("  Task Processor started");
-			logger.info("  Maximum amount of memory the VM will attemp to use = " + Runtime.getRuntime().maxMemory()/1024 + " KiloBytes");
-			logger.info("  harvestid = " + h.getHarvestid());
-			logger.info("  profileid = " + profileid);
-			logger.info("  Harvest type = " + (type == Profile.TEST_PROFILE ? "Test" : "Production" ));
-			logger.info("  retry = " + retry);
-			logger.info("  Contributor id = " + contributorid + " Contributor name=" + c.getName());
-			logger.info("  Collection id = " + c.getCollection().getCollectionid() + " Collection name=" + c.getCollection().getName());
-			logger.info("******************************************************");
-			 
 			 //initialize things so that I can use them for emails later
 			 c.getContacts().size();
 			 c.getContactselections().size();
 			 
+			 taskUtil = new TaskUtilities(harvestid, props, ctx, c);
+			 taskUtil.logHarvestStatistics(h, c, profileid, retry);
 			 
 			 //set this harvest as the contributors last harvest
 			 c.setLastharvest(h);
 			 c.setHidefromworktray(0);	//reset the hide tag
 			 
-			 //update the from value in the harvest record and contributor
-			 logger.info("passed in from: " + from);
-			 if(c.getLastsuccessfulprod() != null)
-				 logger.info("hid=" + h.getHarvestid() + " " + "contributor last successful production harvest's date: " + c.getLastsuccessfulprod().getStarttime());
-			 if(c.getLastsuccessfultest() != null)
-				 logger.info("hid=" + h.getHarvestid() + " " + "contributor last successful test harvest's date: " + c.getLastsuccessfultest().getStarttime());		 
-			 if(c.getLastharvest() != null)
-				 logger.info("hid=" + h.getHarvestid() + " " + "contributor last harvest's date: " + c.getLastharvest().getStarttime());
-			 
 			 ///////////////////////////////////////////////////////////
 			 // this from field stuff is messy, mostly because we only want to follow what we get in the passed form field
 			 // for the first harvest of a string of production harvests. This could be done in a better way if the scheduler
 			 // had a way to pass different parameters for the first harvest out of a series of scheduled harvests.
-			 
+			 logger.info("passed in from: " + from);
 			 
 			 if(type == Profile.TEST_PROFILE) {
-				 h.setHarvestfrom(determineCorrectFrom(from, c.getLastsuccessfultest()));		 
+				 h.setHarvestfrom(taskUtil.determineCorrectFrom(from, c.getLastsuccessfultest()));		 
 				 
 			 } else { //this is a production harvest then
 				 // if this a first harvest, we follow the from they pass in, otherwise we do with from last
 				 if(c.getIsfinishedfirstharvest() != null && c.getIsfinishedfirstharvest() == Contributor.NOT_FIRST_HARVEST ) {
 					 if(c.getLastsuccessfulprod() != null) {
 						logger.info("hid=" + h.getHarvestid() + " " + "harvesting from last successful production harvest minus 1 gran unit");
-						delete = null;
+						//delete = null;
 						 
 						Calendar cal = Calendar.getInstance();
 						cal.setTime(c.getLastsuccessfulprod().getStarttime());
 						cal.add(Calendar.DATE, -1);
-						h.setHarvestfrom(DatetoOAIFormatUTC(cal.getTime(), c.getGranularity()));	
+						h.setHarvestfrom(taskUtil.DatetoOAIFormatUTC(cal.getTime(), c.getGranularity()));	
 					 } else {
 						 logger.info("hid=" + h.getHarvestid() + " " + "can't do harvest from last because getLastsuccessfulprod is null");
 						 h.setHarvestfrom(null);
 					 }
 					 
 				 } else { //FIRST HARVEST
-					 h.setHarvestfrom(determineCorrectFrom(from, c.getLastsuccessfulprod()));
+					 h.setHarvestfrom(taskUtil.determineCorrectFrom(from, c.getLastsuccessfulprod()));
 				 }
 			 }
 			 
@@ -230,7 +205,8 @@ public class TaskProcessor implements Runnable, Controller {
 				 logger.debug("hid=" + h.getHarvestid() + " " + "Got profile. number of pipelinestages is:" + dp.getProfilesteps().size());
 			 
 			 //Now that we have the profile, get the step objects using reflection.
-			 steps = Profiler.getStepObjects(this);
+			 Profiler profiler = new Profiler(params, props, h, ctx, this);
+			 steps = profiler.getStepObjects(dp);
 			 
 			 //no more need to fiddle with the profile object's collections
 			 //so close the db connection and reopen when harvest needs to be changed
@@ -253,7 +229,7 @@ public class TaskProcessor implements Runnable, Controller {
 			 slog.log(StepLogger.INIT_ERROR, "Could not start harvest. There is already a harvest running for this contributor", 
 					 "Could not start harvest", null, null);
 			 try {
-				sc.reschedule(this);
+				sc.reschedule(h);
 				
 				h.setEndtime(new Date());
 				h.setStatus("FAILED");				
@@ -262,7 +238,7 @@ public class TaskProcessor implements Runnable, Controller {
 				h.setTotalrecords(0);
 				h.setRecordscompleted(0);
 				
-				email(Email.HARVEST_FAILURE);
+				taskUtil.email(Email.HARVEST_FAILURE);
 				
 			 } catch(Exception e2) {
 				 logger.error("hid=" + h.getHarvestid() + " " + "database error when applying initialise error msg");
@@ -309,7 +285,7 @@ public class TaskProcessor implements Runnable, Controller {
 				 h.setEndtime(new Date());
 				 harvestdao.ApplyChanges(h);
 				 
-				email(Email.HARVEST_FAILURE);
+				 taskUtil.email(Email.HARVEST_FAILURE);
 				logger.info("handled exception");
 			 } catch(Exception e2) {
 				 try {
@@ -318,10 +294,6 @@ public class TaskProcessor implements Runnable, Controller {
 			 }
 
 		 }
-		 
-		 //no session running now
-//		 if(HibernateUtil.getSessionFactory().getCurrentSession() != null)
-//			 HibernateUtil.getSessionFactory().getCurrentSession().close();
 		 
 		 stopFlags.remove(String.valueOf(h.getHarvestid()));
 		 runningContributors.remove(new Integer(c.getContributorid()));
@@ -334,7 +306,7 @@ public class TaskProcessor implements Runnable, Controller {
 	 * The harvest step absolutely must be the first in the pipeline, and there must be only one of them! */	
 	private void startPipeline(LinkedList<StagePluginInterface> steps) throws Exception {
 		
-		StepLogger slog = new StepLoggerImpl(h.getHarvestid(), clienturl);
+		StepLogger slog = new StepLoggerImpl(harvestid, clienturl);
 		
 		//Stages are already initialised
 		//create a new list of records
@@ -342,57 +314,30 @@ public class TaskProcessor implements Runnable, Controller {
 		
 		//update local and database logs
 		slog.info("Beginning Harvest [Local Time: " + userdateformater.format(new Date()) + "]");
-		logger.info("hid=" + h.getHarvestid() + " " + "stages =" + steps.size());
+		logger.info("hid=" + harvestid + " " + "stages =" + steps.size());
 		
 		StagePluginInterface harveststage = steps.getFirst();
 		steps.removeFirst();
 		
 		boolean shown_record_count = false;
 		
-		harvestdao.ApplyChanges(h);
 		
 		//the harvest step will change the continue flag if there is no more work to be done
 		while( records.isContinue_harvesting() ) {
 				System.gc();
-				Statistics stats = HibernateUtil.getSessionFactory().getStatistics();
-				stats.setStatisticsEnabled(true);
-
-				logger.debug("##############");
-				logger.debug("Maximum amount of memory the VM will attemp to use = " + Runtime.getRuntime().maxMemory()/1024 + " KiloBytes");
-				logger.debug("Current amount of free memory availible for future allocation: " + Runtime.getRuntime().freeMemory()/1024 + " Kilobytes");
-				logger.debug("Total amount of memory in the JVM: " + Runtime.getRuntime().totalMemory()/1024 + " Kilobytes");
-				logger.debug("Close Statement count: " + stats.getCloseStatementCount());
-				
-				logger.debug("Collection fetch count: " + stats.getCollectionFetchCount());
-				logger.debug("Collection load count: " + stats.getCollectionLoadCount());
-				logger.debug("Collection Recreate count: " + stats.getCollectionRecreateCount());
-				logger.debug("Collection remove count: " + stats.getCollectionRemoveCount());
-				logger.debug("Collection updated count: " + stats.getCollectionUpdateCount());
-				
-				logger.debug("Entity fetch count: " + stats.getEntityFetchCount());
-				logger.debug("Entity load count: " + stats.getEntityLoadCount());
-				logger.debug("Entity Insert count: " + stats.getEntityInsertCount());
-				logger.debug("Entity delete count: " + stats.getEntityDeleteCount());
-				logger.debug("Entity updated count: " + stats.getEntityUpdateCount());
-				
-				logger.debug("Connection count: " + stats.getConnectCount());
-				logger.debug("Flush count: " + stats.getFlushCount());
-				logger.debug("Queries Executed: " + stats.getQueryExecutionCount());
-				logger.debug("Query max execution time: " + stats.getQueryExecutionMaxTime());
-				logger.debug("Sessions openned: " + stats.getSessionOpenCount());
-				logger.debug("Sessions closed: " + stats.getSessionCloseCount());
-				logger.debug("Transactions started: " + stats.getTransactionCount());
-				logger.debug("Transactions completed: " + stats.getSuccessfulTransactionCount());
-				logger.debug("##############");
 			
-				Integer stop = stopFlags.get(String.valueOf(h.getHarvestid()));
+				HibernateUtil.logHibernateStats();
+				
+				Integer stop = stopFlags.get(String.valueOf(harvestid));
 				Integer shutdown = stopFlags.get("ALL");
 				if(STOP_EXECUTION.equals(stop) || SERVER_SHUTTING_DOWN.equals(shutdown) ) {
-					stopHarvest(slog, steps, harveststage);
+					taskUtil.stopHarvest(slog, steps, harveststage, stopFlags);
 					return;
 				}
 					
-			
+			//load harvest object again
+			Harvest h = harvestdao.getHarvest(harvestid);
+				
 			logger.info("Running stage: " + harveststage.getName());
 			
 			try {
@@ -400,20 +345,20 @@ public class TaskProcessor implements Runnable, Controller {
 			} catch (UnableToConnectException ue) {
 				logger.info("hid=" + h.getHarvestid() + " " + "add a retry event to the scheduler");
 				h.setEndtime(new Date());
-				h.setStatus(sc.reschedule(this));
+				h.setStatus(sc.reschedule(h));
 				h.setStatuscode(Harvest.FAILED);
 				harvestdao.ApplyChanges(h);
 				
 				if(sc.getLastScheduleCode() == SchedulerClient.FAILED)
-					email(Email.HARVEST_FAILURE);
+					taskUtil.email(Email.HARVEST_FAILURE);
 				else
-					email(Email.HARVEST_ERRORS);
+					taskUtil.email(Email.HARVEST_ERRORS);
 				
 				return;
 				
 			} catch (InterruptedException e) {
 				logger.info("Interrupted, probably shutting down or stopping", e);
-				stopHarvest(slog, steps, harveststage);
+				taskUtil.stopHarvest(slog, steps, harveststage, stopFlags);
 				return;
 			} catch (Exception e) {
 				logger.error("Error harvesting with: " + harveststage.getName(), e);
@@ -460,7 +405,7 @@ public class TaskProcessor implements Runnable, Controller {
 				}
 			} catch (InterruptedException  e) {
 				logger.info("Interrupted, probably shutting down or stopping", e);
-				stopHarvest(slog, steps, harveststage);
+				taskUtil.stopHarvest(slog, steps, harveststage, stopFlags);
 				return;
 			} finally {
 				h.setTotalrecords(h.getTotalrecords() + records.getTotalRecords());
@@ -493,17 +438,18 @@ public class TaskProcessor implements Runnable, Controller {
 			spi.Dispose();
 		}		
 		
+		//load harvest object again
+		Harvest h = harvestdao.getHarvest(harvestid);
+		
 		//update finish time and records completed
 		h.setEndtime(new Date());
-		//h.setRecordscompleted(current_records);
-		//h.setTotalrecords(total_records);
 		h.setStatus("Complete");
 		h.setStatuscode(Harvest.SUCCESSFUL);
 		
 		if(h.getTotalrecords() != h.getRecordscompleted())
-			email(Email.RECORD_FAILURES);
+			taskUtil.email(Email.RECORD_FAILURES);
 		else
-			email(Email.SUCCESS);
+			taskUtil.email(Email.SUCCESS);
 		
 		harvestdao.ApplyChanges(h);
 		
@@ -515,66 +461,8 @@ public class TaskProcessor implements Runnable, Controller {
 		slog.log(" Harvest Complete [Local Time: " + userdateformater.format(new Date()) + "]");
 	}
 	
-	/**
-	 * If a user has set them selves up to be notified of harvest results, we email them here
-	 * @param success status of just finished harvest
-	 */
-	private void email(int success) {
-		if(props.get("mail.on") != null && props.get("mail.on").equals("true")) {
-			try {
-				logger.info("hid=" + h.getHarvestid() + " " + "setting up email module");
-				 harvester.processor.email.Email email = new harvester.processor.email.Email();
-				 email.setC(c);
-				 email.setH(h);
-				 email.setProps(props);
-				 email.setCtx(ServletCtx);
-				 email.EmailInit();
-				 if(success == Email.SUCCESS)
-					 email.emailSuccess();
-				 else if( success == Email.HARVEST_ERRORS)
-					 email.emailHarvestErrors();
-				 else if( success == Email.RECORD_FAILURES)
-					 email.emailRecordFailure();			 
-				 else if( success == Email.HARVEST_FAILURE)
-					 email.emailHarvestFailure();
-			} catch (Exception e) {
-				logger.info("unable to email contacts:" + e.toString());
-				 for(StackTraceElement el : e.getStackTrace())
-					 logger.error(el.toString());
-				 
-			}
-		} else logger.info("emailing turned off");
-	}
-	
-	/**
-	 * Set status and other details correctly for a stopped harvest
-	 */
-	private void stopHarvest(StepLogger slog, LinkedList<StagePluginInterface> steps, StagePluginInterface harveststage) throws Exception {
-		
-		//We need to call dispose on everything
-		harveststage.Dispose();
-		
-		for(StagePluginInterface spi : steps) {
-			spi.Dispose();
-		}	
-
-		Integer shutdown = stopFlags.get("ALL");
-				
-		if(SERVER_SHUTTING_DOWN.equals(shutdown)) {											
-			slog.info("Harvest stopped since server is shutting down. [Local Time: " + userdateformater.format(new Date()) + "]");
-		}
-		else {
-			slog.info("Harvest stopped by user. [Local Time: " + userdateformater.format(new Date()) + "]");
-		}
-		
-		h.setStatuscode(Harvest.SUCCESSFUL);
-		h.setStatus("Stopped");
-		h.setEndtime(new Date());
-		harvestdao.ApplyChanges(h);
-	}
-	
 	public void yield() throws InterruptedException {
-		Integer stop = stopFlags.get(String.valueOf(h.getHarvestid()));
+		Integer stop = stopFlags.get(String.valueOf(harvestid));
 		Integer shutdown = stopFlags.get("ALL");
 		
 		if(STOP_EXECUTION.equals(stop) || SERVER_SHUTTING_DOWN.equals(shutdown) ) {
@@ -582,197 +470,12 @@ public class TaskProcessor implements Runnable, Controller {
 		}
 	}
 	
-	/**
-	 * Coverts a standard java date to the specific oai style date
-	 * We always compute both the short and long so that we can log the long version.
-	 * @param lastharvest the date to convert
-	 * @param granularity A flag indicating the granularity of the date needed. ( 0 is short format)
-	 * @return the new date
-	 */
-	private String DatetoOAIFormatUTC(Date lastharvest, Integer granularity) {
-		if (lastharvest == null)
-			return null;
-		
-		logger.info("converting to UTC, old date = " + lastharvest.toString());
-		DateFormat shortoai = new SimpleDateFormat("yyyy-MM-dd");
-		DateFormat oai = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");		
-		oai.setTimeZone( TimeZone.getTimeZone("UTC"));
-		shortoai.setTimeZone( TimeZone.getTimeZone("UTC"));
-		
-		logger.info("utc converted date is: " + oai.format(lastharvest));
-		
-		String d = granularity == 0 ? shortoai.format(lastharvest) : oai.format(lastharvest);
-		logger.info("new date = " + d);
-		return d;
-	}
-	
-	/**
-	 * takes from field information in the format passed to the servlet and determines an actual date to use for the from field
-	 * @param from the from string passed into the servlet
-	 * @param succharvest the harvest data object from the last successful harvest of the type needed
-	 * @return a oai formatted from date or null.
-	 */
-	public String determineCorrectFrom(String from, Harvest succharvest) {
-		String finalfrom = null;
-		
-		 if(from == null || from.equals("")) {
-			 logger.error("NO FROM FIELD PASSED ERRROR!!!!");
-		 } else if(from.equals("LASTRUN")) {
-			 logger.info("harvesting from last harvest of this type");
-			 if(succharvest != null) {
-				logger.info("harvesting from last successful harvest of this type minus 1 day");
-				delete = null;					
-				Calendar cal = Calendar.getInstance();
-				cal.setTime(succharvest.getStarttime());
-				cal.add(c.getGranularity() == 0 ? Calendar.DATE : Calendar.MINUTE, -1);
-				finalfrom = DatetoOAIFormatUTC(cal.getTime(), c.getGranularity());					 
-			 } else {
-				 logger.info("no last harvest!!!!, setting to from earliest");
-			 }			 
-	 	 } else if( from.equals("FIRST")) {
-			 logger.info("harvesting from first record");
-		 } else {
-			 finalfrom = c.getGranularity() == 0 ? from.substring(0, "yyyy-MM-dd".length()) : from;
-			logger.info("harvesting from specified from: " + from); 
-		 }	
-		 
-		 return finalfrom;
-	}
-	
-	
-	
-	
-	
-
-	public Profile getDp() {
-		return dp;
-	}
-
-	public void setDp(Profile dp) {
-		this.dp = dp;
-	}
-
-	public Contributor getC() {
-		return c;
-	}
-
-	public void setC(Contributor c) {
-		this.c = c;
-	}
-
-	public Harvest getH() {
-		return h;
-	}
-
-	public void setH(Harvest h) {
-		this.h = h;
-	}
-
-	public int getProfileid() {
-		return profileid;
-	}
-
-	public void setProfileid(int dataprofileid) {
-		this.profileid = dataprofileid;
+	public int getHarvestid() {
+		return harvestid;
 	}
 
 	public int getContributorid() {
 		return contributorid;
 	}
-
-	public void setContributorid(int contributorid) {
-		this.contributorid = contributorid;
-	}
-
-	public int getTask() {
-		return task;
-	}
-
-	public void setTask(int task) {
-		this.task = task;
-	}
-
-	public int getType() {
-		return type;
-	}
-
-	public void setType(int type) {
-		this.type = type;
-	}
-
-	public String getFrom() {
-		return from;
-	}
-
-	public void setFrom(String from) {
-		this.from = from;
-	}
-
-	public String getUntil() {
-		return until;
-	}
-
-	public void setUntil(String until) {
-		this.until = until;
-	}
-
-	public Hashtable<String, Integer> getStopFlags() {
-		return stopFlags;
-	}
-
-	public void setStopFlags(Hashtable<String, Integer> stopFlags) {
-		this.stopFlags = stopFlags;
-	}
-
-	public Properties getProps() {
-		return props;
-	}
-
-	public void setProps(Properties props) {
-		this.props = props;
-	}
-	public ServletContext getServletCtx() {
-		return ServletCtx;
-	}
-
-	public void setServletCtx(ServletContext servletCtx) {
-		ServletCtx = servletCtx;
-	}
 	
-
-   	public int getRetry() {
-		return retry;
-	}
-
-	public void setRetry(int retry) {
-		this.retry = retry;
-	}
-
-	public String getDelete() {
-		return delete;
-	}
-
-	public void setDelete(String delete) {
-		this.delete = delete;
-	}
-
-	public String getUntil50() {
-		return until50;
-	}
-
-	public void setUntil50(String until50) {
-		this.until50 = until50;
-	}
-	
-	public String getSinglerecord() {
-		return singlerecord;
-	}
-
-	public void setSinglerecord(String singlerecord) {
-		this.singlerecord = singlerecord;
-	}
-	
-	public String getClienturl() {
-		return clienturl;
-	}
 }

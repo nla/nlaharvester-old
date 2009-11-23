@@ -27,18 +27,36 @@
       <version>1.0</version>
     </dependency>
     
+    <!-- <dependency>
+      <groupId>au.gov.nla</groupId>
+      <artifactId>HarvestTOC</artifactId>
+      <version>1.0</version>
+    </dependency> -->
+    
     <dependency>
       <groupId>au.gov.nla</groupId>
       <artifactId>ProcessorInterface</artifactId>
       <version>1.0</version>
     </dependency>
     
-    <!-- external dependencies -->
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate</artifactId>
-      <version>3.2.6.ga</version>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-core</artifactId>
+		<version>3.3.2.GA</version>
+	</dependency>
+	<dependency>
+		<groupId>org.slf4j</groupId>
+		<artifactId>slf4j-log4j12</artifactId>
+		<version>1.4.0</version>
+	</dependency>
+	
+    <dependency>
+        <groupId>xmlunit</groupId>
+        <artifactId>xmlunit</artifactId>
+        <version>1.2</version>
+        <scope>test</scope>
     </dependency>
+    
     <dependency>
       <groupId>dom4j</groupId>
       <artifactId>dom4j</artifactId>
@@ -150,12 +168,6 @@
       <groupId>org.ostermiller</groupId>
       <artifactId>utils</artifactId>
       <version>1.07.00</version>
-    </dependency>
-    <dependency>
-      <groupId>xmlunit</groupId>
-      <artifactId>xmlunit</artifactId>
-      <version>1.2</version>
-      <scope>test</scope>
     </dependency>
   </dependencies>
 

@@ -93,7 +93,7 @@ public class TaskPool {
 		try {
 			Thread.sleep(200);	//0.2 seconds
 		} catch (Exception e) {
-			logger.error("could not pause for 200ms!!!");	// its silly that thread.sleep can throw exceptions, there should be a flag to turn it off.
+			logger.error("could not pause for 200ms!!!");
 		}
 		int queuesize = threadPool.getQueue().size();
 		if(queuesize != 0) {

@@ -3,8 +3,11 @@ package harvester.processor.util;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
+
+import javax.servlet.ServletContext;
 
 import harvester.data.*;
 import harvester.processor.data.dao.DAOFactory;
@@ -20,6 +23,22 @@ import org.apache.log4j.Logger;
 public class Profiler {
 
 	private static Logger logger = Logger.getLogger(Profiler.class);
+
+	private String clientUrl;
+	private Properties tprops;
+	private Harvest h;
+	private ServletContext ctx;
+	private Controller controller;
+	private HashMap<String, Object> task_params;
+	
+	public Profiler(HashMap<String, Object> params, Properties props, Harvest h, ServletContext ctx, Controller controller) {
+		this.tprops = props;
+		this.h = h;
+   		this.ctx = ctx;
+   		this.controller = controller;
+   		this.task_params = params;
+		clientUrl = (String)props.get("log.clienturl");
+	}
 	
 	/**
 	 * Builds a list of StagePluginInterfaces based off the active profile and the harvest and load stages for this harvest.
@@ -28,18 +47,17 @@ public class Profiler {
 	 * @return list of plugins for stages to run.
 	 * @throws Exception
 	 */
-	public static LinkedList<StagePluginInterface> getStepObjects(TaskProcessor tp) throws Exception
-	{
+	public LinkedList<StagePluginInterface> getStepObjects(Profile dp) throws Exception {
 		logger.info("getting step objects");
 		
 		LinkedList<StagePluginInterface> l = new LinkedList<StagePluginInterface>();
 
-		StepLoggerImpl slog = new StepLoggerImpl(tp.getH().getHarvestid(), tp.getClienturl());
+		StepLoggerImpl slog = new StepLoggerImpl(h.getHarvestid(), clientUrl);
 		
-		//first get the harvest step since it is stored seperately with the contributor object
-		ProfileStep hstage = tp.getC().getHarveststage();
+		//first get the harvest step since it is stored separately with the contributor object
+		ProfileStep hstage = h.getContributor().getHarveststage();
 		if(hstage != null) {
-			l.add(getInitialisedPlugin(hstage,slog, tp));	//nulls probably only exist here in testing, maybe
+			l.add(getInitialisedPlugin(hstage,slog));	//nulls probably only exist here in testing, maybe
 			l.getLast().setPosition(0);
 		} else {
 			logger.error("no harvest stage");
@@ -48,21 +66,20 @@ public class Profiler {
 		//get main pipeline stages, sorted by position
 		TreeSet<ProfileStep> plss = new TreeSet<ProfileStep>(new pipelinestageComparator());
 			
-		if(tp.getDp() != null)
-			plss.addAll(tp.getDp().getProfilesteps());
+		if(dp != null)
+			plss.addAll(dp.getProfilesteps());
 		
 		for( ProfileStep ps : plss) {
 			if(ps.getEnabled() == ProfileStep.ENABLED)
-				l.add(getInitialisedPlugin(ps, slog, tp));
+				l.add(getInitialisedPlugin(ps, slog));
 		}
 
 		//get the loader step, which is stored with in collections class
 		//get the parent collection from the contributor
-		Collection collection = tp.getC().getCollection();
-		ProfileStep lstage = collection.getLoadstage();
+		ProfileStep lstage = h.getContributor().getCollection().getLoadstage();
 		if(lstage != null) {
 			int position = l.getLast().getPosition();
-			l.add(getInitialisedPlugin(lstage, slog, tp));
+			l.add(getInitialisedPlugin(lstage, slog));
 			l.getLast().setPosition(position + 1);
 		} else {
 			logger.error("no load stage");
@@ -79,8 +96,7 @@ public class Profiler {
 	 * @return the newly created stage plugin.
 	 * @throws Exception
 	 */
-	private static StagePluginInterface getInitialisedPlugin(ProfileStep ps, StepLoggerImpl slog, TaskProcessor tp) throws Exception
-	{
+	private StagePluginInterface getInitialisedPlugin(ProfileStep ps, StepLoggerImpl slog) throws Exception {
 		Step s = ps.getStep();
 		logger.info("Processing step: " + s.getName() + " position: " + ps.getPosition());
 
@@ -90,10 +106,10 @@ public class Profiler {
 
 		spi.setPosition(ps.getPosition());
 		
-		HashMap<String, Object> props = addProperties(ps, tp);
+		HashMap<String, Object> props = addProperties(ps);
 
 		//Initialise the step and add return it
-		spi.Initialise(props,slog, tp.getServletCtx());
+		spi.Initialise(props,slog, ctx);
 		
 		//UGLY special case for OAI harvests.
 		if(props.containsKey("Base URL") && props.containsKey("Metadata Prefix")) {
@@ -111,7 +127,8 @@ public class Profiler {
 	 * @param tp task processor object
 	 * @return properties map
 	 */
-	private static HashMap<String, Object> addProperties(ProfileStep ps, TaskProcessor tp) {
+	@SuppressWarnings("unchecked")
+	private HashMap<String, Object> addProperties(ProfileStep ps) {
 		
 					//build the properties object to pass to its initialiser
 					HashMap<String, Object> props = new HashMap<String, Object>();
@@ -119,15 +136,12 @@ public class Profiler {
 		
 					//pass along application properties first,
 					//that way database properties will override them if needed
-					for(Object key : tp.getProps().keySet())
-					{
-						if( ((String)key).startsWith("all") || ((String)key).startsWith(ps.getStep().getClassname())  )
-						{
+					for(Object key : tprops.keySet()) {
+						if( ((String)key).startsWith("all") || ((String)key).startsWith(ps.getStep().getClassname())  ) {
 							String propname = (String)key;
-							//propname =  propname.substring(propname.indexOf(".")+1);
 							propname =  propname.substring(propname.lastIndexOf(".")+1);
-							logger.info("app property full=" + key  + " p=" + propname + " value=" + tp.getProps().getProperty((String)key));
-							props.put(propname, tp.getProps().getProperty((String)key));
+							logger.info("app property full=" + key  + " p=" + propname + " value=" + tprops.getProperty((String)key));
+							props.put(propname, tprops.getProperty((String)key));
 						}
 					}
 					
@@ -136,40 +150,40 @@ public class Profiler {
 					props.put("stepFiles", files);
 					
 					//harvest related properties that are taken from the harvest object
-					props.put("harvestid", String.valueOf(tp.getH().getHarvestid()));
-					if(tp.getH().getHarvestfrom() != null)
-						props.put("harvestfrom", tp.getH().getHarvestfrom());
-					if(tp.getH().getHarvestuntil() != null)
-						props.put("harvestuntil", tp.getH().getHarvestuntil());
-					props.put("type", String.valueOf(tp.getH().getType()));
-					if(tp.getDelete() != null)
-						props.put("delete", tp.getDelete());
-					if(tp.getUntil50() != null)
-						props.put("until50", tp.getUntil50());
-					if(tp.getSinglerecord() != null)
-						props.put("singlerecord", tp.getSinglerecord());
-						props.put("contributor", tp.getC());
+					props.put("harvestid", String.valueOf(h.getHarvestid()));
+					if(h.getHarvestfrom() != null)
+						props.put("harvestfrom",h.getHarvestfrom());
+					if(h.getHarvestuntil() != null)
+						props.put("harvestuntil", h.getHarvestuntil());
+					props.put("type", String.valueOf(h.getType()));
+//					if(tp.getDelete() != null)
+//						props.put("delete", tp.getDelete());
 					
+					String until50 = (String) task_params.get("until50");
+					String single_record = (String) task_params.get("singlerecord");
+					
+					if(until50 != null)
+						props.put("until50", until50);
+					if(single_record  != null)
+						props.put("singlerecord", single_record);
+
+					props.put("contributor", h.getContributor());					
 					props.put("stage", String.valueOf(ps.getPosition()));
 					props.put("stepid", ps.getStep().getStepid());
-					props.put("controller", tp);	//Somewhat defeats the purpose
+					props.put("controller", controller);
 					
 					//best way to do this might be to loop through things twice		
 					//we first create any linked lists of hashtables that are needed 
-					for(ProfileStepParameter p : params)
-					{			
+					for(ProfileStepParameter p : params) {			
 						logger.info("pname= " + p.getPis().getParametername() + " p=" + p.getProfilestepparameterid() + " value=" + p.getValue() + " parentid=" + p.getPis().getParentpiid());
-						if(p.getPis().getParentpiid() == null)
-						{
-							if(p.getPis().getType().equals("nested"))
-							{
+						if(p.getPis().getParentpiid() == null) {
+							if(p.getPis().getType().equals("nested")) {
 								//build a list of hashtables 
 								LinkedList<HashMap<String, String>> nestedparams = new LinkedList<HashMap<String,String>>();
 
 								props.put(p.getPis().getParametername(), nestedparams);
 								props.put(String.valueOf(p.getPis().getPiid()), nestedparams);
-							} else
-							{
+							} else {
 								//you can't add a null to a properties object, for a very good reason
 								//which I won't discuss here.
 								if(p.getValue() != null)
@@ -180,10 +194,8 @@ public class Profiler {
 					
 					//now we fill the created lists with all the passed nested properties
 					//parameters are in ascending order by grouplistindex
-					for(ProfileStepParameter p : params)
-					{
-						if(p.getPis().getParentpiid() != null)
-						{
+					for(ProfileStepParameter p : params) {
+						if(p.getPis().getParentpiid() != null) {
 							//get the hashtable to add to 
 							LinkedList<HashMap<String, String>> nestedparams = 
 								(LinkedList<HashMap<String, String>>) props.get(p.getPis().getParentpiid().toString());

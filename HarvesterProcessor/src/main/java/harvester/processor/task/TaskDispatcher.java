@@ -1,6 +1,7 @@
 package harvester.processor.task;
 
 import harvester.data.Collection;
+import harvester.data.Harvest;
 import harvester.processor.data.dao.DAOFactory;
 import harvester.processor.util.HibernateUtil;
 
@@ -143,14 +144,20 @@ public class TaskDispatcher {
 			int i = 0;
 			
 			for(TaskProcessor task : queued) {
-				i++;
-				out.append("<harvest position=\"" + i + 
-						"\" profileid=\"" + task.getProfileid() + 
-						"\" type=\"" + task.getType() + 
-						"\" from=\"" + (task.getFrom() == null ? "" : task.getFrom()) + 
-						"\" until=\"" + (task.getUntil() == null ? "" : task.getUntil()) + 
-						"\" contributorid=\"" + task.getContributorid() + 
-						"\" collectionid=\"" + entry.getKey() + "\" />\n");
+				try {
+					Harvest h = daofactory.getHarvestDAO().getHarvest(task.getHarvestid());
+					i++;
+					out.append("<harvest position=\"" + i + 
+							"\" profileid=\"" + h.getProfileid() + 
+							"\" type=\"" + h.getType() + 
+							"\" from=\"" + (h.getHarvestfrom() == null ? "" : h.getHarvestfrom()) + 
+							"\" until=\"" + (h.getHarvestuntil() == null ? "" : h.getHarvestuntil()) + 
+							"\" contributorid=\"" + h.getContributor().getContributorid() + 
+							"\" collectionid=\"" + entry.getKey() + "\" />\n");
+				} catch (Exception e) {
+					logger.error("Error listing harvest: " + task.getHarvestid(), e);
+					throw new IOException();
+				}
 			}
 			
 		}

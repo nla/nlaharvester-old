@@ -25,10 +25,21 @@ public class SchedulerClient
 	public static int FAILED = 1;
 	
 	private int scheduleCode;
+	private int retry;
+	private String task;
+	private String clientUrl;
 	
-	public int getLastScheduleCode()
-	{
+	private Properties props;
+	
+	public int getLastScheduleCode() {
 		return scheduleCode;
+	}
+	
+	public SchedulerClient(Properties props, int retry, String task) {
+		this.retry = retry;
+		this.task = task;
+		this.props = props;
+		clientUrl = (String)props.get("log.clienturl");
 	}
 	
 	/**
@@ -37,55 +48,48 @@ public class SchedulerClient
 	 * @return schedule code
 	 * @throws Exception
 	 */
-	public String reschedule(TaskProcessor tp) throws Exception
-	{
-		StepLogger slog = new StepLoggerImpl(tp.getH().getHarvestid(), tp.getClienturl());
+	public String reschedule(Harvest h) throws Exception {
+		StepLogger slog = new StepLoggerImpl(h.getHarvestid(), clientUrl);
 		
-		String scheduleretry = tp.getProps().getProperty("scheduleretry");
-		String thisurl = tp.getProps().getProperty("thisurl");
+		String scheduleretry = props.getProperty("scheduleretry");
+		String thisurl = props.getProperty("thisurl");
 		
-		if(tp.getType() == Profile.TEST_PROFILE && !"true".equals(tp.getProps().getProperty("retryfortest")))
-		{
+		if(h.getType() == Profile.TEST_PROFILE && !"true".equals(props.getProperty("retryfortest"))) {
 			//do not retry on a test harvest, unless set in the config file
 			logger.info("not scheduling a retrying for this test harvest");
 			scheduleCode = FAILED;
 			return FAILED_TO_CONNECT;
 		}
 		
-		if( "false".equals(scheduleretry) )
-		{
+		if( "false".equals(scheduleretry) ) {
 			logger.info("not attempting to reschedule, since it has been turned off in the configuration files");
 			scheduleCode = FAILED;
 			return FAILED_TO_CONNECT;	//no need to log that we a re doing this
 		}
 		
-		if(tp.getRetry() >= 2)
-		{
+		if(retry >= 2) {
 			logger.info("used up all retries, just fail");
 			scheduleCode = FAILED;
 			slog.log(StepLogger.STEP_ERROR, "Unable to connect, all retries failed", "Unable to connect", null, null);
 			return "FAILURE: Unable to connect";
 		}
 		//get the two urls we need
-		String schedulerurl = tp.getProps().getProperty("schedulerurl");
-		String scheduletesting = tp.getProps().getProperty("scheduletesting");
+		String schedulerurl = props.getProperty("schedulerurl");
+		String scheduletesting = props.getProperty("scheduletesting");
 		String msg = FAILED_TO_CONNECT;
 		Calendar cal = Calendar.getInstance();
 
-		if(scheduletesting != null && scheduletesting.equals("true"))
-		{
+		if(scheduletesting != null && scheduletesting.equals("true")) {
 			logger.info("using testing time increments 1,1min");
-			if(tp.getRetry() == 0)
+			if(retry == 0)
 				cal.add(Calendar.MINUTE, 1);
-			else if(tp.getRetry() == 1)
+			else if(retry == 1)
 				cal.add(Calendar.MINUTE, 1);
 			else cal =null;
-		}
-		else
-		{
-			if(tp.getRetry() == 0)
+		} else {
+			if(retry == 0)
 				cal.add(Calendar.HOUR, 1);
-			else if(tp.getRetry() == 1)
+			else if(retry == 1)
 				cal.add(Calendar.HOUR, 12);
 			else cal=null;
 		}
@@ -100,32 +104,32 @@ public class SchedulerClient
 		}
 		
 		//increment the retry
-		tp.setRetry(tp.getRetry()+1);
+		retry++;
 		
-		logger.info("scheduling a retry schedule, with retrynum= " + tp.getRetry());
+		logger.info("scheduling a retry schedule, with retrynum= " + retry);
 		
 		StringBuilder doc = new StringBuilder();
-		doc.append("retry=" + tp.getRetry());
+		doc.append("retry=" + retry);
 		if(cron != null)
 		{
 			doc.append("&cron=");
 			doc.append(URLEncoder.encode(cron, "UTF-8"));
 		}
 		
-		doc.append("&contributorid=" + tp.getContributorid());
-		if(tp.getProfileid() != -1)
-			doc.append("&profileid=" + tp.getProfileid());
-		doc.append("&task=" + tp.getTask());
-		doc.append("&type=" + tp.getType());
-		if(tp.getFrom() != null && !tp.getFrom().equals(""))
-			doc.append("&from=" + tp.getFrom());
-		if(tp.getUntil() != null && !tp.getUntil().equals(""))
-		doc.append("&until=" + tp.getUntil());
+		doc.append("&contributorid=" + h.getContributor().getContributorid());
+		if(h.getProfileid() != -1)
+			doc.append("&profileid=" + h.getProfileid());
+		doc.append("&task=" + task);
+		doc.append("&type=" + h.getType());
+		if(h.getHarvestfrom() != null && !h.getHarvestfrom().equals(""))
+			doc.append("&from=" + h.getHarvestfrom());
+		if(h.getHarvestuntil() != null && !h.getHarvestuntil().equals(""))
+		doc.append("&until=" + h.getHarvestuntil());
 		doc.append("&url=" + URLEncoder.encode(thisurl, "UTF-8"));
 		doc.append("&action=start");
 	
 		
-		String url = schedulerurl + tp.getContributorid();
+		String url = schedulerurl + h.getContributor().getContributorid();
 		logger.info("url : " + url  + " \ndoc : " + doc.toString());
 				
 		logger.info("connecting to scheduler ws");
