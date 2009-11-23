@@ -20,18 +20,17 @@ public class HHarvestDataDAO implements HarvestdataDAO
 {
 
 	private static Logger logger = Logger.getLogger(HHarvestDataDAO.class);
-	
-	public void AddToDatabase(HarvestData hd) throws Exception 
-	{
-		
+
+	public void AddToDatabase(HarvestData hd) throws Exception {
+
 		Session session  = null;
-        try {
-		session = HibernateUtil.getSessionFactory().getCurrentSession();
-		 session.beginTransaction();
-		 
-		 session.save(hd);
-		 session.getTransaction().commit();
-		 logger.debug("New harvestdata item added to database.   id=" + hd.getHarvestdataid());
+		try {
+			session = HibernateUtil.getSessionFactory().getCurrentSession();
+			session.beginTransaction();
+
+			session.save(hd);
+			session.getTransaction().commit();
+			logger.debug("New harvestdata item added to database.   id=" + hd.getHarvestdataid());
 		} catch (HibernateException e) {
 			if(session != null)
 				session.getTransaction().rollback();
@@ -39,64 +38,45 @@ public class HHarvestDataDAO implements HarvestdataDAO
 		}
 
 	}
-	
-	
-	public void AddToDatabaseBulk(LinkedList<Object> records, int harvestid, int stage) throws Exception 
-	{
+
+
+	public void AddToDatabaseBulk(LinkedList<Object> records, int harvestid, int stage) throws Exception {
 		logger.info("saving records, harvestid=" + harvestid + " stage=" + stage);
-		
-		Session session  = null;
-        try {
-		session = HibernateUtil.getSessionFactory().getCurrentSession();
-		 session.beginTransaction();
-		 
-		 int count = 0;
-		 
-		 //Harvest h = (Harvest)session.get(Harvest.class, harvestid);
-		 
-		 //loop over each record
-		 for(Object rec : records)
-		 {
 
-			 HarvestData hd = new HarvestData();
-			 //if(id != null)
-			//	 hd.setHarvestdataid(Integer.valueOf(id));
-			 hd.setHarvestid(harvestid);
-			 hd.setStage(stage);
-			// h.getHarvestdata().add(hd);			 
-			 
-			 //this should pretty print to document
+		StatelessSession session  = null;
+		try {
+			session = HibernateUtil.getSessionFactory().openStatelessSession();
+			Transaction tx = session.beginTransaction();
 
-			 OutputFormat format = OutputFormat.createPrettyPrint();
-			 StringWriter out = new StringWriter();
-			 format.setEncoding("UTF-8");
-			 XMLWriter writer = new XMLWriter( out, format );
-			 writer.write((Document)rec);
-			 writer.close();
-			 out.close();
-			 String data = out.toString();
+			//loop over each record
+			for(Object rec : records) {
+				HarvestData hd = new HarvestData();
+				hd.setHarvestid(harvestid);
+				hd.setStage(stage);	 
 
-			 //hd.setData(Hibernate.createClob(data));
-			 hd.setData(Hibernate.createBlob(data.getBytes("UTF-8")));
-			 //hd.setBdata(Hibernate.createBlob("testing 123".getBytes("UTF-8")));
-			 
-			 session.save(hd);	
-			 
-			 count++;
-			 if(count % 20 == 0)
-			 {
-				 session.flush();
-				 session.clear();
-			 }
-		 }
+				//this should pretty print to document
 
-		 session.flush();
-		 session.clear();
-		 
-		 logger.info("attempting commit, count = " + count + "...");
-		 session.getTransaction().commit();
-		 
-		 logger.debug("Completed commit");
+				OutputFormat format = OutputFormat.createPrettyPrint();
+				StringWriter out = new StringWriter();
+				format.setEncoding("UTF-8");
+				XMLWriter writer = new XMLWriter( out, format );
+				writer.write((Document)rec);
+				writer.close();
+				out.close();
+				String data = out.toString();
+
+				hd.setData(Hibernate.createBlob(data.getBytes("UTF-8")));
+
+				session.insert(hd);		 
+			}
+
+
+			logger.info("attempting commit");
+
+			tx.commit();
+			session.close();
+
+			logger.debug("Completed commit");
 		} catch (HibernateException e) {
 			if(session != null)
 				session.getTransaction().rollback();

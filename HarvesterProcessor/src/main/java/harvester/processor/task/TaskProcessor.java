@@ -126,7 +126,7 @@ public class TaskProcessor implements Runnable, Controller {
 		 LinkedList<harvester.processor.steps.StagePluginInterface> steps = null;
 		 
 		 boolean init_error = false;	//set to true if a failure to initialize occurs
-		 StepLogger slog = new StepLoggerImpl(h.getHarvestid(), clienturl);
+		 StepLogger slog = new StepLoggerImpl(harvestid, clienturl);
 		 
 		 Session session = null;
 		 try {
@@ -213,14 +213,14 @@ public class TaskProcessor implements Runnable, Controller {
 			 session.getTransaction().commit();
 			 session = null;
 			 
-		 } catch (Exception e) {			 
+		 } catch (Exception e) {
+			 if(session != null)
+				session.getTransaction().rollback();
+				
 			 init_error = true;
 			 slog.log(StepLogger.INIT_ERROR, "Could not start harvest. Java Error:" + e.toString(), "Could not start harvest", null, null);
-			 for(StackTraceElement el : e.getStackTrace())
-				 logger.error(el.toString());		
-			 
-			if(session != null)
-				session.getTransaction().rollback();
+			 logger.error("error in init", e);	
+
 		 }
 		 
 		 if(runningContributors.contains(new Integer(c.getContributorid()))) {
@@ -286,7 +286,7 @@ public class TaskProcessor implements Runnable, Controller {
 				 harvestdao.ApplyChanges(h);
 				 
 				 taskUtil.email(Email.HARVEST_FAILURE);
-				logger.info("handled exception");
+				 logger.info("handled exception");
 			 } catch(Exception e2) {
 				 try {
 				 	logger.error("database error when applying pipeline error msg", e2);				 	
