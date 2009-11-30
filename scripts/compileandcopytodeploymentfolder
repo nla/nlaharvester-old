@@ -1,6 +1,7 @@
 #!/bin/bash
 cd ..
-mvn package
+echo NOTE! Tests are not being run, please run them seperately if you need to
+mvn -Dmaven.test.skip=true package
 cd scripts
 echo -----------------COMPILING COMPLETE
 echo deleting current deployment folder

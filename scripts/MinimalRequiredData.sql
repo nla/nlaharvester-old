@@ -7,6 +7,7 @@
 INSERT INTO step VALUES(4, 'harvester.processor.steps.HarvesterThroughWS', 'OAI', '', 'xml', 0, 'Harvests OAI');
 INSERT INTO parameterinformation VALUES( 6, 4, 'Base URL', '', 'String', 1, 'The Base URL of the OAI data source', null);
 INSERT INTO parameterinformation VALUES( 7, 4, 'Set', '', 'String', 0, 'Harvest only a subset of data in the repository', null);
+INSERT INTO parameterinformation VALUES( 80, 4, 'Set Description', '', 'String', 3, null, null);
 INSERT INTO parameterinformation VALUES( 8, 4, 'Metadata Prefix', 'oai_dc', 'String', 1, 'The data format to harvest', null);
 INSERT INTO profilestep VALUES( 4, null,4, 0, 1, 'Harvest through OAI', 0, 1);
 INSERT INTO profilestepparameter VALUES (6, 4, 6, 1, 'http://export.arxiv.org/oai2');
