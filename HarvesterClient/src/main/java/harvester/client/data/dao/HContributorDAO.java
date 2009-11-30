@@ -201,7 +201,9 @@ public class HContributorDAO implements ContributorDAO {
 			//get the associated parameterinfo object
 			ParameterInformation pis = (ParameterInformation)sf.getCurrentSession().get(ParameterInformation.class, entry.getKey());
 			
-			logger.info("saving parameter key=" + entry.getKey() + " value=" + entry.getValue() + "pis name=" + pis.getParametername());
+			logger.info("saving parameter key=" + entry.getKey() 
+					+ " value=" + entry.getValue() 
+					+ " pis name=" + pis.getParametername() == null ? "(pis null)" : pis.getParametername());
 			
 			p.setPis(pis);
 			ps.getParameters().add(p);
