@@ -173,7 +173,7 @@ public class SchedulerService {
 			
 			details.getJobDataMap().put(en.getKey(), en.getValue().get(0));
 			//logger.info(en.getKey() + "=" + en.getValue());
-			System.out.println(en.getKey() + "=" + en.getValue());
+			System.out.println(en.getKey() + "=" + en.getValue().get(0));
 		}
 	}
 	
