@@ -87,6 +87,35 @@ public class ViewHarvestController {
         response.getWriter().write(jharvest.toString());
     }
     
+    @RequestMapping("/GetPlaceholders.json")
+    public void getPlaceholders(@RequestParam("harvestid") int harvestid, 
+    							@RequestParam("last_record") int last_record,
+    							HttpServletResponse response) throws Exception {
+    	
+    	List<Object> placeholder_info = daofactory.getRecordDAO().getPlaceholders(harvestid, last_record, MAX_LOG_BATCH_SIZE);
+    	int count = 0;
+    	 
+		JSONArray parray = new JSONArray();
+    	
+    	for(Object placeholder_obj : placeholder_info) {
+    		Object[] placeholder = (Object[]) placeholder_obj;
+    		Integer num = (Integer)placeholder[0];
+    		
+    		JSONObject row = new JSONObject();
+    		row.put("start", count);
+    		row.put("num", placeholder[0]);
+    		row.put("errors", placeholder[1]);
+    		parray.put(row);
+    		
+    		count += num;
+    	}
+    	
+		logger.info("returning get placeholders response");
+        response.setContentType("application/json");
+        response.setHeader("Cache-Control", "no-cache");
+        response.getWriter().write(parray.toString());
+    }
+    
     @RequestMapping("/GetNewLogs.json")
     public void getNewLogs(@RequestParam("harvestid") int harvestid, 
     					   @RequestParam(value="fromdate", required=false) String fromdatestr,
@@ -170,85 +199,58 @@ public class ViewHarvestController {
 		model.put("contributor", harvest.getContributor());
 		model.put("dateformat", wutil);
 		
-		List<Object> logs = daofactory.getRecordDAO().getHarvestLogs(harvestid);
+		//List<Object> logs = daofactory.getRecordDAO().getHarvestLogs(harvestid);
 		
 		List<KeyValue> props = new LinkedList<KeyValue>();
 		boolean hasClusters = daofactory.getHarvestDAO().hasClusters(harvestid);
 
-		List<KeyValue> log_placeholders = new ArrayList<KeyValue>();
-		List<HarvestLog> filtered_logs = new ArrayList<HarvestLog>();
+		//List<KeyValue> log_placeholders = new ArrayList<KeyValue>();
+		//List<HarvestLog> filtered_logs = new ArrayList<HarvestLog>();
+		
 		String last_date_shown = "";
 		
 		//we need to do some processing on the logs to remove any logs marked as prop log messages
+		List<Object> props_logs = daofactory.getRecordDAO().getHarvestLogsWithErrorLevel(harvestid, HarvestLog.PROP_INFO);
 		
-		for(Iterator<Object> itor = logs.iterator(); itor.hasNext() ;) {
-			HarvestLog log = (HarvestLog) itor.next();
-			if(log.getErrorlevel() == HarvestLog.PROP_INFO) {
-				try {
-					String desc = log.getDescription();
-					int splitpos = desc.indexOf('=');
-					props.add(new KeyValue(desc.substring(0,splitpos), desc.substring(splitpos+1)));
-					itor.remove();	
-					continue;
-				} catch (Exception e) {
-					logger.info("problem parsing a prop info log message. desc=" + log.getDescription());
-				}
+		for(Iterator<Object> itor = props_logs.iterator(); itor.hasNext() ;) {
+			HarvestLog prop_log = (HarvestLog) itor.next();
+			try {
+				String desc = prop_log.getDescription();
+				int splitpos = desc.indexOf('=');
+				props.add(new KeyValue(desc.substring(0,splitpos), desc.substring(splitpos+1)));
+			} catch (Exception e) {
+				logger.info("problem parsing a prop info log message. desc=" + prop_log.getDescription());
 			}
-			if(log.getErrorlevel() == HarvestLog.REPORT_INFO) {				
-				itor.remove(); //don't show report info		
-				continue;
-			} 
 		}
 		
-		int count = 0;
-		int current_batch_size = 0;
-		int errors_in_batch = 0;
-		for(Object log_object : logs) {
-			HarvestLog log = (HarvestLog)log_object;
-			if(logs.size() - count > MAX_LOG_BATCH_SIZE) {
-				if(log.getErrorlevel() != HarvestLog.INFO) {
-					errors_in_batch++;
-				}
-				
-				if(current_batch_size == MAX_LOG_BATCH_SIZE) {
-					String msg = "Log messages " + (count-current_batch_size) + " to " + count + " hidden." + 
-					 			 (errors_in_batch != 0 ? "<br /> " + errors_in_batch + " errors within" : "");
-					log_placeholders.add(new KeyValue((count-current_batch_size) + "-" + count, msg));
-					current_batch_size = 0;
-					errors_in_batch = 0;
-				}
-				
-				current_batch_size++;
-			} else {	
-				if(current_batch_size != 0) {
-					String msg = "Log messages " + (count-current_batch_size) + " to " + count + " hidden." + 
-		 			 			 (errors_in_batch != 0 ? "<br /> " + errors_in_batch + " errors within" : "");
-					log_placeholders.add(new KeyValue((count-current_batch_size) + "-" + count, msg));
-					current_batch_size = 0;
-				}
-				filtered_logs.add(log);
-			}
-			count++;
-		}
 	
-		if(filtered_logs.size() > 0)
-			last_date_shown = wutil.userformat(filtered_logs.get(filtered_logs.size()-1).getTimestamp());
-		// log.getTimestamp())
+		List<Object> logs = daofactory.getRecordDAO().getLastHarvestLogs(harvestid, MAX_LOG_BATCH_SIZE);
+		int total_logs = daofactory.getHarvestDAO().getTotalLogMessages(harvestid);
+		
+		HarvestLog firstlog = (HarvestLog)logs.get(0);
+		
+		if(logs.size() > 0) {
+			HarvestLog last_log = (HarvestLog)logs.get(logs.size()-1);
+			last_date_shown = wutil.userformat(last_log.getTimestamp());
+		}
 		
 		List<HarvestError> errors = daofactory.getHarvestDAO().getErrorSummary(harvestid);
 		model.put("errors", errors);
 		
 		model.put("props", props);
-		model.put("logs", filtered_logs);	
-		model.put("placeholders", log_placeholders);
+		model.put("logs", logs);	
+		//model.put("placeholders", log_placeholders);
 		model.put("lastDateShown", last_date_shown);
+		model.put("logs_hidden", total_logs-logs.size());
+		model.put("first_log_id", firstlog.getHarvestlogid());
+		model.put("max_log_batch_size", MAX_LOG_BATCH_SIZE);
 		
 		model.put("hasClusters", hasClusters);
 		model.put("HarvestLogInfoConst", HarvestLog.INFO);
 		model.put("duration", buildDurationString(harvest));
 		model.put("number", new WebUtil());
 
-		logger.info("viewHarvest model built");
+		logger.info("viewHarvest model built, logs.size()=" + logs.size() + " total=" + total_logs);
 		return "ViewHarvest";
 	}
 

@@ -14,6 +14,32 @@
     <!--
     
     var newestlogdate = "$!lastDateShown";
+    var first_log_line_shown = "$!first_log_id";
+
+    function getPlaceholders(p) {
+      jQuery.getJSON("GetPlaceholders.json?harvestid=${harvest.harvestid}&last_record=" + first_log_line_shown,
+        function(data){
+          
+          var last_added = $(p);
+                      
+          jQuery.each(data, function(i, item){
+            var text = "Log messages " + item.start + " to " + (item.start+item.num) + " hidden." + 
+					 			      (item.errors != 0 ? "<br /> " + item.errors + " errors within" : "");
+            var row = '<tr class="placeholder" id="range' + item.start + '-' + (item.start+item.num) + '" >' + 
+                      '<td colspan="3">' + text + '</td>' + 
+                      '</tr>';
+            
+            var rowDom = jQuery(row);
+            rowDom.hide();
+            
+            last_added.after(rowDom);
+            $(rowDom).fadeIn("slow");
+            last_added = $(rowDom);
+          });  
+          
+          $(p).hide();        
+        });
+    }
 
     function replacePlaceholder(p) {      
       var range = $(p).attr('id').substring(5)
@@ -120,9 +146,17 @@
     
     $(document).ready(function(){
       
-      $('.placeholder').click(function() {
+      $('.placeholder').live("click", function() {
         replacePlaceholder(this);
       });
+      
+      $('.placeholder_show').click(function() {
+        getPlaceholders(this);
+      });
+      
+      if($logs_hidden > 0 && $logs_hidden < $max_log_batch_size) {
+         getPlaceholders($('.placeholder_show'));
+      }
       
        poll();
     });
@@ -240,11 +274,16 @@
           <th>Message</th>
           <th>Attached Data</th>
         </tr>
-        #foreach($placeholder in $placeholders)
-          <tr class="placeholder" id="range${placeholder.key}" >
-            <td colspan="3" >$placeholder.value</td>
-          </tr>
+        
+        #if($logs_hidden > 0)
+            <tr class="placeholder_show">
+              <td colspan="3">
+                Click To Show Past Log Messages<br />
+                $logs_hidden Log Messages Hidden
+                </td>
+            </tr>
         #end
+
         #foreach($log in $logs)
           <tr #if($log.errorlevel != $log.INFO())class="error"#{end} >
             <td>$dateformat.userformat($log.timestamp)</td>

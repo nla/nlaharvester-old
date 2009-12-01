@@ -263,14 +263,14 @@ pre {
 .shortnestedheading { margin-right: 0px; margin-top: -3em;}
 .nestedheading { margin-right: 0px;}
 
-.placeholder {
+.placeholder, .placeholder_show {
 	-moz-background-clip:border;
 	-moz-background-inline-policy:continuous;
 	-moz-background-origin:padding;background:#DDDDFF url(../_img/button.gif) repeat-x scroll 0 bottom;
 	text-align: center;
 }
 
-.placeholder:hover {
+.placeholder:hover, .placeholder_show:hover {
 	background-color:#FFE; 
 	background-image:url("../_img/button-hover.gif"); 
 	cursor:pointer;	

@@ -11,4 +11,9 @@ public interface RecordDAO {
 	public List<Object> getHarvestLogs(int harvestid);
 	public List<Object> getNewHarvestLogs(int harvestid, Date fromdate);
 	public List<Object> getVisibleHarvestLogsInRange(int harvestid, int start, int end);
+	
+	public List<Object> getLastHarvestLogs(int harvestid, int num_logs);
+	public List<Object> getHarvestLogsWithErrorLevel(int harvestid, int error_level);
+	
+	public List<Object> getPlaceholders(int harvestid, int last_record, int chunksize);
 }

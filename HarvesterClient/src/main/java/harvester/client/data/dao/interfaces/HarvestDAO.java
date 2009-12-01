@@ -19,6 +19,8 @@ public interface HarvestDAO {
 	public Harvest getHarvestAndContributor(Integer harvestid);
 	
 	public int getTotalDataRecords(int harvestid);
+	
+	public int getTotalLogMessages(int harvestid) ;
 
 	public Harvest getHarvestContributorCollection(int harvestid);
 	

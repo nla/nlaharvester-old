@@ -125,12 +125,20 @@ public class HHarvestDAO implements HarvestDAO{
 
 	@Transactional(readOnly=true)
 	public int getTotalDataRecords(int harvestid) {
-		Query q = sf.getCurrentSession().createQuery("select count(hd) from HarvestData hd where harvestid=" + harvestid);
+		Query q = sf.getCurrentSession().createQuery("select count(*) from HarvestData hd where harvestid=" + harvestid);
 		Object result = q.uniqueResult();
 		return Integer.valueOf(result.toString());
 	}
 	
-
+	@Transactional(readOnly=true)
+	public int getTotalLogMessages(int harvestid) {
+		Query q = sf.getCurrentSession().createQuery("select count(*) from HarvestLog hl where hl.harvestid=" + 
+													 harvestid + " and hl.errorlevel <> " + HarvestLog.PROP_INFO);
+		Object result = q.uniqueResult();
+		return Integer.valueOf(result.toString());
+	}
+	
+	
 	@Transactional
 	public void doHardHarvestStop(Integer harvestid) {
   		Harvest h = (Harvest)sf.getCurrentSession().load(Harvest.class, harvestid);
@@ -152,7 +160,7 @@ public class HHarvestDAO implements HarvestDAO{
 
 	@Transactional
 	public boolean hasClusters(int harvestid) {
-		Query q = sf.getCurrentSession().createQuery("select count(hc) from HarvestCluster hc where harvestid=" + harvestid);
+		Query q = sf.getCurrentSession().createQuery("select count(*) from HarvestCluster hc where harvestid=" + harvestid);
 		Object count = q.uniqueResult();
 		return Integer.valueOf(count.toString()) != 0;
 	}
