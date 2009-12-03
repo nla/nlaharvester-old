@@ -25,7 +25,7 @@
     <dependency>
       <groupId>asm</groupId>
       <artifactId>asm</artifactId>
-      <version>3.1</version>                       
+      <version>1.5.3</version>                       
     </dependency>
     
     <dependency>
@@ -56,7 +56,14 @@
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate</artifactId>
       <version>3.2.6.ga</version>
+      <exclusions>
+          <exclusion>
+            <groupId>asm</groupId>
+            <artifactId>asm</artifactId>
+          </exclusion>
+      </exclusions>
     </dependency>
+    
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-annotations</artifactId>
