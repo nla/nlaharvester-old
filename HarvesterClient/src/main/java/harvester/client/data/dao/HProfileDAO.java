@@ -8,8 +8,6 @@ import org.apache.commons.logging.*;
 import org.hibernate.*;
 import org.springframework.beans.factory.annotation.Required;
 
-import sun.text.CompactShortArray.Iterator;
-
 
 @SuppressWarnings("unchecked")
 public class HProfileDAO implements ProfileDAO {
