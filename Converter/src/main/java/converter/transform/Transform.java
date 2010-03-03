@@ -26,25 +26,14 @@ public class Transform {
 	
 	Document doc;
 	boolean matched;
+	VelocityEngine ve;
+	
 	public Transform() {
 		matched = false;
 	}
 	public Transform(Document doc) {
 		this.doc = doc;
 		matched = false;
-	}
-
-	public void velocityInit() {
-
-		//configure the velocity engine
-        Velocity.setProperty( RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, "org.apache.velocity.runtime.log.Log4JLogChute" ); 
-        Velocity.setProperty("runtime.log.logsystem.log4j.logger", "org.apache.velocity");
-        
-        try {
-        	Velocity.init();
-		} catch (Exception e) {
-			logger.error("Error initializing velocity!", e);
-		}
 	}
 	
 	public boolean getMatched() {
@@ -191,8 +180,6 @@ public class Transform {
 		Pattern pattern = Pattern.compile(regex, Pattern.DOTALL);
 
 		Matcher matcher = pattern.matcher(input);
-
-		velocityInit();
 		
 		String new_expr = output;
 		String new_text = "";
@@ -202,7 +189,7 @@ public class Transform {
 			count+=1;
 			matched = true;
 			StringWriter w;
-		 	w	= new StringWriter();
+		 	w = new StringWriter();
 			VelocityContext context = new VelocityContext();
 			context.put("C", new Convert());
 			context.put("D", doc);
@@ -213,7 +200,7 @@ public class Transform {
 				context.put("g" + Integer.toString(i), matcher.group(i));
 			}
 			try {
-			Velocity.evaluate(context, w, "mystring", output);
+				Velocity.evaluate(context, w, "mystring", output);
 			}catch (ParseErrorException e) {
 				throw new Exception("Parse error in template<br /> " + e.getMessage());
 			}

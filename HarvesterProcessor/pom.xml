@@ -27,11 +27,11 @@
       <version>1.0</version>
     </dependency>
     
-    <!-- <dependency>
+    <dependency>
       <groupId>au.gov.nla</groupId>
       <artifactId>HarvestTOC</artifactId>
       <version>1.0</version>
-    </dependency> -->
+    </dependency>
     
     <dependency>
       <groupId>au.gov.nla</groupId>

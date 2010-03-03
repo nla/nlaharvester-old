@@ -1,7 +1,13 @@
 #!/bin/bash
 cd ..
 echo NOTE! Tests are not being run, please run them seperately if you need to
+
 mvn -Dmaven.test.skip=true package
+if [ "$?" -ne 0 ]; then
+  echo "Build failed"
+  exit 1
+fi
+
 cd scripts
 echo -----------------COMPILING COMPLETE
 echo deleting current deployment folder

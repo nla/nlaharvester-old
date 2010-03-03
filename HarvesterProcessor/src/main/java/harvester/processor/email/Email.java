@@ -23,7 +23,6 @@ public class Email {
 	protected Harvest h;
 	protected Properties props;
 	protected ServletContext ctx;
-	protected VelocityEngine ve;
 	protected VelocityContext colcontext;
 	protected VelocityContext concontext;
 	
@@ -48,13 +47,6 @@ public class Email {
 
 		String templatefolder = props.getProperty("mail.templatefolder");
 		
-		//configure the velocity engine
-        ve = new VelocityEngine();
-        ve.addProperty("file.resource.loader.path", ctx.getRealPath(templatefolder));
-        ve.setProperty( RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, "org.apache.velocity.runtime.log.Log4JLogChute" ); 
-        ve.setProperty("runtime.log.logsystem.log4j.logger", "org.apache.velocity");
-        
-        ve.init();
         LogFormatter lf = new LogFormatter(h.getHarvestid());
         Map<String, Object> map = lf.generateEmailReport();
         
@@ -81,7 +73,7 @@ public class Email {
 	private void emailForType(String msgfile, FilterContributor filter, String subject) throws Exception {
 		logger.info("emailing on successful contacts");
 		
-        Template t = ve.getTemplate(msgfile, "UTF-8");
+        Template t = Velocity.getTemplate(msgfile, "UTF-8");
         StringWriter conwriter = new StringWriter();
         t.merge( concontext, conwriter );
         String conmsg = conwriter.toString();

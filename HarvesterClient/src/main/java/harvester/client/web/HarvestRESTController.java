@@ -49,6 +49,22 @@ public class HarvestRESTController {
 
     private DateFormat df = DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT);
 
+    @RequestMapping("/GetPast.json")
+    public void getPast(@RequestParam("collectionid") int collectionid, 
+    					 HttpServletResponse response) throws Exception {  
+    	
+    	JSONObject categories = new JSONObject();
+    	
+    	//factor out categories stuff from ListHarvests controller
+    	//work out what to do with sorting code
+    	//fill categories object based off of HarvestNameModel object
+    	
+		logger.info("returning GetPast response");
+        response.setContentType("application/json");
+        response.setHeader("Cache-Control", "no-cache");
+        response.getWriter().write(categories.toString());
+    }
+    
     @RequestMapping("/GetRunning.json")
     public void getRunning(@RequestParam("collectionid") int collectionid, 
     					 HttpServletResponse response) 

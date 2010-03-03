@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
+import org.apache.velocity.app.Velocity;
+import org.apache.velocity.runtime.RuntimeConstants;
 
 
 /**
@@ -79,6 +81,8 @@ import org.apache.log4j.Logger;
 		} catch (Exception e) {
 			logger.error("clearing running error", e);
 		}
+		
+		velocityInit();
  		
    	}
    
@@ -137,6 +141,22 @@ import org.apache.log4j.Logger;
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// we don't support any sort of post request at the moment
 	}  
+	
+	public void velocityInit() {
+		String templatefolder = props.getProperty("mail.templatefolder");
+		logger.info("Template folder: " + templatefolder);
+
+    	Properties props = new Properties();
+    	props.setProperty("file.resource.loader.path", ctx.getRealPath(templatefolder));
+    	props.setProperty( RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, "org.apache.velocity.runtime.log.Log4JLogChute" ); 
+    	props.setProperty("runtime.log.logsystem.log4j.logger", "org.apache.velocity");
+
+        try {
+        	Velocity.init(props);
+		} catch (Exception e) {
+			logger.error("Error initializing velocity!", e);
+		}
+	}
 	
 	/**
 	 * The recommended way to shutdown a thread nicely is to set a variable that that thread regularily checks to see if it has been 
