@@ -54,7 +54,7 @@ public class SBDSLoaderActions implements LoadStepActions {
 			OutputStream os = socket.getOutputStream();
 			os.write(message);
 			os.flush();
-			os.close();
+			socket.shutdownOutput();
 			
 			InputStream is = socket.getInputStream();
 			int i;
@@ -64,8 +64,11 @@ public class SBDSLoaderActions implements LoadStepActions {
 			if (message[1] == 3) {
 				logger.warn("Delete All Records message for " + source + " failed");
 			}
+			socket.shutdownInput();
+			
+			// close the streams.
+			os.close();
 			is.close();
-
 		} catch (UnknownHostException e) {
 			logger.warn("Unknown host: " + host, e);
 		} catch (IOException e) {
