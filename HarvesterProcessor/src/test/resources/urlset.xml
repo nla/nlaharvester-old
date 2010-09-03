@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset  xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+  <loc>http://www.nla.gov.au/find</loc>
+  <lastmod>2010-08-26T12:36:13Z</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.4</priority>
+</url>
+<url>
+  <loc>http://www.nla.gov.au/services</loc>
+  <lastmod>2010-08-25T10:24:52Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.4</priority>
+</url>
+<url>
+  <loc>http://www.nla.gov.au/library</loc>
+  <lastmod>2010-08-22T07:21:29Z</lastmod>
+  <changefreq>always</changefreq>
+  <priority>0.3</priority>
+</url>
+<url>
+  <loc>http://www.nla.gov.au/collect</loc>
+  <lastmod>2010-08-23T17:14:34Z</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.4</priority>
+</url>
+<url>
+  <loc>http://www.nla.gov.au/visit-us</loc>
+  <lastmod>2010-08-23T08:46:46Z</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.4</priority>
+</url>
+<url>
+  <loc>http://www.google.com.au</loc>
+  <lastmod>2010-08-23T08:46:46Z</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.4</priority>
+</url>
+</urlset>
