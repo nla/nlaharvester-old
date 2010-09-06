@@ -163,6 +163,11 @@
       <artifactId>utils</artifactId>
       <version>1.07.00</version>
     </dependency>
+    <dependency>
+      <groupId>jtidy</groupId>
+      <artifactId>jtidy</artifactId>
+      <version>4aug2000r7-dev</version>
+    </dependency>
   </dependencies>
 
   <build>
