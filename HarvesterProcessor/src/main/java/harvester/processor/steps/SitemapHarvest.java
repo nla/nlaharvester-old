@@ -2,12 +2,17 @@ package harvester.processor.steps;
 
 import harvester.processor.exceptions.HarvestException;
 import harvester.processor.main.Records;
+import harvester.processor.util.HTMLHelper;
 import harvester.processor.util.HarvestConnection;
 import harvester.processor.util.SitemapClient;
 import harvester.processor.util.StepLogger;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,6 +23,7 @@ import javax.servlet.ServletContext;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
+import org.w3c.tidy.Tidy;
 
 public class SitemapHarvest implements StagePluginInterface {
 	
@@ -79,9 +85,11 @@ public class SitemapHarvest implements StagePluginInterface {
         
         urlsetList = new ArrayList<String>();
 	}
-
-	public Records Process(Records records) throws Exception {
-		// TODO Auto-generated method stub
+	
+	/**
+	 * The main method that is called to process the sitemaps. 
+	 */
+	public Records Process(Records records) throws Exception {		
 	
 		client = new SitemapClient(logger);		
 		
@@ -278,7 +286,8 @@ public class SitemapHarvest implements StagePluginInterface {
 	}
 	
 	/**
-	 * Iterates through urlsetList and harvests the html pages.
+	 * Iterates through urlsetList and harvests the html pages, cleans them and adds
+	 * the page as a dom4j document to the records.
 	 * 
 	 * @param records 
 	 */
@@ -297,15 +306,13 @@ public class SitemapHarvest implements StagePluginInterface {
 	    		logger.locallog("Harvested " + count + " records and urlsetlist " + urlsetList.size() + ", breaking from record loop", getName());
 	    		break;
 	    	}
-
-	        // Potentially determine if we should download the page
-	        // Clean the page up
-	        // Add it to the records
+	        
 	    	String url = urlsetList.remove(0);
 	    	logger.locallog("Harvesting: " + url , getName());
 	    	try {
-	    		String html = downloadPage(new URL(url));
-	    		records.addRecord(html);
+	    		String html = HTMLHelper.downloadPage(new URL(url));
+	    		String xml = HTMLHelper.cleanHtmlToXml(html);	    		
+	    		records.addRecord(xml);
 	    	} catch (Exception e) {
 	    		logger.logfailedrecord("URL: " + url + " rejected" +
                         "<br/>Processing Step: " + getName() +
@@ -322,32 +329,6 @@ public class SitemapHarvest implements StagePluginInterface {
         
         records.setTotalRecords(records.getCurrentrecords() + parse_error_count);
 	}
-	
-	/**
-	 * Downloads a page from a given URL and returns the page as a String.
-	 * @param pageUrl
-	 * @return A string representing the downloaded contents of the page.
-	 */
-    public String downloadPage(URL pageUrl) {
-        try {
-            // Open connection to URL for reading.
-            BufferedReader reader = new BufferedReader(new InputStreamReader(pageUrl.openStream()));
-            
-            // Read page into buffer.
-            String line;
-            StringBuffer pageBuffer = new StringBuffer();
-            while ((line = reader.readLine()) != null) {
-                pageBuffer.append(line);
-            }
-            
-            return pageBuffer.toString();
-        } catch (Exception e) {
-        	//TODO
-        	// Add an appropriate exception
-        }
-        
-        return null;
-    }
     
 	/**
 	 * Reads the Robots.txt file and retrieves a list of URLs to the Sitemaps.

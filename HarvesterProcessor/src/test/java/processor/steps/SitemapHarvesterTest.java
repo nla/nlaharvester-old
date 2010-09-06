@@ -2,6 +2,7 @@ package processor.steps;
 
 import static org.junit.Assert.*;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +15,9 @@ import harvester.processor.test.helpers.MockStepLogger;
 
 import nu.xom.Builder;
 
+import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -90,17 +94,9 @@ public class SitemapHarvesterTest {
 		records = sitemapHarvest.Process(records);		
 		assertFalse("Expecting the continue harvesting flag to be false", records.isContinue_harvesting());
 	}
-	
-	@Test
-	public void shouldReturnHTMLPageFromURL() throws Exception {
-		String page = sitemapHarvest.downloadPage(new URL("http://www.nla.gov.au"));
-		assertNotNull(page);
-		assertTrue(page.contains("National Library Of Australia"));
-		assertTrue(page.contains("<html"));
-	}
-	
+		
 	/**
-	 * Note that this test is extremely dependant on the validaity of the
+	 * Note that this test is extremely dependent on the validity of the
 	 * URL's in the input file. If this tests starts failing double check the 
 	 * input url's are valid.
 	 * @throws Exception
