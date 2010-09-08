@@ -55,7 +55,7 @@ public class HHarvestDataDAO implements HarvestdataDAO
 				hd.setStage(stage);	 
 
 				//this should pretty print to document
-
+/*
 				OutputFormat format = OutputFormat.createPrettyPrint();
 				StringWriter out = new StringWriter();
 				format.setEncoding("UTF-8");
@@ -64,7 +64,10 @@ public class HHarvestDataDAO implements HarvestdataDAO
 				writer.close();
 				out.close();
 				String data = out.toString();
-
+*/
+				Document doc = (Document)rec;
+				String data = doc.asXML();
+				
 				hd.setData(Hibernate.createBlob(data.getBytes("UTF-8")));
 
 				session.insert(hd);		 

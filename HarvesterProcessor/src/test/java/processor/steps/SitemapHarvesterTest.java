@@ -2,8 +2,6 @@ package processor.steps;
 
 import static org.junit.Assert.*;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -15,11 +13,8 @@ import harvester.processor.test.helpers.MockStepLogger;
 
 import nu.xom.Builder;
 
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.junit.Assert;
+import org.dom4j.Document;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 
@@ -43,8 +38,8 @@ public class SitemapHarvesterTest {
 		sitemapHarvest = new SitemapHarvest();
 								
 		props.put("Base URL", baseUrl);
-		props.put("stepid", 1);
-		props.put("urlPattern", "http://www.nla.gov.au.*");
+		props.put("stepid", 1); //props.put("urlPattern", 1);
+		props.put("Set", "http://www.nla.gov.au.*");
 
 		sitemapHarvest.Initialise(props, new MockStepLogger(), new MockServletContext());
 	}
@@ -111,39 +106,23 @@ public class SitemapHarvesterTest {
 	}
 	
 	/**
-	 * This testcase is just to test the PowerHouse Museum as a contributor.
-	 * 
+	 * Note that this test is extremely dependent on the validity of the
+	 * URL's in the input file. If this tests starts failing double check the 
+	 * input url's are valid.
 	 * @throws Exception
 	 */
-	@Ignore
 	@Test
-	public void shouldHarvestPowerHouseMusuemRecords() throws Exception {
-				
-		HashMap<String, Object> props = new HashMap<String, Object>();													
-		props.put("Base URL", "http://www.powerhousemuseum.com/robots.txt");
-		props.put("stepid", 1);
-		props.put("urlPattern", "http://www.powerhousemuseum.com/collection/database/index.php\\p{Punct}irn\\p{Punct}[\\d]+");
-		
-		SitemapHarvest sitemapHarvest = new SitemapHarvest();
-		sitemapHarvest.Initialise(props, new MockStepLogger(), new MockServletContext());
-		sitemapHarvest.RECORD_LIMIT = 10;
-		
-		Records records = new Records(); 		
-		int count = 0;
-		
-		while (count <= 2) {
-			count++;						
-			records = new Records();
-			records.setContinue_harvesting(true);
-			sitemapHarvest.Process(records);		
-		} 					
-	}
-	
-	
-	
-	
-	
-	
-	
+	public void shouldHarvestPagesAndCreateDom4jRecord() throws Exception {
+		sitemapHarvest.setUrlsetList(sitemapHarvest.processUrlSet(urlSetXML));		
+		Records records = new Records();
+		sitemapHarvest.harvestHTMLPages(records);
+		for (Object record : records.getRecords()) {
+			try {
+				Document doc = (Document)record;
+			} catch (ClassCastException e) {
+				fail("Expecting each record to be of type dom4j and not: " + e.getMessage());
+			}
+		}		
+	}	
 
 }

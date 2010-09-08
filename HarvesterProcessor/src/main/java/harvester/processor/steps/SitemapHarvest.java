@@ -3,15 +3,12 @@ package harvester.processor.steps;
 import harvester.processor.exceptions.HarvestException;
 import harvester.processor.main.Records;
 import harvester.processor.util.HTMLHelper;
-import harvester.processor.util.HarvestConnection;
 import harvester.processor.util.SitemapClient;
 import harvester.processor.util.StepLogger;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -22,8 +19,8 @@ import java.util.regex.Pattern;
 import javax.servlet.ServletContext;
 
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
-import org.w3c.tidy.Tidy;
 
 public class SitemapHarvest implements StagePluginInterface {
 	
@@ -31,14 +28,13 @@ public class SitemapHarvest implements StagePluginInterface {
 	private String baseUrl;
 	private String allowedURLPattern;
 	
-	private HarvestConnection con;
 	private StepLogger logger;
 	private SitemapClient client;
 	
 	private ArrayList<String> sitemapIndexList; // Contains the URL's to other sitemaps used as a queue
 	private ArrayList<String> urlsetList; // Contains the URL's to pages to harvest used as a queue
 	
-	public int RECORD_LIMIT = 2000;
+	public int RECORD_LIMIT = 50;
 	
 	public void Dispose() {
 		// TODO Auto-generated method stub
@@ -54,11 +50,11 @@ public class SitemapHarvest implements StagePluginInterface {
 		
 		this.logger = logger;
 		
-		 //String url = props.get("url").toString();
-        baseUrl = props.get("Base URL").toString();
+		String url = (props.get("URL") == null ? null : props.get("URL").toString());
+        baseUrl = (props.get("Base URL") == null ? url : props.get("Base URL").toString());
         //String from = (props.get("harvestfrom") == null ? null : props.get("harvestfrom").toString());
         //String until = (props.get("harvestuntil") == null ? null : props.get("harvestuntil").toString());
-        //String set = (props.get("Set") == null ? null : props.get("Set").toString());
+        String set = (props.get("Set") == null ? null : props.get("Set").toString());
         //String metadata_prefix = props.get("Metadata Prefix").toString();
         //String record_oai_id = (props.get("singlerecord") == null ? null : props.get("singlerecord").toString());
 
@@ -70,6 +66,7 @@ public class SitemapHarvest implements StagePluginInterface {
         
         //Its vitial that the above strings get logged using a log properties call, otherwise they
         //will not show up under the Harvest Details heading in the logs.
+        logger.log("URL: " +  baseUrl);
         logger.logprop("Base URL", baseUrl, stepid);
         //logger.logprop("From", from == null ? "-" : from, stepid);
         //logger.logprop("Until", until == null ? "-" : until, stepid);
@@ -77,8 +74,8 @@ public class SitemapHarvest implements StagePluginInterface {
         //logger.logprop("Set", set == null ? "-" : set, stepid);
         //if(get_50 == true) logger.logprop("Stop at 50 records", "True", stepid);
         //if(record_oai_id != null) logger.logprop("identifier", record_oai_id, stepid);
-        
-        allowedURLPattern = props.get("urlPattern").toString();
+                
+        allowedURLPattern = (props.get("Match URL Pattern") == null ? set : props.get("Match URL Pattern").toString());
         
         sitemapIndexList = new ArrayList<String>();
         sitemapIndexList.addAll(readRobotsTxtAndGetSitemapList(baseUrl));
@@ -100,8 +97,8 @@ public class SitemapHarvest implements StagePluginInterface {
 		
 		// Harvest the next sitemap 
 		if (urlsetList.isEmpty()) {					
-			try {
-		        logger.locallog("Requesting next sitemap from: " + sitemapIndexList.get(0), getName());
+			try {			
+		        logger.log("Requesting next sitemap from: " + sitemapIndexList.get(0));
 		        client.makeRequest(sitemapIndexList.remove(0)); // Get and remove the first on the queue
 		        String response = client.getResponse();		         
 		        parseResponseAndAddUrlsToSiteIndexOrUrlsetList(response);
@@ -127,14 +124,14 @@ public class SitemapHarvest implements StagePluginInterface {
 	 * @throws HarvestException
 	 */
 	private void parseResponseAndAddUrlsToSiteIndexOrUrlsetList(String response) throws HarvestException {
-		logger.locallog("Strip namepsaces", getName());	
+		logger.locallog("Strip namespaces", getName());		
 		response = stripNamespace(response);
 		
 		if (response.indexOf("sitemapindex") > -1) {
-			logger.locallog("Reponse is a sitemapindex", getName());
+			logger.log("Reponse is a sitemapindex");
 			sitemapIndexList.addAll(processSitemapIndex(response)); // Add the URL's to the siteMapIndexList
 		} else if (response.indexOf("urlset") > -1) {
-			logger.locallog("Reponse is a urlset", getName());
+			logger.log("Reponse is a urlset");
 			urlsetList.addAll(processUrlSet(response)); // Add the URL's of pages
 		} else {
 			logger.error("Error parsing reponse. Response not a valid sitemap document. ", null);
@@ -232,7 +229,7 @@ public class SitemapHarvest implements StagePluginInterface {
 	                // TODO
 	                // Remove this step if I am not going to use to the dates for harvesting
 	                // as the XML processing adds more overhead. rather just use the regexps.
-	                try {
+	                try {	                	
 	                    Document record = DocumentHelper.parseText(xml);
 	                    String loc = record.selectSingleNode("//loc").getText();
 	                    String validatedURL = validateURL(loc);
@@ -245,7 +242,7 @@ public class SitemapHarvest implements StagePluginInterface {
 	                    parse_error_count++;
 	                }
 	                	                	               
-	                if (xml.startsWith(allowedURLPattern)) list.add(xml);	                
+	                //if (xml.startsWith(allowedURLPattern)) list.add(xml);	                
 	                break;
 	            }
 	        }
@@ -297,30 +294,46 @@ public class SitemapHarvest implements StagePluginInterface {
 		int parse_error_count = 0;
 
 	    while (true) {
-	    	
-	    	count++;
-	    	
+	    		    		    	
 	    	// Don't download any more records if the upper limit has been reached or
 	    	// there are no more pages to download.
 	    	if (count == RECORD_LIMIT || urlsetList.isEmpty()) {
-	    		logger.locallog("Harvested " + count + " records and urlsetlist " + urlsetList.size() + ", breaking from record loop", getName());
+	    		logger.locallog("Harvested: " + count + " records, remaining url queue: " + urlsetList.size() + ", breaking from record loop", getName());
 	    		break;
 	    	}
+	    	
+	    	count++;
 	        
 	    	String url = urlsetList.remove(0);
 	    	logger.locallog("Harvesting: " + url , getName());
 	    	try {
-	    		String html = HTMLHelper.downloadPage(new URL(url));
-	    		String xml = HTMLHelper.cleanHtmlToXml(html);	    		
-	    		records.addRecord(xml);
-	    	} catch (Exception e) {
+	    		String html = HTMLHelper.downloadPage(url);
+	    		org.w3c.dom.Document domDocument = HTMLHelper.tidyHtmlAndReturnAsDocument(html);
+	    		org.dom4j.io.DOMReader reader = new org.dom4j.io.DOMReader();
+	    		Document doc = reader.read(domDocument);	    		 
+	    		doc.setDocType(null);
+	    		records.addRecord(doc);
+	    	} catch (UnsupportedEncodingException e) {
 	    		logger.logfailedrecord("URL: " + url + " rejected" +
                         "<br/>Processing Step: " + getName() +
-                        "<br/>Reason: Record malformed<br/>" + e.getMessage(), "Record malformed", stepid, url);
+                        "<br/>Reason: Unable to convert HTML into XML<br/>" + e.getMessage(), "Encoding Exception", stepid, url);
+	    		parse_error_count++;
+	    	}
+	    	catch (IOException e) {
+	    		logger.logfailedrecord("URL: " + url + " rejected" +
+                        "<br/>Processing Step: " + getName() +
+                        "<br/>Reason: Unable to download page<br/>" + e.getMessage(), "Connection Exception", stepid, url);
+	    		logger.locallog(e.toString(), getName());
+	    		parse_error_count++;
+			} catch (Exception e) {
+	    		logger.logfailedrecord("URL: " + url + " rejected" +
+                        "<br/>Processing Step: " + getName() +
+                        "<br/>Reason: <br/>" + e.getMessage(), "Unknown Exception", stepid, url);
+	    		logger.locallog(e.toString(), getName());
 	    		parse_error_count++;
 			}     
 	    	
-	    	logger.locallog("Harvested " + count + " records and urlsetlist " + urlsetList.size(), getName());
+	    	logger.locallog("Harvested " + count + " records, remaining url queue: " + urlsetList.size(), getName());
 	    }
 	    
 	    logger.locallog(count + " records in batch", getName());
@@ -369,7 +382,7 @@ public class SitemapHarvest implements StagePluginInterface {
 	}
 	
 	public String getName() {
-		return getClass().getName();
+		return "SitemapHarvest";
 	}
 
 	public int getPosition() {
