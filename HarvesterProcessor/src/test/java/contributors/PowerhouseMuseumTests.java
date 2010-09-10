@@ -59,7 +59,21 @@ public class PowerhouseMuseumTests {
 		} 					
 	}
 	
-	//@Ignore
+	@Ignore
+	@Test
+	public void shouldDownloadAndCleanPage() throws MalformedURLException, IOException, DocumentException {
+		String page = HTMLHelper.downloadPage("http://www.powerhousemuseum.com/collection/database/index.php?irn=27713");
+					
+		org.w3c.dom.Document domDoc = HTMLHelper.tidyHtmlAndReturnAsDocument(page);
+		org.dom4j.io.DOMReader reader = new org.dom4j.io.DOMReader();
+		org.dom4j.Document doc = reader.read(domDoc);
+		doc.setDocType(null);
+		
+		System.out.println(doc.asXML());					
+	}
+	
+	
+	@Ignore
 	@Test
 	public void shouldConvertPageIntoDom4jDocument() throws MalformedURLException, IOException, DocumentException {
 		String page = HTMLHelper.downloadPage("http://www.powerhousemuseum.com/collection/database/index.php?irn=502789");
