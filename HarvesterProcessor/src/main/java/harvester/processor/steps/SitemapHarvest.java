@@ -19,14 +19,20 @@ import java.util.regex.Pattern;
 import javax.servlet.ServletContext;
 
 import org.dom4j.Document;
-import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 
+/**
+ * Main class for harvesting of sitemaps.
+ * 
+ * @author tingram
+ *
+ */
 public class SitemapHarvest implements StagePluginInterface {
 	
 	private Integer stepid;
 	private String baseUrl;
 	private String allowedURLPattern;
+	private boolean onlyHarvestFirst50Records;
 	
 	private StepLogger logger;
 	private SitemapClient client;
@@ -34,53 +40,53 @@ public class SitemapHarvest implements StagePluginInterface {
 	private ArrayList<String> sitemapIndexList; // Contains the URL's to other sitemaps used as a queue
 	private ArrayList<String> urlsetList; // Contains the URL's to pages to harvest used as a queue
 	
-	public int RECORD_LIMIT = 50;
+	public int RECORD_LIMIT = 100;
 	
+	/**
+	 * Does not do anything
+	 */
 	public void Dispose() {
-		// TODO Auto-generated method stub
-
 	}
 	
 	/**
 	 * Initializes the class and reads the robots.txt to get the first URL to harvest.
+	 * Called once.
 	 */
 	public void Initialise(HashMap<String, Object> props, StepLogger logger, ServletContext servletContext) throws Exception {
-		// TODO Auto-generated method stub
-		
 		
 		this.logger = logger;
+		this.sitemapIndexList = new ArrayList<String>();
+		this.urlsetList = new ArrayList<String>();
+		this.onlyHarvestFirst50Records = false;
+		this.stepid = (Integer)props.get("stepid");
 		
-		String url = (props.get("URL") == null ? null : props.get("URL").toString());
-        baseUrl = (props.get("Base URL") == null ? url : props.get("Base URL").toString());
+		this.baseUrl = (props.get("URL") == null ? null : props.get("URL").toString());        
+        this.allowedURLPattern = (props.get("Match URL Pattern") == null ? null : props.get("Match URL Pattern").toString());
+        this.onlyHarvestFirst50Records = "true".equals(props.get("until50"));
+        
         //String from = (props.get("harvestfrom") == null ? null : props.get("harvestfrom").toString());
         //String until = (props.get("harvestuntil") == null ? null : props.get("harvestuntil").toString());
-        String set = (props.get("Set") == null ? null : props.get("Set").toString());
+        
         //String metadata_prefix = props.get("Metadata Prefix").toString();
         //String record_oai_id = (props.get("singlerecord") == null ? null : props.get("singlerecord").toString());
 
         //forced_encoding = (String) props.get("Encoding");
         //boolean get_record = "true".equals(props.get("stopatfirst"));
-        //get_50 = "true".equals(props.get("until50"));
-
-        stepid = (Integer)props.get("stepid");
         
-        //Its vitial that the above strings get logged using a log properties call, otherwise they
-        //will not show up under the Harvest Details heading in the logs.
+        // Log stuff
         logger.log("URL: " +  baseUrl);
-        logger.logprop("Base URL", baseUrl, stepid);
+        logger.log("Allowable url pattern: " + allowedURLPattern);
+        logger.logprop("URL: ", baseUrl, stepid);
+        logger.logprop("Allowable url pattern: ", allowedURLPattern, stepid);
+        if(onlyHarvestFirst50Records == true) logger.logprop("Stop at 50 records", "True", stepid);
+       
         //logger.logprop("From", from == null ? "-" : from, stepid);
         //logger.logprop("Until", until == null ? "-" : until, stepid);
         //logger.logprop("Metadata Prefix", metadata_prefix == null ? "-" : metadata_prefix, stepid);
-        //logger.logprop("Set", set == null ? "-" : set, stepid);
-        //if(get_50 == true) logger.logprop("Stop at 50 records", "True", stepid);
+        //logger.logprop("Set", set == null ? "-" : set, stepid);        
         //if(record_oai_id != null) logger.logprop("identifier", record_oai_id, stepid);
-                
-        allowedURLPattern = (props.get("Match URL Pattern") == null ? set : props.get("Match URL Pattern").toString());
-        
-        sitemapIndexList = new ArrayList<String>();
+                                        
         sitemapIndexList.addAll(readRobotsTxtAndGetSitemapList(baseUrl));
-        
-        urlsetList = new ArrayList<String>();
 	}
 	
 	/**
@@ -187,7 +193,7 @@ public class SitemapHarvest implements StagePluginInterface {
 	
 	        count++;
 	    }
-	    logger.locallog(count + " sitemap urls in batch", getName());	    
+	    logger.log(count + " sitemap urls in batch");	    
 	    return list;
 	}
 	
@@ -241,8 +247,7 @@ public class SitemapHarvest implements StagePluginInterface {
 	                                           "<br/>Reason: Record malformed<br/>" + e.getMessage(), "Record malformed", stepid, xml);
 	                    parse_error_count++;
 	                }
-	                	                	               
-	                //if (xml.startsWith(allowedURLPattern)) list.add(xml);	                
+	                	                	               	                             
 	                break;
 	            }
 	        }
@@ -253,14 +258,14 @@ public class SitemapHarvest implements StagePluginInterface {
 	
 	        if (start == -1) {
 	            break;
-	        }
+	        }	        	       
 	
 	        count++;
 	    }
 	    
-	    logger.locallog(count + " page urls in document", getName());      
-	    logger.locallog(list.size() + " allowable page urls in document", getName());
-	    logger.locallog(parse_error_count + " <url> elements in batch had parse errors", getName());
+	    logger.log(count + " page urls in document");      
+	    logger.log(list.size() + " allowable page urls in document");
+	    logger.log(parse_error_count + " <url> elements in batch had parse errors");
 	    
 		return list;
 	}
@@ -294,7 +299,13 @@ public class SitemapHarvest implements StagePluginInterface {
 		int parse_error_count = 0;
 
 	    while (true) {
-	    		    		    	
+	    	
+	    	 if (onlyHarvestFirst50Records && count >= 50) {
+	    		 records.setContinue_harvesting(false);
+	             logger.locallog("Harvested 50 records, breaking from record loop", getName());
+	             break;
+	         }
+	    	 
 	    	// Don't download any more records if the upper limit has been reached or
 	    	// there are no more pages to download.
 	    	if (count == RECORD_LIMIT || urlsetList.isEmpty()) {
@@ -385,14 +396,17 @@ public class SitemapHarvest implements StagePluginInterface {
 		return "SitemapHarvest";
 	}
 
+	/**
+	 * Gets the current size of the list of allowable URLs to process
+	 */
 	public int getPosition() {
-		// TODO Auto-generated method stub
-		return 0;
+		return urlsetList.size();
 	}
 
+	/**
+	 * Not used
+	 */
 	public void setPosition(int arg0) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public String getBaseUrl() {

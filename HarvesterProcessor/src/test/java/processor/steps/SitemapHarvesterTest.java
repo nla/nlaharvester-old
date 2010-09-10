@@ -37,9 +37,9 @@ public class SitemapHarvesterTest {
 		props = new HashMap<String, Object>();					
 		sitemapHarvest = new SitemapHarvest();
 								
-		props.put("Base URL", baseUrl);
-		props.put("stepid", 1); //props.put("urlPattern", 1);
-		props.put("Set", "http://www.nla.gov.au.*");
+		props.put("URL", baseUrl);
+		props.put("stepid", 1); 
+		props.put("Match URL Pattern", "http://www.nla.gov.au.*");
 
 		sitemapHarvest.Initialise(props, new MockStepLogger(), new MockServletContext());
 	}
