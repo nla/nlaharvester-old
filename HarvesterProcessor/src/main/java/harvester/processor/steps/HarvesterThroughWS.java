@@ -3,7 +3,6 @@ package harvester.processor.steps;
 import org.dom4j.*;
 
 import harvester.processor.main.*;
-import harvester.processor.task.TaskProcessor;
 import harvester.processor.util.*;
 import harvester.processor.exceptions.*;
 
