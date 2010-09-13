@@ -32,14 +32,11 @@ public class SitemapHarvest implements StagePluginInterface {
 	private Integer stepid;
 	private String baseUrl;
 	private String allowedURLPattern;
-	private boolean onlyHarvestFirst50Records;
-	
+	private boolean onlyHarvestFirst50Records;	
 	private StepLogger logger;
-	private SitemapClient client;
-	
+	private SitemapClient client;	
 	private ArrayList<String> sitemapIndexList; // Contains the URL's to other sitemaps used as a queue
-	private ArrayList<String> urlsetList; // Contains the URL's to pages to harvest used as a queue
-	
+	private ArrayList<String> urlsetList; // Contains the URL's to pages to harvest used as a queue	
 	public int RECORD_LIMIT = 100;
 	
 	/**
