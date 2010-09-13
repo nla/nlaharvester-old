@@ -74,6 +74,7 @@
     </bean>
     <bean id="Z3950OptionProcessor" class="harvester.client.connconfig.actions.Z3950OptionProcessor" />
     <bean id="SitemapOptionProcessor" class="harvester.client.connconfig.actions.SitemapOptionProcessor" />
+    <bean id="RssOptionProcessor" class="harvester.client.connconfig.actions.RssOptionProcessor" />
     
     <!-- this class holds information on the specific settings for each input stage -->
     <bean id="inputpluginconfigurer" class="harvester.client.connconfig.InputPluginConfigurer">
@@ -92,6 +93,11 @@
                             <value>82</value>
                         </list>
                  </entry>
+                 <entry key="harvester.processor.steps.SitemapHarvest">
+                        <list>                        	
+                            <value>83</value>                            
+                        </list>
+                 </entry>
             </map>
         </property>
         <!-- link each harvest step with the client side code for it, executed between steps 2 and 3. -->
@@ -100,6 +106,7 @@
                  <entry key="harvester.processor.steps.HarvesterThroughWS" value-ref="OAIOptionProcessor" />
                  <entry key="harvester.processor.steps.HarvestMarcXML" value-ref="Z3950OptionProcessor" />
                  <entry key="harvester.processor.steps.SitemapHarvest" value-ref="SitemapOptionProcessor" />
+                  <entry key="harvester.processor.steps.RssHarvest" value-ref="RssOptionProcessor" />
             </map>
         </property>
         <property name="daofactory" ref="DAOFactoryImpl" /> <!-- it might need database access -->
