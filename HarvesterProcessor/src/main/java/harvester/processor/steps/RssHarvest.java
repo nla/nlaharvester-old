@@ -3,14 +3,10 @@ package harvester.processor.steps;
 import harvester.processor.exceptions.HarvestException;
 import harvester.processor.main.Records;
 import harvester.processor.util.HTMLHelper;
-import harvester.processor.util.SitemapClient;
 import harvester.processor.util.StepLogger;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Matcher;
