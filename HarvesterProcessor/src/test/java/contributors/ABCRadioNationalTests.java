@@ -52,7 +52,7 @@ public class ABCRadioNationalTests {
 		} 					
 	}
 	
-	@Ignore
+	//@Ignore
 	@Test
 	public void shouldDownloadAndCleanPage() throws MalformedURLException, IOException, DocumentException {
 		String page = HTMLHelper.downloadPage("http://abc.net.au/rn/allinthemind/stories/2010/3004743.htm");					
