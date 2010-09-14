@@ -20,6 +20,7 @@ import javax.servlet.ServletContext;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentHelper;
+import org.dom4j.Element;
 
 /**
  * Main class for harvesting of sitemaps.
@@ -173,8 +174,7 @@ public class SitemapHarvest implements StagePluginInterface {
 	            }
 	            if (level == 0) {	
 	                url = response.substring(start, matcher.start());
-	                list.add(url);
-	                //logger.locallog(url, getName());
+	                list.add(url);	                
 	                response = response.substring(matcher.end());
 	                break;
 	            }
@@ -318,7 +318,8 @@ public class SitemapHarvest implements StagePluginInterface {
 	    		String html = HTMLHelper.downloadPage(url);
 	    		org.w3c.dom.Document domDocument = HTMLHelper.tidyHtmlAndReturnAsDocument(html);
 	    		org.dom4j.io.DOMReader reader = new org.dom4j.io.DOMReader();
-	    		Document doc = reader.read(domDocument);	    		 
+	    		Document doc = reader.read(domDocument);
+	    		addIdentifierURL(doc, url);
 	    		doc.setDocType(null);
 	    		records.addRecord(doc);
 	    	} catch (UnsupportedEncodingException e) {
@@ -349,6 +350,19 @@ public class SitemapHarvest implements StagePluginInterface {
         logger.locallog(records.getCurrentrecords() + parse_error_count + " total records", getName());
         
         records.setTotalRecords(records.getCurrentrecords() + parse_error_count);
+	}
+	
+	/**
+	 * Adds a new meta tag to the HTML with the URL of the page.
+	 * @param doc
+	 * @param pageUrl
+	 */
+	private void addIdentifierURL(Document doc, String pageUrl) {
+		Element root = doc.getRootElement();
+		Element el = DocumentHelper.createElement("meta");
+		el.addAttribute("name", "identifier.url");
+		el.addAttribute("content", pageUrl);
+		root.add(el);
 	}
     
 	/**
